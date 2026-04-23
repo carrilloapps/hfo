@@ -2,17 +2,83 @@
 <html lang="en">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+
 <title>hfo — Hugging Face · Ollama, in your terminal</title>
-<meta name="description" content="A fullscreen terminal UI to discover, install, tune, back up, restore and launch Hugging Face GGUF models through Ollama — auto-tuned to your hardware." />
-<meta property="og:title" content="hfo — Hugging Face · Ollama in your terminal" />
-<meta property="og:description" content="Fullscreen TUI for local LLMs via Ollama. Auto-tuned to your hardware. Free, MIT, cross-OS." />
-<meta property="og:url" content="https://hfo.carrillo.app" />
+<meta name="description" content="Fullscreen terminal UI and headless CLI to discover, install, tune, back up, restore and launch Hugging Face GGUF models through Ollama — auto-tuned to your hardware. Cross-OS. MIT. Free." />
+<meta name="author" content="José Carrillo" />
+<meta name="theme-color" content="#0a0b0f" media="(prefers-color-scheme: dark)" />
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+<meta name="color-scheme" content="dark light" />
+
+<!-- Canonical + alternates -->
+<link rel="canonical" href="https://hfo.carrillo.app/" />
+
+<!-- Favicons -->
+<link rel="icon" type="image/svg+xml" href="/assets/logo-mark.svg" />
+<link rel="apple-touch-icon" href="/assets/logo-mark.svg" />
+<link rel="mask-icon" href="/assets/logo-mark.svg" color="#6cb6ff" />
+
+<!-- Open Graph -->
 <meta property="og:type" content="website" />
-<meta name="theme-color" content="#0a0b0f" />
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='0.9em' font-size='88'%3E%23%3C/text%3E%3C/svg%3E" />
+<meta property="og:site_name" content="hfo" />
+<meta property="og:title" content="hfo — Hugging Face · Ollama, in your terminal" />
+<meta property="og:description" content="Fullscreen TUI + headless CLI for local LLMs via Ollama. Auto-tuned to your hardware. Free, MIT, cross-OS." />
+<meta property="og:url" content="https://hfo.carrillo.app/" />
+<meta property="og:image" content="https://hfo.carrillo.app/assets/og-image.svg" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:alt" content="hfo logo with tagline: Hugging Face · Ollama, in your terminal" />
+<meta property="og:locale" content="en_US" />
+
+<!-- Twitter / X card -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:site" content="@carrilloapps" />
+<meta name="twitter:creator" content="@carrilloapps" />
+<meta name="twitter:title" content="hfo — Hugging Face · Ollama, in your terminal" />
+<meta name="twitter:description" content="Fullscreen TUI + headless CLI for local LLMs via Ollama. Auto-tuned to your hardware. Free, MIT, cross-OS." />
+<meta name="twitter:image" content="https://hfo.carrillo.app/assets/og-image.svg" />
+
+<!-- Preconnect / font load -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+
+<!-- Structured data -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "hfo",
+  "alternateName": "hfo-cli",
+  "description": "Fullscreen terminal UI and headless CLI to discover, install, tune, back up, restore and launch Hugging Face GGUF models through Ollama.",
+  "url": "https://hfo.carrillo.app/",
+  "applicationCategory": "DeveloperApplication",
+  "operatingSystem": "Windows, macOS, Linux",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+  "license": "https://spdx.org/licenses/MIT.html",
+  "softwareVersion": "0.1.0",
+  "programmingLanguage": "TypeScript",
+  "codeRepository": "https://github.com/carrilloapps/hfo",
+  "downloadUrl": "https://www.npmjs.com/package/hfo-cli",
+  "author": {
+    "@type": "Person",
+    "name": "José Carrillo",
+    "url": "https://carrillo.app",
+    "sameAs": [
+      "https://github.com/carrilloapps",
+      "https://linkedin.com/in/carrilloapps",
+      "https://x.com/carrilloapps",
+      "https://dev.to/carrilloapps",
+      "https://medium.com/@carrilloapps"
+    ]
+  }
+}
+</script>
+
 <style>
   :root {
+    color-scheme: dark light;
     --bg: #0a0b0f;
     --bg-alt: #11131a;
     --bg-raised: #171922;
@@ -25,8 +91,14 @@
     --warning: #ffd766;
     --danger: #ff7a7a;
     --border: #262a35;
-    --mono: ui-monospace, "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace;
-    --sans: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, sans-serif;
+    --border-strong: #363c4a;
+    --shadow: 0 10px 30px rgba(0,0,0,0.35), 0 2px 8px rgba(0,0,0,0.2);
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 14px;
+    --radius-xl: 22px;
+    --sans: 'Inter', ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --mono: 'JetBrains Mono', ui-monospace, "SF Mono", Menlo, Consolas, monospace;
   }
   @media (prefers-color-scheme: light) {
     :root {
@@ -39,240 +111,554 @@
       --primary-dim: #cfdcf2;
       --accent: #7d55d7;
       --success: #1f9d6c;
-      --warning: #b4820a;
+      --warning: #a57200;
       --danger: #c03b3b;
       --border: #e4e7ee;
+      --border-strong: #c9cfdc;
+      --shadow: 0 6px 20px rgba(20,22,28,0.06), 0 2px 6px rgba(20,22,28,0.04);
     }
   }
-  * { box-sizing: border-box; }
-  html { scroll-behavior: smooth; }
+
+  *, *::before, *::after { box-sizing: border-box; }
+  html { scroll-behavior: smooth; scroll-padding-top: 72px; }
   body {
     margin: 0;
     font-family: var(--sans);
+    font-size: 16px;
     background: var(--bg);
     color: var(--fg);
-    line-height: 1.55;
+    line-height: 1.6;
     -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
   }
-  a { color: var(--primary); text-decoration: none; }
-  a:hover { text-decoration: underline; }
-  code, pre { font-family: var(--mono); }
-  pre {
-    background: var(--bg-alt);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 14px 16px;
-    overflow-x: auto;
-    font-size: 13.5px;
-    margin: 0;
+  :focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 3px;
+    border-radius: 4px;
   }
-  code { font-size: 0.92em; background: var(--bg-alt); padding: 0 6px; border-radius: 4px; border: 1px solid var(--border); }
-  pre code { background: none; border: 0; padding: 0; }
+  a { color: var(--primary); text-decoration: none; transition: color .15s ease; }
+  a:hover { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
+  code { font-family: var(--mono); font-size: 0.9em; background: var(--bg-alt); padding: 1px 6px; border-radius: 4px; border: 1px solid var(--border); }
+  pre { font-family: var(--mono); background: var(--bg-alt); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 18px 20px; overflow-x: auto; font-size: 14px; margin: 0; line-height: 1.65; }
+  pre code { background: none; border: 0; padding: 0; font-size: inherit; }
+  hr { border: 0; border-top: 1px solid var(--border); margin: 0; }
 
-  .container { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+  .container { max-width: 1120px; margin: 0 auto; padding: 0 clamp(18px, 4vw, 36px); }
+  .skip-link {
+    position: absolute; top: -40px; left: 12px; background: var(--primary); color: var(--bg);
+    padding: 8px 14px; border-radius: var(--radius-sm); font-weight: 600; z-index: 100;
+    transition: top .2s ease;
+  }
+  .skip-link:focus { top: 12px; }
 
-  header.site {
+  /* Header */
+  .site-header {
     position: sticky; top: 0; z-index: 10;
-    background: color-mix(in oklab, var(--bg) 85%, transparent);
-    backdrop-filter: blur(12px);
+    background: color-mix(in oklab, var(--bg) 88%, transparent);
+    backdrop-filter: saturate(140%) blur(14px);
+    -webkit-backdrop-filter: saturate(140%) blur(14px);
     border-bottom: 1px solid var(--border);
   }
-  header.site .row { display: flex; align-items: center; gap: 16px; height: 60px; }
-  header.site .brand { font-family: var(--mono); font-weight: 700; font-size: 18px; letter-spacing: -0.5px; }
-  header.site nav { margin-left: auto; display: flex; gap: 18px; font-size: 14px; }
-  header.site nav a { color: var(--muted); }
-  header.site nav a:hover { color: var(--fg); text-decoration: none; }
+  .site-header .row { display: flex; align-items: center; gap: 24px; height: 64px; }
+  .brand { display: inline-flex; align-items: center; gap: 10px; color: var(--fg); font-family: var(--mono); font-weight: 700; font-size: 18px; letter-spacing: -0.5px; }
+  .brand:hover { text-decoration: none; color: var(--primary); }
+  .brand svg { width: 28px; height: 28px; color: var(--primary); }
+  .site-nav { margin-left: auto; display: flex; gap: 4px; align-items: center; }
+  .site-nav a { color: var(--muted); padding: 8px 12px; border-radius: var(--radius-sm); font-size: 14.5px; font-weight: 500; }
+  .site-nav a:hover { color: var(--fg); background: var(--bg-alt); text-decoration: none; }
+  .nav-icon-link { display: inline-flex; align-items: center; gap: 6px; }
 
-  section { padding: 72px 0; }
+  /* Hero */
+  main { display: block; }
+  section { padding: clamp(56px, 9vw, 96px) 0; }
   section + section { border-top: 1px solid var(--border); }
 
-  .hero h1 { font-size: clamp(36px, 6vw, 56px); line-height: 1.1; margin: 0 0 18px; letter-spacing: -1.5px; }
-  .hero h1 .grad { background: linear-gradient(90deg, var(--primary), var(--accent)); -webkit-background-clip: text; background-clip: text; color: transparent; }
-  .hero .sub { font-size: 19px; color: var(--muted); max-width: 720px; margin: 0 0 32px; }
-  .hero .cta { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
-  .hero .pill { font-family: var(--mono); font-size: 14px; background: var(--bg-alt); border: 1px solid var(--border); padding: 10px 14px; border-radius: 8px; }
-  .badges { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 28px; }
-  .badges img { height: 20px; }
+  .hero-eyebrow {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 6px 12px; border: 1px solid var(--border-strong);
+    border-radius: 999px; font-size: 12.5px; font-weight: 600; letter-spacing: 0.2px;
+    color: var(--muted); background: var(--bg-alt);
+    margin: 0 0 22px;
+  }
+  .hero-eyebrow svg { width: 14px; height: 14px; color: var(--success); }
+  .hero h1 {
+    font-size: clamp(40px, 7vw, 72px); line-height: 1.02;
+    margin: 0 0 20px; letter-spacing: -2.5px; font-weight: 800;
+  }
+  .hero h1 .grad {
+    background: linear-gradient(100deg, var(--primary), var(--accent));
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    padding-right: 2px;
+  }
+  .hero .sub {
+    font-size: clamp(17px, 2.2vw, 21px); color: var(--muted);
+    max-width: 680px; margin: 0 0 36px; line-height: 1.55;
+  }
+  .cta-group { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 11px 18px; border-radius: var(--radius-md);
+    font-family: var(--sans); font-weight: 600; font-size: 15px;
+    border: 1px solid transparent; cursor: pointer; text-decoration: none;
+    transition: transform .12s ease, background .15s ease, border-color .15s ease, color .15s ease;
+  }
+  .btn:hover { text-decoration: none; transform: translateY(-1px); }
+  .btn-primary { background: var(--primary); color: #07111b; border-color: var(--primary); }
+  .btn-primary:hover { background: var(--accent); border-color: var(--accent); color: #07111b; }
+  .btn-ghost { background: var(--bg-alt); color: var(--fg); border-color: var(--border-strong); }
+  .btn-ghost:hover { background: var(--bg-raised); color: var(--primary); border-color: var(--primary); }
+  .btn svg { width: 18px; height: 18px; }
+  .install-pill {
+    display: inline-flex; align-items: center; gap: 10px;
+    font-family: var(--mono); font-size: 14.5px; font-weight: 500;
+    padding: 11px 16px; border: 1px solid var(--border-strong);
+    border-radius: var(--radius-md); background: var(--bg-alt); color: var(--fg);
+    cursor: pointer;
+  }
+  .install-pill:hover { border-color: var(--primary); color: var(--primary); }
+  .install-pill svg { width: 16px; height: 16px; color: var(--muted); }
+
+  .badges { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 32px; }
+  .badges img { height: 22px; }
+
+  /* Feature grid */
+  h2 { font-size: clamp(26px, 3.5vw, 34px); letter-spacing: -1px; margin: 0 0 14px; font-weight: 800; }
+  .section-lede { color: var(--muted); margin: 0 0 40px; max-width: 720px; font-size: 17px; }
 
   .grid {
-    display: grid; gap: 18px;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    display: grid; gap: 16px;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   }
-  .card { background: var(--bg-raised); border: 1px solid var(--border); border-radius: 12px; padding: 22px; }
-  .card h3 { margin: 0 0 8px; font-size: 16px; letter-spacing: -0.2px; color: var(--fg); }
-  .card p { margin: 0; color: var(--muted); font-size: 14.5px; }
+  .card {
+    background: var(--bg-raised); border: 1px solid var(--border);
+    border-radius: var(--radius-lg); padding: 24px;
+    transition: border-color .15s ease, transform .2s ease, box-shadow .2s ease;
+  }
+  .card:hover { border-color: var(--border-strong); transform: translateY(-2px); box-shadow: var(--shadow); }
+  .card-icon {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 40px; height: 40px; border-radius: var(--radius-md);
+    background: color-mix(in oklab, var(--primary) 12%, transparent);
+    color: var(--primary); margin-bottom: 14px;
+  }
+  .card-icon svg { width: 22px; height: 22px; }
+  .card h3 { margin: 0 0 6px; font-size: 17px; font-weight: 700; color: var(--fg); letter-spacing: -0.2px; }
+  .card p { margin: 0; color: var(--muted); font-size: 14.5px; line-height: 1.6; }
 
-  h2 { font-size: 30px; letter-spacing: -0.8px; margin: 0 0 12px; }
-  .lede { color: var(--muted); margin: 0 0 36px; max-width: 680px; }
+  /* Install section */
+  .tabs { display: flex; gap: 6px; margin: 0 0 14px; flex-wrap: wrap; }
+  .tab-btn {
+    padding: 8px 14px; background: var(--bg-alt); border: 1px solid var(--border);
+    border-radius: var(--radius-sm); color: var(--muted); font-weight: 500;
+    font-family: var(--sans); font-size: 14px; cursor: pointer;
+    transition: color .15s ease, border-color .15s ease, background .15s ease;
+  }
+  .tab-btn[aria-selected="true"] { background: var(--bg-raised); color: var(--fg); border-color: var(--primary); }
+  .tab-btn:hover { color: var(--fg); }
 
-  .table { width: 100%; border-collapse: collapse; font-size: 14.5px; }
-  .table th, .table td { text-align: left; padding: 12px 14px; border-bottom: 1px solid var(--border); vertical-align: top; }
-  .table th { color: var(--muted); font-weight: 600; }
+  /* Tables */
+  .table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--bg-raised); }
+  .table { width: 100%; border-collapse: collapse; font-size: 14.5px; min-width: 640px; }
+  .table th, .table td {
+    text-align: left; padding: 14px 16px; vertical-align: top;
+    border-bottom: 1px solid var(--border);
+  }
+  .table thead th { color: var(--muted); font-weight: 600; font-size: 12.5px; text-transform: uppercase; letter-spacing: 0.6px; background: var(--bg-alt); }
+  .table tbody tr:last-child td { border-bottom: 0; }
+  .table tbody tr:hover { background: var(--bg-alt); }
   .table code { font-size: 13px; }
 
-  .cmd-table tr:hover { background: var(--bg-alt); }
+  .kbd {
+    display: inline-flex; align-items: center; justify-content: center;
+    min-width: 22px; height: 22px; padding: 0 6px;
+    border: 1px solid var(--border-strong); background: var(--bg-alt);
+    border-radius: 4px; font-family: var(--mono); font-size: 12px; color: var(--fg);
+    margin: 0 2px;
+  }
 
-  footer.site { padding: 48px 0; color: var(--muted); font-size: 14px; border-top: 1px solid var(--border); }
-  footer.site .row { display: flex; flex-wrap: wrap; gap: 24px; align-items: center; justify-content: space-between; }
-  footer.site a { color: var(--muted); }
-  footer.site a:hover { color: var(--fg); }
-  footer.site .social { display: flex; flex-wrap: wrap; gap: 16px; }
+  /* Privacy box */
+  .privacy-box {
+    display: grid; gap: 16px;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    margin-bottom: 22px;
+  }
+  .privacy-box > div {
+    padding: 18px; border: 1px solid var(--border); border-radius: var(--radius-md);
+    background: var(--bg-raised);
+  }
+  .privacy-box h4 { margin: 0 0 8px; font-size: 14px; font-weight: 700; color: var(--fg); display: flex; align-items: center; gap: 8px; }
+  .privacy-box h4 svg { width: 16px; height: 16px; }
+  .privacy-box p { margin: 0; color: var(--muted); font-size: 14px; }
+  .privacy-box .ok svg { color: var(--success); }
+  .privacy-box .warn svg { color: var(--warning); }
+  .privacy-box .info svg { color: var(--primary); }
 
-  .kbd { display: inline-block; border: 1px solid var(--border); background: var(--bg-alt); border-radius: 4px; padding: 1px 6px; font-family: var(--mono); font-size: 12.5px; }
+  /* Author card */
+  .author-card {
+    display: grid; grid-template-columns: auto 1fr; gap: 28px; align-items: start;
+    background: var(--bg-raised); border: 1px solid var(--border);
+    border-radius: var(--radius-lg); padding: 28px;
+  }
+  .author-avatar {
+    width: 96px; height: 96px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    display: flex; align-items: center; justify-content: center;
+    color: var(--bg); font-family: var(--mono); font-weight: 800; font-size: 32px;
+  }
+  .author-card h3 { margin: 0 0 4px; font-size: 22px; letter-spacing: -0.4px; }
+  .author-card .role { color: var(--muted); margin: 0 0 14px; font-size: 15px; }
+  .socials { display: flex; flex-wrap: wrap; gap: 8px; }
+  .socials a {
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 6px 11px; border: 1px solid var(--border); border-radius: 999px;
+    color: var(--muted); font-size: 13.5px; font-weight: 500; background: var(--bg-alt);
+    transition: color .15s ease, border-color .15s ease;
+  }
+  .socials a:hover { color: var(--primary); border-color: var(--primary); text-decoration: none; }
+  .socials svg { width: 14px; height: 14px; }
 
-  .hl-ok { color: var(--success); }
-  .hl-warn { color: var(--warning); }
-  .hl-bad { color: var(--danger); }
+  @media (max-width: 540px) {
+    .author-card { grid-template-columns: 1fr; text-align: left; }
+  }
+
+  /* Footer */
+  .site-footer { padding: 40px 0; color: var(--muted); font-size: 13.5px; border-top: 1px solid var(--border); }
+  .site-footer .row { display: flex; flex-wrap: wrap; gap: 20px; align-items: center; justify-content: space-between; }
+  .site-footer a { color: var(--muted); }
+  .site-footer a:hover { color: var(--fg); }
+  .footer-links { display: flex; flex-wrap: wrap; gap: 18px; }
+
+  @media (max-width: 720px) {
+    .site-nav { display: none; }
+  }
 </style>
 </head>
 <body>
 
-<header class="site">
+<a class="skip-link" href="#main">Skip to main content</a>
+
+<header class="site-header" role="banner">
   <div class="container row">
-    <span class="brand">hfo</span>
-    <nav>
+    <a class="brand" href="/" aria-label="hfo home">
+      <!-- Inline logo mark -->
+      <svg viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+        <rect x="1" y="1" width="30" height="30" rx="7" fill="currentColor"/>
+        <line x1="8" y1="16" x2="24" y2="16" stroke="var(--bg)" stroke-width="2" stroke-linecap="round"/>
+        <circle cx="8"  cy="16" r="3" fill="var(--bg)"/>
+        <circle cx="16" cy="16" r="3" fill="none" stroke="var(--bg)" stroke-width="2"/>
+        <circle cx="24" cy="16" r="3" fill="var(--bg)"/>
+      </svg>
+      <span>hfo</span>
+    </a>
+    <nav class="site-nav" aria-label="Primary">
       <a href="#features">Features</a>
       <a href="#install">Install</a>
-      <a href="#commands">Commands</a>
+      <a href="#cli">CLI</a>
       <a href="#keyboard">Keyboard</a>
       <a href="#privacy">Privacy</a>
-      <a href="https://github.com/carrilloapps/hfo" target="_blank" rel="noreferrer">GitHub</a>
+      <a href="https://github.com/carrilloapps/hfo" target="_blank" rel="noreferrer noopener" class="nav-icon-link">
+        <svg aria-hidden="true" focusable="false" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.4 5.4 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>
+        GitHub
+      </a>
     </nav>
   </div>
 </header>
 
+<main id="main">
+
 <section class="hero">
   <div class="container">
+    <span class="hero-eyebrow">
+      <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+      v0.1.0 · MIT · cross-OS · no telemetry
+    </span>
     <h1>Hugging Face · Ollama,<br /><span class="grad">in your terminal.</span></h1>
     <p class="sub">
-      hfo is a fullscreen terminal UI that turns any Hugging Face repo URL into a running Ollama model — auto-tuned to your hardware.
-      Discover, install, tune, back up, restore, and launch integrations (Claude Code, Codex, Copilot CLI, OpenCode, Droid, Cline,
-      Hermes, Kimi, OpenClaw, Pi, VS Code) without leaving your shell.
+      A fullscreen terminal UI and headless CLI that turns any Hugging Face GGUF repository into a running, hardware-tuned Ollama model — then lets you back it up, restore it, or hand it off to Claude Code, Codex, Copilot CLI, OpenCode, Droid, and seven more integrations without leaving your shell.
     </p>
-    <div class="cta">
-      <span class="pill">npm i -g hfo-cli</span>
-      <a class="pill" href="https://github.com/carrilloapps/hfo" target="_blank" rel="noreferrer">View on GitHub →</a>
+    <div class="cta-group">
+      <button type="button" class="install-pill" onclick="navigator.clipboard?.writeText('npm i -g hfo-cli'); this.querySelector('span').textContent='copied'; setTimeout(()=>this.querySelector('span').textContent='copy', 1500);" aria-label="Copy install command">
+        <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v4M9 21H5a2 2 0 0 1-2-2v-4M21 3l-7 7M3 21l7-7"/></svg>
+        <code>$ npm i -g hfo-cli</code>
+        <span style="color:var(--muted); margin-left: 6px;">copy</span>
+      </button>
+      <a class="btn btn-primary" href="https://github.com/carrilloapps/hfo" target="_blank" rel="noreferrer noopener">
+        <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.4 5.4 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>
+        Source on GitHub
+      </a>
+      <a class="btn btn-ghost" href="https://www.npmjs.com/package/hfo-cli" target="_blank" rel="noreferrer noopener">
+        <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 10v12"/><path d="M15 5.88 14 12h7l-1 6.12A2 2 0 0 1 18.02 20H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h6l3 .88z"/></svg>
+        View on npm
+      </a>
     </div>
-    <div class="badges">
-      <img alt="npm" src="https://img.shields.io/npm/v/hfo-cli.svg?style=flat" />
-      <img alt="license" src="https://img.shields.io/npm/l/hfo-cli.svg?style=flat" />
-      <img alt="node" src="https://img.shields.io/node/v/hfo-cli.svg?style=flat" />
-      <img alt="ci" src="https://github.com/carrilloapps/hfo/actions/workflows/ci.yml/badge.svg" />
+    <div class="badges" aria-hidden="true">
+      <img alt="" src="https://img.shields.io/npm/v/hfo-cli.svg?style=flat" />
+      <img alt="" src="https://img.shields.io/npm/l/hfo-cli.svg?style=flat" />
+      <img alt="" src="https://img.shields.io/node/v/hfo-cli.svg?style=flat" />
+      <img alt="" src="https://github.com/carrilloapps/hfo/actions/workflows/ci.yml/badge.svg" />
+      <img alt="" src="https://img.shields.io/badge/TypeScript-strict-3178c6?style=flat&logo=typescript&logoColor=white" />
     </div>
   </div>
 </section>
 
-<section id="features">
+<section id="features" aria-labelledby="features-title">
   <div class="container">
-    <h2>What it does</h2>
-    <p class="lede">Everything that normally takes a dozen shell commands and a hand-written Modelfile — folded into one TUI that understands your rig.</p>
+    <h2 id="features-title">What it does</h2>
+    <p class="section-lede">Everything that normally takes a dozen shell commands and a hand-written Modelfile — folded into one tool that understands your rig.</p>
     <div class="grid">
-      <div class="card"><h3>Fullscreen TUI</h3><p>Tab-based shell with a live dashboard (GPU / VRAM / RAM meters, loaded models, tier score). Alt-screen buffer preserves your scrollback on exit.</p></div>
-      <div class="card"><h3>Hardware-aware install</h3><p>Scores every GGUF quant in a repo against your VRAM, parses the HF model card for recommended temperature / top_p / ctx, synthesizes a tuned Modelfile, and registers with <code>ollama create</code>.</p></div>
-      <div class="card"><h3>Launch integrations</h3><p>One-key <span class="kbd">L</span> spawns any Ollama integration (Claude Code, Codex, Copilot CLI, OpenCode, Droid, Cline, Hermes, Kimi, OpenClaw, Pi, VS Code) using the selected model as the local backend.</p></div>
-      <div class="card"><h3>Backup · Restore</h3><p>Zip the model folder with level-9 compression, write a sidecar <code>metadata.json</code>, then restore with one command — regenerating the Modelfile if it's missing.</p></div>
-      <div class="card"><h3>Orphan reinstall</h3><p>Models removed from Ollama but still on disk surface as "available to reinstall". <span class="kbd">I</span> rebuilds the Modelfile from the GGUF alone using your hardware + HF card.</p></div>
-      <div class="card"><h3>Tune Ollama to 90%</h3><p>Side-by-side default / suggested / current view of <code>OLLAMA_FLASH_ATTENTION</code>, <code>OLLAMA_KV_CACHE_TYPE</code>, <code>OLLAMA_KEEP_ALIVE</code>, etc. Persists via setx · launchctl · systemd depending on OS.</p></div>
-      <div class="card"><h3>Themes &amp; i18n</h3><p>Seven built-in themes (dark, light, Dracula, Solarized, Nord, Monokai) and translations for 20 languages including English, Spanish, Chinese, Hindi, Arabic, Portuguese, Bengali, Russian, Japanese, German, French, Korean, and more.</p></div>
-      <div class="card"><h3>Headless commands</h3><p><code>--view</code>, <code>--list</code>, <code>--backup</code>, <code>--restore</code>, <code>--tune</code>, <code>--launch</code>, <code>--delete</code> let you script every TUI capability from CI, cron, or an editor plugin.</p></div>
-      <div class="card"><h3>Cross-OS, free, private</h3><p>Windows · macOS · Linux. Talks only to the public Hugging Face API and your local Ollama daemon. No telemetry, no accounts.</p></div>
+      <article class="card">
+        <span class="card-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg></span>
+        <h3>Fullscreen TUI</h3>
+        <p>Six tabs — Dashboard, Models, Install, Tune, Help, Settings — with live GPU / VRAM / RAM meters. Alt-screen buffer preserves your scrollback on exit.</p>
+      </article>
+      <article class="card">
+        <span class="card-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span>
+        <h3>Quick-confirm install</h3>
+        <p>New models install in one Enter keystroke: the tool scores every quant against your VRAM, parses the HF card, and proposes a ready-to-run Modelfile.</p>
+      </article>
+      <article class="card">
+        <span class="card-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg></span>
+        <h3>Hardware scoring</h3>
+        <p>Every GGUF graded 0–100 against your usable VRAM and RAM headroom, with per-quant labels like <code>Full GPU</code>, <code>Partial 87%</code>, <code>CPU-heavy</code>.</p>
+      </article>
+      <article class="card">
+        <span class="card-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5Z"/><polyline points="14 2 14 8 20 8"/><path d="m10 13-2 2 2 2"/><path d="m14 17 2-2-2-2"/></svg></span>
+        <h3>HF-card-aware Modelfile</h3>
+        <p>Reads each model's README for recommended <code>temperature</code>, <code>top_p</code>, <code>top_k</code>, <code>repeat_penalty</code>, <code>min_p</code>, and context size. Overlaid on hardware defaults.</p>
+      </article>
+      <article class="card">
+        <span class="card-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg></span>
+        <h3>Orphan reinstall</h3>
+        <p>Models removed from Ollama but still on disk appear as <em>available to reinstall</em>. Press <span class="kbd">I</span> to rebuild the Modelfile from the GGUF alone.</p>
+      </article>
+      <article class="card">
+        <span class="card-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="5" rx="2"/><path d="M4 9v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9"/><path d="M10 13h4"/></svg></span>
+        <h3>Zip backup &amp; restore</h3>
+        <p>Level-9 compression, streaming (multi-GB safe), sidecar <code>metadata.json</code>. <code>hfo --restore &lt;zip&gt;</code> extracts and re-registers automatically.</p>
+      </article>
+      <article class="card">
+        <span class="card-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.25-2 5-2 5s3.75-.5 5-2c.73-.86.71-2.2-.08-3-.78-.8-2.15-.84-3-.08z"/><path d="M12 15V9"/><path d="M15 12l-3-3-3 3"/><path d="M16 11a5 5 0 0 0-5-5"/><path d="M20 15a9 9 0 0 0-9-9"/></svg></span>
+        <h3>Launch integrations</h3>
+        <p>Press <span class="kbd">L</span> on any model to run <code>ollama launch</code> with it as backend: Claude Code, Cline, Codex, Copilot CLI, Droid, Hermes, Kimi, OpenCode, OpenClaw, Pi, VS Code.</p>
+      </article>
+      <article class="card">
+        <span class="card-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V11"/><path d="M4 11V3"/><path d="M12 21v-6"/><path d="M12 11V3"/><path d="M20 21v-10"/><path d="M20 5V3"/><path d="M2 11h4"/><path d="M10 15h4"/><path d="M18 11h4"/></svg></span>
+        <h3>~90% capacity tuner</h3>
+        <p>Side-by-side <em>default</em> / <em>suggested</em> / <em>current</em> view of every key Ollama env var. Persists via <code>setx</code> · <code>launchctl</code> · <code>systemd</code> per OS.</p>
+      </article>
+      <article class="card">
+        <span class="card-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r=".5"/><circle cx="17.5" cy="10.5" r=".5"/><circle cx="8.5" cy="7.5" r=".5"/><circle cx="6.5" cy="12.5" r=".5"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg></span>
+        <h3>7 themes, 20 languages</h3>
+        <p>Dark, Light, Dracula, Solarized, Nord, Monokai. Translations in English, Spanish, Chinese, Hindi, Arabic, Portuguese, Bengali, Russian, Japanese, German, French, Korean, and more.</p>
+      </article>
     </div>
   </div>
 </section>
 
-<section id="install">
+<section id="install" aria-labelledby="install-title">
   <div class="container">
-    <h2>Install</h2>
-    <p class="lede">Needs Node.js 20+. Ollama is optional — hfo can install it for you via winget / brew / the official script.</p>
-    <pre><code>npm i -g hfo-cli
+    <h2 id="install-title">Install</h2>
+    <p class="section-lede">Needs Node.js ≥ 20. Ollama is optional — <code>hfo</code> can install it for you via winget, brew, or the official script.</p>
+    <div class="tabs" role="tablist" aria-label="Install command">
+      <button type="button" class="tab-btn" role="tab" aria-selected="true" id="tab-npm" aria-controls="panel-npm" onclick="switchTab('npm')">npm</button>
+      <button type="button" class="tab-btn" role="tab" aria-selected="false" id="tab-pnpm" aria-controls="panel-pnpm" onclick="switchTab('pnpm')">pnpm</button>
+      <button type="button" class="tab-btn" role="tab" aria-selected="false" id="tab-yarn" aria-controls="panel-yarn" onclick="switchTab('yarn')">yarn</button>
+      <button type="button" class="tab-btn" role="tab" aria-selected="false" id="tab-bin" aria-controls="panel-bin" onclick="switchTab('bin')">binary</button>
+    </div>
+    <div id="panel-npm"  role="tabpanel" aria-labelledby="tab-npm"><pre><code>npm i -g hfo-cli</code></pre></div>
+    <div id="panel-pnpm" role="tabpanel" aria-labelledby="tab-pnpm" hidden><pre><code>pnpm add -g hfo-cli</code></pre></div>
+    <div id="panel-yarn" role="tabpanel" aria-labelledby="tab-yarn" hidden><pre><code>yarn global add hfo-cli</code></pre></div>
+    <div id="panel-bin"  role="tabpanel" aria-labelledby="tab-bin"  hidden><pre><code># Pre-built executables per OS (no Node required)
+# https://github.com/carrilloapps/hfo/releases
 
-# Open the TUI
+# Linux x64
+curl -LO https://github.com/carrilloapps/hfo/releases/latest/download/hfo-linux-x64
+chmod +x hfo-linux-x64 &amp;&amp; sudo mv hfo-linux-x64 /usr/local/bin/hfo
+
+# macOS arm64
+curl -LO https://github.com/carrilloapps/hfo/releases/latest/download/hfo-macos-arm64
+chmod +x hfo-macos-arm64 &amp;&amp; sudo mv hfo-macos-arm64 /usr/local/bin/hfo
+
+# Windows x64
+# Download hfo-win-x64.exe from the Releases page and put it on your PATH.</code></pre></div>
+
+    <h3 style="margin-top:32px; font-size:18px;">Then try it</h3>
+    <pre><code># Explore — fullscreen dashboard
 hfo
 
-# Pre-fill the Install tab with a model
-hfo bartowski/Llama-3.2-3B-Instruct-GGUF</code></pre>
+# Install a specific repo (opens the Install tab pre-filled)
+hfo bartowski/Llama-3.2-3B-Instruct-GGUF
+
+# Or skip the TUI entirely
+hfo --view
+hfo --list
+hfo --launch claude --model llama3.1:8b</code></pre>
   </div>
 </section>
 
-<section id="commands">
+<section id="cli" aria-labelledby="cli-title">
   <div class="container">
-    <h2>Every capability, non-interactively</h2>
-    <p class="lede">Every TUI feature has a one-shot command equivalent that exits with a status code — ideal for scripts, CI, or editor integrations.</p>
-    <table class="table cmd-table">
-      <thead><tr><th>Command</th><th>What it does</th></tr></thead>
-      <tbody>
-        <tr><td><code>hfo</code></td><td>Open the fullscreen TUI</td></tr>
-        <tr><td><code>hfo --help</code> · <code>-h</code></td><td>Print the full flag reference</td></tr>
-        <tr><td><code>hfo --version</code></td><td>Print <code>hfo vX.Y.Z · MIT · José Carrillo · https://carrillo.app</code></td></tr>
-        <tr><td><code>hfo --view</code></td><td>Print hardware profile, capacity score, tier, hand-picked repos and pre-filtered HF search URLs</td></tr>
-        <tr><td><code>hfo --list</code></td><td>List installed models + orphaned GGUFs on disk</td></tr>
-        <tr><td><code>hfo --tune</code></td><td>Persist the ~90% capacity Ollama env profile + restart the daemon</td></tr>
-        <tr><td><code>hfo --backup &lt;tag&gt;</code></td><td>Create a <code>.zip</code> backup of the model's folder under <code>&lt;config&gt;/hfo/backups/&lt;ts&gt;/</code></td></tr>
-        <tr><td><code>hfo --restore &lt;zip&gt;</code></td><td>Extract a backup, regenerate the Modelfile if needed, re-register with Ollama</td></tr>
-        <tr><td><code>hfo --delete &lt;tag&gt; [--deep]</code></td><td>Remove the Ollama tag. With <code>--deep</code> also delete the on-disk folder</td></tr>
-        <tr><td><code>hfo --launch &lt;integration&gt;</code></td><td>Run <code>ollama launch &lt;integration&gt;</code> (claude · codex · copilot · opencode · droid · cline · hermes · kimi · openclaw · pi · vscode)</td></tr>
-        <tr><td><code>hfo --tab &lt;name&gt;</code></td><td>Open the TUI on a specific tab (dashboard · models · install · tune · help · settings)</td></tr>
-      </tbody>
-    </table>
+    <h2 id="cli-title">Every capability, non-interactively</h2>
+    <p class="section-lede">Every TUI feature ships a one-shot command equivalent — ideal for scripts, CI, or editor integrations.</p>
+    <div class="table-wrap">
+      <table class="table">
+        <thead><tr><th scope="col">Command</th><th scope="col">What it does</th></tr></thead>
+        <tbody>
+          <tr><td><code>hfo</code></td><td>Open the fullscreen TUI</td></tr>
+          <tr><td><code>hfo --help</code> · <code>-h</code></td><td>Print the full flag reference</td></tr>
+          <tr><td><code>hfo --version</code></td><td>Print version, license, and author</td></tr>
+          <tr><td><code>hfo --view</code></td><td>Print hardware profile, capacity score, tier, picks, pre-filtered HF search URLs</td></tr>
+          <tr><td><code>hfo --list</code></td><td>List installed models + orphaned GGUFs on disk</td></tr>
+          <tr><td><code>hfo --tune</code></td><td>Persist the ~90% capacity Ollama env profile, then restart the daemon</td></tr>
+          <tr><td><code>hfo --backup &lt;tag&gt;</code></td><td>Create a <code>.zip</code> backup of the model's folder</td></tr>
+          <tr><td><code>hfo --restore &lt;zip&gt;</code></td><td>Extract a backup and re-register with Ollama</td></tr>
+          <tr><td><code>hfo --delete &lt;tag&gt; [--deep]</code></td><td>Remove the Ollama tag. With <code>--deep</code> also delete the folder</td></tr>
+          <tr><td><code>hfo --launch &lt;integration&gt;</code></td><td>Run <code>ollama launch &lt;integration&gt;</code> (claude · codex · copilot · opencode · droid · cline · hermes · kimi · openclaw · pi · vscode)</td></tr>
+          <tr><td><code>hfo --tab &lt;name&gt;</code></td><td>Open the TUI on a specific tab (dashboard · models · install · tune · help · settings)</td></tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </section>
 
-<section id="keyboard">
+<section id="keyboard" aria-labelledby="keyboard-title">
   <div class="container">
-    <h2>Keyboard reference</h2>
-    <p class="lede">Global bindings work on every tab. Tab-specific keys appear in the footer as you navigate.</p>
-    <table class="table">
-      <thead><tr><th>Scope</th><th>Keys</th><th>Action</th></tr></thead>
-      <tbody>
-        <tr><td>Global</td><td><span class="kbd">1</span>–<span class="kbd">6</span></td><td>Jump to a tab</td></tr>
-        <tr><td>Global</td><td><span class="kbd">Tab</span> · <span class="kbd">Shift+Tab</span></td><td>Cycle tabs</td></tr>
-        <tr><td>Global</td><td><span class="kbd">,</span></td><td>Open Settings</td></tr>
-        <tr><td>Global</td><td><span class="kbd">?</span></td><td>Open Help</td></tr>
-        <tr><td>Global</td><td><span class="kbd">Ctrl+H</span></td><td>Open author homepage</td></tr>
-        <tr><td>Global</td><td><span class="kbd">q</span> · <span class="kbd">Ctrl+C</span></td><td>Quit (restores scrollback)</td></tr>
-        <tr><td>Dashboard</td><td><span class="kbd">Alt+↑</span> · <span class="kbd">Alt+↓</span></td><td>Focus / cycle panels</td></tr>
-        <tr><td>Dashboard</td><td><span class="kbd">Esc</span> · <span class="kbd">b</span></td><td>Return to the 4-panel grid</td></tr>
-        <tr><td>Dashboard</td><td><span class="kbd">Enter</span></td><td>Open the selected link in your browser</td></tr>
-        <tr><td>Models</td><td><span class="kbd">L</span> · <span class="kbd">G</span></td><td>Launch integration · Launch menu with no preset</td></tr>
-        <tr><td>Models</td><td><span class="kbd">I</span></td><td>Reinstall an orphan (regenerates Modelfile if missing)</td></tr>
-        <tr><td>Models</td><td><span class="kbd">B</span></td><td>Create a .zip backup of the model folder</td></tr>
-        <tr><td>Models</td><td><span class="kbd">d</span> · <span class="kbd">Alt+d</span></td><td>Remove tag · Remove tag AND delete files</td></tr>
-        <tr><td>Tune</td><td><span class="kbd">↑↓</span> · <span class="kbd">←→</span> · <span class="kbd">E</span> · <span class="kbd">D</span> · <span class="kbd">S</span> · <span class="kbd">A</span></td><td>Nav · Cycle · Edit · Default · Suggested · Apply</td></tr>
-        <tr><td>Settings</td><td><span class="kbd">Enter</span></td><td>Open dropdown (themes / 20 languages, searchable)</td></tr>
-      </tbody>
-    </table>
+    <h2 id="keyboard-title">Keyboard reference</h2>
+    <p class="section-lede">Global shortcuts work on every tab. Tab-specific keys appear in the footer as you navigate.</p>
+    <div class="table-wrap">
+      <table class="table">
+        <thead><tr><th scope="col">Scope</th><th scope="col">Keys</th><th scope="col">Action</th></tr></thead>
+        <tbody>
+          <tr><td>Global</td><td><span class="kbd">1</span>–<span class="kbd">6</span></td><td>Jump to a tab</td></tr>
+          <tr><td>Global</td><td><span class="kbd">Tab</span> · <span class="kbd">Shift+Tab</span></td><td>Cycle tabs</td></tr>
+          <tr><td>Global</td><td><span class="kbd">,</span></td><td>Open Settings</td></tr>
+          <tr><td>Global</td><td><span class="kbd">?</span></td><td>Open Help</td></tr>
+          <tr><td>Global</td><td><span class="kbd">Ctrl+H</span></td><td>Open author homepage</td></tr>
+          <tr><td>Global</td><td><span class="kbd">q</span> · <span class="kbd">Ctrl+C</span></td><td>Quit (restores scrollback)</td></tr>
+          <tr><td>Dashboard</td><td><span class="kbd">Alt</span>+<span class="kbd">↑</span>/<span class="kbd">↓</span></td><td>Focus a panel (full-screen zoom)</td></tr>
+          <tr><td>Dashboard</td><td><span class="kbd">Esc</span> · <span class="kbd">b</span></td><td>Return to the 4-panel grid</td></tr>
+          <tr><td>Dashboard</td><td><span class="kbd">Enter</span></td><td>Open the selected link in the default browser</td></tr>
+          <tr><td>Models</td><td><span class="kbd">L</span> / <span class="kbd">G</span></td><td>Launch integration · Launch menu with no preset</td></tr>
+          <tr><td>Models</td><td><span class="kbd">I</span></td><td>Reinstall an orphan (regenerates Modelfile if missing)</td></tr>
+          <tr><td>Models</td><td><span class="kbd">B</span></td><td>Create a .zip backup</td></tr>
+          <tr><td>Models</td><td><span class="kbd">d</span> · <span class="kbd">Alt</span>+<span class="kbd">d</span></td><td>Remove tag · Remove tag AND delete files</td></tr>
+          <tr><td>Install (quick-confirm)</td><td><span class="kbd">Enter</span></td><td>Install now with recommended defaults</td></tr>
+          <tr><td>Install (quick-confirm)</td><td><span class="kbd">O</span> / <span class="kbd">C</span></td><td>Change target dir · Customize parameters</td></tr>
+          <tr><td>Tune</td><td><span class="kbd">↑</span><span class="kbd">↓</span> · <span class="kbd">←</span><span class="kbd">→</span></td><td>Navigate · cycle enum values</td></tr>
+          <tr><td>Settings</td><td><span class="kbd">Enter</span></td><td>Open dropdown (themes, 20 languages, searchable)</td></tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </section>
 
-<section id="privacy">
+<section id="privacy" aria-labelledby="privacy-title">
   <div class="container">
-    <h2>Privacy &amp; cost</h2>
-    <p class="lede">hfo makes exactly two kinds of external requests — both to Hugging Face's public, unauthenticated API:</p>
-    <pre><code>GET https://huggingface.co/api/models/&lt;repo&gt;/tree/main
-GET https://huggingface.co/&lt;repo&gt;/resolve/main/&lt;file&gt;</code></pre>
-    <p style="margin-top: 16px; color: var(--muted);">
-      Everything else — <code>nvidia-smi</code>, <code>systeminformation</code>, <code>ollama ps</code>, <code>ollama create</code>, <code>ollama launch</code> — runs locally.
-      No telemetry. No accounts. No external calls beyond those two endpoints and (optionally, on your explicit request) the Ollama install script.
-      Gated or private repos use a standard <code>HF_TOKEN</code> environment variable or <code>--token</code> flag.
+    <h2 id="privacy-title">Privacy, security, cost</h2>
+    <p class="section-lede">Exactly two kinds of external requests, both to Hugging Face's public API. Everything else is local.</p>
+    <div class="privacy-box">
+      <div class="info">
+        <h4>
+          <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+          Public endpoints used
+        </h4>
+        <p><code>GET huggingface.co/api/models/&lt;repo&gt;/tree/main</code><br /><code>GET huggingface.co/&lt;repo&gt;/resolve/main/&lt;file&gt;</code></p>
+      </div>
+      <div class="ok">
+        <h4>
+          <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+          Runs locally
+        </h4>
+        <p><code>nvidia-smi</code>, <code>systeminformation</code>, <code>ollama ps</code>, <code>ollama create</code>, <code>ollama launch</code> — all invoked in your shell with your privileges.</p>
+      </div>
+      <div class="warn">
+        <h4>
+          <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.46 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
+          Opt-in only
+        </h4>
+        <p>Ollama install helpers (<code>winget</code>, <code>brew</code>, the official shell script) run only when you explicitly confirm from the installer overlay.</p>
+      </div>
+    </div>
+    <p style="color: var(--muted); font-size: 14.5px; margin: 0;">
+      No telemetry. No accounts. No external calls beyond those two HF endpoints. Gated or private HF repos use a standard <code>HF_TOKEN</code> environment variable. See <a href="https://github.com/carrilloapps/hfo/blob/main/SECURITY.md" target="_blank" rel="noreferrer noopener">SECURITY.md</a> for the full threat model and reporting policy.
     </p>
   </div>
 </section>
 
-<footer class="site">
+<section id="author" aria-labelledby="author-title">
+  <div class="container">
+    <h2 id="author-title">Author</h2>
+    <p class="section-lede">Built and maintained by one person.</p>
+    <div class="author-card">
+      <div class="author-avatar" aria-hidden="true">jc</div>
+      <div>
+        <h3>José Carrillo</h3>
+        <p class="role">Senior Full-stack Developer · Tech Lead</p>
+        <div class="socials">
+          <a href="https://carrillo.app" target="_blank" rel="noreferrer noopener">
+            <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+            carrillo.app
+          </a>
+          <a href="mailto:m@carrillo.app">
+            <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+            m@carrillo.app
+          </a>
+          <a href="https://github.com/carrilloapps" target="_blank" rel="noreferrer noopener">
+            <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.4 5.4 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>
+            GitHub
+          </a>
+          <a href="https://linkedin.com/in/carrilloapps" target="_blank" rel="noreferrer noopener">
+            <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></svg>
+            LinkedIn
+          </a>
+          <a href="https://x.com/carrilloapps" target="_blank" rel="noreferrer noopener">
+            <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 4 12 14.01l-3-3L22 4z"/><path d="m12 14.01 3 6 7-16"/><path d="M2 11l10-7"/><path d="m2 11 4 4"/></svg>
+            X
+          </a>
+          <a href="https://dev.to/carrilloapps" target="_blank" rel="noreferrer noopener">
+            <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+            Dev.to
+          </a>
+          <a href="https://medium.com/@carrilloapps" target="_blank" rel="noreferrer noopener">
+            <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h16"/><path d="M4 4v16"/><path d="M8 4v16"/><path d="M12 4v16"/><path d="M16 4v16"/><path d="M20 4v16"/></svg>
+            Medium
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="site-footer" role="contentinfo">
   <div class="container row">
     <div>
-      <strong>hfo</strong> · MIT · © 2026 <a href="https://carrillo.app" target="_blank" rel="noreferrer">José Carrillo</a>
+      <strong>hfo</strong> · MIT · © 2026 <a href="https://carrillo.app" target="_blank" rel="noreferrer noopener">José Carrillo</a>
     </div>
-    <div class="social">
-      <a href="https://github.com/carrilloapps/hfo" target="_blank" rel="noreferrer">GitHub</a>
-      <a href="https://www.npmjs.com/package/hfo-cli" target="_blank" rel="noreferrer">npm</a>
-      <a href="https://linkedin.com/in/carrilloapps" target="_blank" rel="noreferrer">LinkedIn</a>
-      <a href="https://x.com/carrilloapps" target="_blank" rel="noreferrer">X</a>
-      <a href="https://dev.to/carrilloapps" target="_blank" rel="noreferrer">dev.to</a>
-      <a href="mailto:m@carrillo.app">Contact</a>
+    <div class="footer-links">
+      <a href="https://github.com/carrilloapps/hfo" target="_blank" rel="noreferrer noopener">GitHub</a>
+      <a href="https://www.npmjs.com/package/hfo-cli" target="_blank" rel="noreferrer noopener">npm</a>
+      <a href="https://github.com/carrilloapps/hfo/releases" target="_blank" rel="noreferrer noopener">Releases</a>
+      <a href="https://github.com/carrilloapps/hfo/blob/main/SECURITY.md" target="_blank" rel="noreferrer noopener">Security</a>
+      <a href="https://github.com/carrilloapps/hfo/blob/main/CONTRIBUTING.md" target="_blank" rel="noreferrer noopener">Contribute</a>
+      <a href="https://github.com/carrilloapps/hfo/blob/main/LICENSE" target="_blank" rel="noreferrer noopener">License</a>
     </div>
   </div>
 </footer>
+
+<script>
+  function switchTab(id) {
+    const ids = ['npm', 'pnpm', 'yarn', 'bin'];
+    for (const x of ids) {
+      const btn = document.getElementById('tab-' + x);
+      const panel = document.getElementById('panel-' + x);
+      const active = x === id;
+      btn.setAttribute('aria-selected', active ? 'true' : 'false');
+      panel.hidden = !active;
+    }
+  }
+</script>
 
 </body>
 </html>

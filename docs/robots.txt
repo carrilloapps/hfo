@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://hfo.carrillo.app/sitemap.xml

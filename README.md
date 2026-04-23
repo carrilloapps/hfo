@@ -1,6 +1,6 @@
 <div align="center">
 
-# hfo
+<img src="./docs/assets/logo-wordmark.svg" alt="hfo" width="180" />
 
 ### Hugging Face · Ollama, in your terminal.
 
