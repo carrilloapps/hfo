@@ -1,0 +1,97 @@
+name: Bug report
+description: Report a crash, wrong output, or broken install / install-flow
+title: "[bug] "
+labels: ["bug", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to file a report. Before opening a new issue, please search [existing bugs](https://github.com/carrilloapps/hfo/issues?q=is%3Aissue+label%3Abug) to avoid duplicates.
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: A clear description of the bug, what you expected, and how to reproduce.
+      placeholder: |
+        Steps to reproduce:
+        1. Run `hfo ...`
+        2. ...
+        3. ...
+
+        Expected:
+        Actual:
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: hfo version
+      description: Output of `hfo --version`.
+      placeholder: hfo v0.1.0
+    validations:
+      required: true
+
+  - type: dropdown
+    id: install-method
+    attributes:
+      label: How did you install hfo?
+      options:
+        - npm / pnpm / yarn / bun (global)
+        - install.sh one-liner
+        - install.ps1 one-liner
+        - Manual binary from Releases
+        - Built from source (pnpm build)
+        - Other
+    validations:
+      required: true
+
+  - type: dropdown
+    id: os
+    attributes:
+      label: Operating system
+      options:
+        - Windows
+        - macOS
+        - Linux
+        - Other (please specify under "Anything else")
+    validations:
+      required: true
+
+  - type: input
+    id: node
+    attributes:
+      label: Node.js version
+      description: Output of `node --version`. Leave blank if you installed a standalone binary.
+      placeholder: v22.0.0
+
+  - type: input
+    id: ollama
+    attributes:
+      label: Ollama version
+      description: Output of `ollama --version`.
+      placeholder: ollama version is 0.21.1
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs or screenshot
+      description: Paste terminal output, stack traces, or drag a screenshot here. Trim out secrets.
+      render: shell
+
+  - type: textarea
+    id: extra
+    attributes:
+      label: Anything else?
+      description: Links, related issues, model repo that triggered it, hardware quirks, etc.
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Pre-flight
+      options:
+        - label: I searched existing issues before opening this one.
+          required: true
+        - label: I'm on the latest released version (or I specified the version above).
+          required: true

@@ -33,7 +33,7 @@ jobs:
       - name: Rasterise favicons + Open Graph PNG
         run: |
           npm i --no-save sharp@0.34.4 png-to-ico@3.0.0
-          node docs/generate-favicons.mjs
+          node scripts/generate-favicons.mjs
 
       - uses: actions/configure-pages@v5
 

@@ -1,0 +1,49 @@
+name: Feature request
+description: Suggest a new capability, flag, tab, or workflow
+title: "[feat] "
+labels: ["enhancement", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the idea! Before opening a new request, please search [existing ones](https://github.com/carrilloapps/hfo/issues?q=is%3Aissue+label%3Aenhancement) so the discussion lands in one place.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: The problem
+      description: What are you trying to do that hfo doesn't support yet?
+      placeholder: |
+        When I … I currently have to … because …
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: How should hfo behave? Be as concrete as you can — flags, screens, key bindings, output.
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives you considered
+      description: Other approaches you looked at, and why you prefer this one.
+
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope
+      description: Any non-goals, deprecations, breaking changes, or OS-specific caveats?
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Pre-flight
+      options:
+        - label: I searched existing issues before opening this one.
+          required: true
+        - label: This proposal keeps hfo telemetry-free and cross-OS.
+          required: true

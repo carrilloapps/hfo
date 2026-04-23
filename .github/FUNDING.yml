@@ -1,0 +1,5 @@
+# Adds a "Sponsor" button to the repo. Uncomment / add platforms as they're
+# set up. See https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/displaying-a-sponsor-button-in-your-repository
+# github: [carrilloapps]
+# open_collective: hfo
+custom: ['https://carrillo.app']

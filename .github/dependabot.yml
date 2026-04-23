@@ -1,0 +1,39 @@
+version: 2
+updates:
+  # npm dependencies: batched weekly, limited to 5 open PRs so the queue
+  # stays manageable.
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: '06:00'
+      timezone: America/Bogota
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: deps
+      include: scope
+    groups:
+      ink-stack:
+        patterns:
+          - "ink"
+          - "ink-*"
+          - "react"
+          - "@types/react"
+      tooling:
+        patterns:
+          - "typescript"
+          - "@typescript-eslint/*"
+          - "eslint"
+          - "vitest"
+          - "tsx"
+
+  # GitHub Actions in .github/workflows/
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    commit-message:
+      prefix: ci
+      include: scope
+    open-pull-requests-limit: 3

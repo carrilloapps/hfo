@@ -1,0 +1,38 @@
+# humanstxt.org — for the humans behind hfo.
+
+/* MAINTAINER */
+Name:    José Carrillo
+Role:    Senior Full-stack Developer · Tech Lead · creator and maintainer
+Contact: m@carrillo.app
+Web:     https://carrillo.app
+GitHub:  @carrilloapps
+From:    Colombia
+
+/* PROJECT */
+Name:          hfo
+Repository:    https://github.com/carrilloapps/hfo
+Site:          https://hfo.carrillo.app
+npm:           https://www.npmjs.com/package/hfo-cli
+License:       MIT
+Version:       0.1.0
+
+/* STACK */
+Language:      TypeScript (strict mode, every flag on)
+TUI runtime:   React + ink
+Icons:         figures
+Backup:        archiver · adm-zip
+Hardware:      systeminformation · nvidia-smi
+Build:         tsc
+Test:          vitest
+Lint:          eslint + @typescript-eslint
+Docs site:     vanilla HTML + CSS, no JS frameworks
+Binaries:      @yao-pkg/pkg (published on tagged releases)
+
+/* THANKS */
+Hugging Face    — the public API this project is built on top of
+Ollama team     — for the local LLM runtime and the launch integrations
+
+/* SITE */
+Last updated:  2026-04-23
+Standards:     HTML5, CSS3, JSON-LD, Web App Manifest
+Components:    Inline Lucide-style SVG icons, system font stack

@@ -1,0 +1,9 @@
+# hfo — Codeowners
+#
+# The default owner for everything in this repo is the maintainer.
+# As the project grows, replace or augment these patterns with more
+# specific paths (e.g. CI-only reviewers, locale-specific translators).
+#
+# Syntax reference: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+* @carrilloapps

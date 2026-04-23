@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Usage question or discussion
+    url: https://github.com/carrilloapps/hfo/discussions
+    about: Ask a usage question, share a tip, or brainstorm an idea before filing an issue.
+  - name: Security report (private)
+    url: https://github.com/carrilloapps/hfo/security/advisories/new
+    about: Report a vulnerability privately — please do NOT open a public issue for security bugs.
+  - name: Documentation site
+    url: https://hfo.carrillo.app
+    about: CLI reference, keyboard map, install guide and FAQ.

@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+
+<title>404 — hfo</title>
+<meta name="description" content="The page you asked for doesn't exist on hfo.carrillo.app. Jump back to the install guide, CLI reference, or FAQ." />
+<meta name="robots" content="noindex, nofollow" />
+<meta name="theme-color" content="#0a0b0f" media="(prefers-color-scheme: dark)" />
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+<meta name="color-scheme" content="dark light" />
+
+<link rel="canonical" href="https://hfo.carrillo.app/" />
+
+<link rel="icon" href="/favicon.ico" sizes="32x32" />
+<link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32" />
+<link rel="icon" href="/assets/logo-mark.svg" type="image/svg+xml" />
+<link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180" />
+
+<style>
+  :root {
+    color-scheme: dark light;
+    --bg: #0a0b0f;
+    --bg-alt: #11131a;
+    --bg-raised: #171922;
+    --fg: #e7ecf3;
+    --muted: #8a92a5;
+    --primary: #7e8dff;
+    --accent: #A78BFA;
+    --border: #262a35;
+    --border-strong: #363c4a;
+    --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI Variable', 'Segoe UI', 'Inter', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    --mono: ui-monospace, 'JetBrains Mono', 'SF Mono', 'Cascadia Mono', Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: light) {
+    :root {
+      --bg: #ffffff; --bg-alt: #f6f7fa; --bg-raised: #ffffff;
+      --fg: #14161c; --muted: #60677a;
+      --primary: #3B6FE5; --accent: #7C5BF3;
+      --border: #e4e7ee; --border-strong: #c9cfdc;
+    }
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0; min-height: 100dvh;
+    font-family: var(--sans); color: var(--fg); background: var(--bg);
+    display: grid; place-items: center; padding: 32px 20px;
+    -webkit-font-smoothing: antialiased;
+  }
+  :focus-visible { outline: 2px solid var(--primary); outline-offset: 3px; border-radius: 4px; }
+  a { color: var(--primary); text-decoration: none; }
+  a:hover { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
+
+  main {
+    text-align: center; max-width: 640px; width: 100%;
+  }
+  .brand {
+    display: inline-flex; align-items: center; gap: 10px;
+    color: var(--fg); font-family: var(--mono); font-weight: 700; font-size: 18px;
+    letter-spacing: -0.5px; margin-bottom: 40px;
+  }
+  .brand svg { width: 28px; height: 28px; }
+  .brand:hover { text-decoration: none; color: var(--primary); }
+
+  .code {
+    font-family: var(--mono); font-weight: 800;
+    font-size: clamp(72px, 16vw, 140px); line-height: 1;
+    letter-spacing: -4px;
+    background: linear-gradient(100deg, var(--primary), var(--accent));
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    margin: 0;
+  }
+  h1 {
+    font-size: clamp(22px, 3vw, 30px);
+    letter-spacing: -0.8px; font-weight: 700;
+    margin: 12px 0 8px;
+  }
+  p.lede { color: var(--muted); margin: 0 0 36px; font-size: clamp(15px, 2vw, 17px); }
+
+  .links { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); }
+  .links a {
+    padding: 14px 16px; border: 1px solid var(--border);
+    border-radius: 10px; background: var(--bg-raised); color: var(--fg);
+    font-weight: 600; font-size: 14.5px; transition: border-color .15s ease, transform .15s ease;
+  }
+  .links a:hover { border-color: var(--primary); color: var(--primary); transform: translateY(-1px); text-decoration: none; }
+  .links a small { display: block; font-weight: 500; font-size: 12px; color: var(--muted); margin-top: 4px; }
+
+  .terminal {
+    margin: 36px 0 0;
+    background: #0a0b0f; border: 1px solid #262a35; border-radius: 10px;
+    overflow: hidden; text-align: left;
+  }
+  .terminal-bar { padding: 10px 14px; background: #11131a; border-bottom: 1px solid #262a35; display: flex; gap: 8px; align-items: center; font-family: var(--mono); font-size: 12px; color: #8a92a5; }
+  .dot { width: 12px; height: 12px; border-radius: 50%; }
+  .red { background: #ff5f57; } .yellow { background: #febc2e; } .green { background: #28c840; }
+  .terminal pre { margin: 0; padding: 16px 18px; color: #e7ecf3; font-family: var(--mono); font-size: 13.5px; line-height: 1.65; }
+  .tok-prompt { color: #7e8dff; font-weight: 700; user-select: none; }
+  .tok-cmd { color: #a78bfa; font-weight: 600; }
+  .tok-comment { color: #60677a; font-style: italic; }
+</style>
+</head>
+<body>
+
+<main>
+  <a class="brand" href="/" aria-label="hfo home">
+    <svg viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+      <defs>
+        <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0"    stop-color="#3B6FE5"/>
+          <stop offset="0.55" stop-color="#5B6BE5"/>
+          <stop offset="1"    stop-color="#7C5BF3"/>
+        </linearGradient>
+      </defs>
+      <rect x="1" y="1" width="30" height="30" rx="7" fill="url(#g)"/>
+      <line x1="8" y1="16" x2="24" y2="16" stroke="#0a0b0f" stroke-width="2" stroke-linecap="round"/>
+      <circle cx="8"  cy="16" r="3" fill="#0a0b0f"/>
+      <circle cx="16" cy="16" r="3" fill="none" stroke="#0a0b0f" stroke-width="2"/>
+      <circle cx="24" cy="16" r="3" fill="#0a0b0f"/>
+    </svg>
+    <span>hfo</span>
+  </a>
+
+  <p class="code" aria-hidden="true">404</p>
+  <h1>Page not found</h1>
+  <p class="lede">The URL you followed doesn't exist on hfo.carrillo.app. Jump back to one of the pages below, or keep going from the terminal.</p>
+
+  <nav class="links" aria-label="Suggested destinations">
+    <a href="/">Home<small>Landing + features</small></a>
+    <a href="/#install">Install<small>One-liner + package managers</small></a>
+    <a href="/#cli">CLI reference<small>Headless flags</small></a>
+    <a href="/#keyboard">Keyboard<small>Every shortcut</small></a>
+    <a href="/#faq">FAQ<small>Most-asked questions</small></a>
+    <a href="https://github.com/carrilloapps/hfo" rel="noreferrer noopener">GitHub<small>Source &amp; releases</small></a>
+  </nav>
+
+  <div class="terminal">
+    <div class="terminal-bar">
+      <span class="dot red" aria-hidden="true"></span>
+      <span class="dot yellow" aria-hidden="true"></span>
+      <span class="dot green" aria-hidden="true"></span>
+      <span style="margin-left:auto;margin-right:auto;">bash</span>
+    </div>
+<pre><code><span class="tok-comment"># ...or just install it and carry on:</span>
+<span class="tok-prompt">$</span> <span class="tok-cmd">curl</span> -fsSL https://hfo.carrillo.app/install.sh | <span class="tok-cmd">sh</span></code></pre>
+  </div>
+</main>
+
+</body>
+</html>

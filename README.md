@@ -402,38 +402,47 @@ graph TB
 ## Layout
 
 ```
-src/
-├─ cli.tsx               # argv parsing, headless dispatch, alt-screen handoff, launch
-├─ Shell.tsx             # 6-tab router: Dashboard / Models / Install / Tune / Help / Settings
-├─ App.tsx               # install flow state machine (probe → score → pick → quick-confirm → process)
-├─ tabs/                 # per-tab containers
-├─ components/           # Dropdown · QuickConfirm · PlanReviewer · ParamsEditor · FileBrowser · LaunchMenu · ...
-├─ hf.ts                 # public HF API client + resumable downloader
-├─ hardware.ts           # nvidia-smi + systeminformation probes
-├─ live.ts               # real-time samplers for Dashboard
-├─ scoring.ts            # per-quant compatibility scoring
-├─ capacity.ts           # overall hardware tier + picks + HF search URLs
-├─ readme.ts             # HF model-card parser
-├─ plan.ts               # install plans + conflict detection
-├─ modelfile.ts          # Modelfile generator + tag slugifier
-├─ reinstall.ts          # orphan detection + Modelfile regeneration
-├─ backup.ts             # archiver-based zip writer + metadata
-├─ restore.ts            # adm-zip reader + reinstall handoff
-├─ launch.ts             # ollama launch targets + runtime probing
-├─ ollama.ts             # CLI wrappers + cross-OS env persistence
-├─ platform.ts           # openUrl + config dir (cross-OS)
-├─ settings.ts           # persisted user preferences + installations index
-├─ theme.ts              # 7-theme registry with contrast pairs
-├─ i18n.ts               # 20-language translation catalogs
-├─ describe.ts           # quant flavour + modality detection
-├─ icons.ts              # figures-backed icon set
-├─ about.ts              # package.json loader
-├─ headless.ts           # non-interactive command implementations
-├─ hooks.ts              # useTerminalSize / useInterval / useNow
-└─ format.ts             # byte / ETA / progress bar formatters
-
-test/                    # 12 suites, 71 vitest tests, v8 coverage
-docs/                    # GitHub Pages site (hfo.carrillo.app)
+hfo/
+├─ .github/                    # Community health + CI/CD
+│  ├─ ISSUE_TEMPLATE/           #   bug_report.yml · feature_request.yml · config.yml
+│  ├─ workflows/                #   ci.yml (every push) · pages.yml (docs) · release.yml (tags only)
+│  ├─ CODEOWNERS · FUNDING.yml · dependabot.yml · SUPPORT.md · PULL_REQUEST_TEMPLATE.md
+├─ bin/hfo.js                  # npm bin entrypoint → dist/cli.js
+├─ docs/                       # Static site deployed at hfo.carrillo.app
+│  ├─ .well-known/security.txt  #   RFC 9116 disclosure contact
+│  ├─ assets/                   #   logo-mark.svg · logo-wordmark.svg · og-image.svg
+│  ├─ 404.html                  #   Not-found page sharing the site design
+│  ├─ CNAME · humans.txt · robots.txt · sitemap.xml · manifest.webmanifest
+│  ├─ install.sh · install.ps1  #   One-liner installers (hfo.carrillo.app/install.*)
+│  └─ index.html                #   Landing: Hero · Features · Install · CLI · Kb · FAQ
+├─ scripts/
+│  ├─ generate-favicons.mjs     # SVG → PNG/ICO + og.png, invoked by the Pages workflow
+│  └─ install-skills.mjs        # `pnpm run skills:install`
+├─ src/                        # Strict-TypeScript source
+│  ├─ cli.tsx                   #   argv parsing · headless dispatch · alt-screen handoff
+│  ├─ Shell.tsx                 #   6-tab router
+│  ├─ App.tsx                   #   install-flow state machine
+│  ├─ headless.ts               #   non-interactive command implementations
+│  ├─ tabs/                     #   Dashboard · Models · Install · Tune · Help · Settings
+│  ├─ components/               #   Dropdown · QuickConfirm · BootScreen · PlanReviewer · ParamsEditor · FileBrowser · LaunchMenu · …
+│  ├─ hf.ts                     #   public HF API client + resumable downloader
+│  ├─ hardware.ts · live.ts     #   nvidia-smi + systeminformation probes · Dashboard samplers
+│  ├─ scoring.ts · capacity.ts  #   per-quant compatibility · hardware tier + picks
+│  ├─ readme.ts                 #   HF model-card parser
+│  ├─ plan.ts · modelfile.ts    #   install plans + conflict detection · Modelfile generator
+│  ├─ reinstall.ts              #   orphan detection + Modelfile regeneration
+│  ├─ backup.ts · restore.ts    #   level-9 zip writer + metadata · restore + re-register
+│  ├─ launch.ts                 #   ollama launch targets + runtime probing
+│  ├─ ollama.ts · platform.ts   #   CLI wrappers · openUrl + config dir (cross-OS)
+│  ├─ settings.ts               #   persisted preferences + installations index
+│  ├─ theme.ts · i18n.ts        #   7 themes · 20 language packs
+│  ├─ describe.ts · icons.ts    #   quant flavour + modality · figures-backed icons
+│  ├─ about.ts · hooks.ts       #   package.json loader · useTerminalSize / useInterval / useNow
+│  └─ format.ts                 #   byte / ETA / progress-bar formatters
+├─ test/                       # 12 vitest suites · 71 tests · v8 coverage
+├─ CHANGELOG.md · CODE_OF_CONDUCT.md · CONTRIBUTING.md · LICENSE · README.md · SECURITY.md
+├─ eslint.config.js · tsconfig.json · vitest.config.ts
+└─ package.json                # packageManager pinned; pkg config for binaries
 ```
 
 ## Development

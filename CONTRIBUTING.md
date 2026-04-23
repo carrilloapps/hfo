@@ -19,6 +19,21 @@ Prerequisites:
 - **pnpm** (npm and yarn also work, but the lockfile is pnpm's).
 - **Ollama** for end-to-end testing — installable from inside `hfo`.
 
+## Where things live
+
+```
+src/                   → TypeScript source, strict-mode
+  cli.tsx · Shell.tsx · App.tsx · headless.ts   (entrypoints + state machines)
+  tabs/ · components/                           (UI)
+  *.ts                                          (pure domain logic — testable in isolation)
+test/                  → vitest suites mirroring src/*.ts
+scripts/               → Build-time helpers (generate-favicons.mjs, install-skills.mjs)
+docs/                  → Static site deployed to hfo.carrillo.app
+.github/               → Issue forms, PR template, CI/CD, CODEOWNERS, dependabot, funding, support
+```
+
+See [README.md — Architecture](./README.md#architecture) for the full tree.
+
 ## Workflow
 
 1. Open an issue first for non-trivial changes so we can align on scope.
