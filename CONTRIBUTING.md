@@ -87,6 +87,36 @@ release and the other architectures still succeed.
 
 `prepublishOnly` runs the build for you.
 
+## Recommended Claude Code skills (optional)
+
+If you use Claude Code while working on hfo, a small set of skills dramatically
+speeds up day-to-day contributions. **These are not committed to the
+repository** — skills live under `~/.claude/skills/` and are user-local by
+design (they churn independently of this project, belong to your Claude
+Code configuration, and contain telemetry / authored-by metadata we don't
+want in the public history).
+
+Instead, run:
+
+```bash
+pnpm run skills:install
+```
+
+…which prints the full list, a one-line rationale per skill, and the exact
+`/skill install <name>` commands you need to run from inside Claude Code.
+The script is read-only — it never invokes Claude on your behalf.
+
+| Skill | Why it helps |
+| --- | --- |
+| `react-ink` | API reference and usage patterns for `ink` components and hooks |
+| `interface-design` | Critique + validation heuristics before you push a UI change |
+| `brainstorming` | Structured exploration when scoping new tabs / flows / flags |
+| `documentation-writer` | README, CONTRIBUTING, and docs-site polish conventions |
+| `changelog-generator` | Release notes aligned with what tagged releases use |
+
+If you contribute a workflow that depends on another skill, add it to
+`scripts/install-skills.mjs` and this table.
+
 ## Code of conduct
 
 Be kind. Assume good intent. Attack ideas, not people.

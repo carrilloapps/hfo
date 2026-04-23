@@ -56,6 +56,7 @@
     "lint": "eslint \"src/**/*.{ts,tsx}\"",
     "lint:fix": "eslint \"src/**/*.{ts,tsx}\" --fix",
     "typecheck": "tsc --noEmit",
+    "skills:install": "node scripts/install-skills.mjs",
     "ci": "npm run typecheck && npm run lint && npm run test && npm run build",
     "prepublishOnly": "npm run build",
     "link": "npm link"

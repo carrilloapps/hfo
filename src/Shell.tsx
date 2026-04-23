@@ -12,6 +12,7 @@ import InstallTab from './tabs/InstallTab.js';
 import TuneTab from './tabs/TuneTab.js';
 import HelpTab from './tabs/HelpTab.js';
 import SettingsTab from './tabs/SettingsTab.js';
+import BootScreen from './components/BootScreen.js';
 import { formatBytes } from './format.js';
 import { icon } from './icons.js';
 import type { LaunchSelection } from './components/LaunchMenu.js';
@@ -42,13 +43,20 @@ export default function Shell(props: Props) {
   const [flash, setFlash] = useState<string | null>(null);
   const [installLocked, setInstallLocked] = useState(false);
   const [settings, setSettings] = useState<Settings | null>(null);
+  const [bootStep, setBootStep] = useState('Detecting hardware and probing Ollama');
+  const [closing, setClosing] = useState(false);
 
   useEffect(() => {
     (async () => {
-      const [h, o, s] = await Promise.all([detectHardware(), checkOllama(), loadSettings()]);
-      setHw(h);
-      setOllama(o);
+      setBootStep('Loading settings');
+      const s = await loadSettings();
       setSettings(s);
+      setBootStep('Detecting hardware');
+      const h = await detectHardware();
+      setHw(h);
+      setBootStep('Probing Ollama');
+      const o = await checkOllama();
+      setOllama(o);
     })();
   }, []);
 
@@ -90,9 +98,10 @@ export default function Shell(props: Props) {
   };
 
   useInput((input, key) => {
-    if (installLocked) return;
+    if (installLocked || closing) return;
     if (input === 'q' || (key.ctrl && input === 'c')) {
-      exit();
+      setClosing(true);
+      setTimeout(() => exit(), 400);
       return;
     }
     if (key.tab && !key.shift) {
@@ -133,6 +142,24 @@ export default function Shell(props: Props) {
   const rows = size.rows;
   const bodyRows = Math.max(5, rows - 4);
 
+  // Full-screen brand moments: boot and shutdown both render the ASCII
+  // mark + version + a single status line, so the user always sees
+  // something intentional when the app is starting or exiting.
+  if (closing) {
+    return (
+      <Box flexDirection="column" width={cols} height={rows} alignItems="center" justifyContent="center">
+        <BootScreen theme={theme} message="Goodbye." spinner={false} tone="muted" />
+      </Box>
+    );
+  }
+  if (hw == null || ollama == null || settings == null) {
+    return (
+      <Box flexDirection="column" width={cols} height={rows} alignItems="center" justifyContent="center">
+        <BootScreen theme={theme} message={bootStep} detail="Preparing the workspace…" />
+      </Box>
+    );
+  }
+
   return (
     <Box flexDirection="column" width={cols} height={rows}>
       <Box width={cols} paddingX={1}>
@@ -142,9 +169,7 @@ export default function Shell(props: Props) {
         <TabBar active={active} labels={labels} hotkey={hotkey} theme={theme} />
       </Box>
       <Box flexDirection="column" width={cols} height={bodyRows} paddingX={1}>
-        {hw == null || ollama == null || settings == null ? (
-          <Text color={theme.primary as any}>Initializing...</Text>
-        ) : active === 'dashboard' ? (
+        {active === 'dashboard' ? (
           <DashboardTab
             hw={hw}
             ollama={ollama}
