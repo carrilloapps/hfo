@@ -309,6 +309,77 @@
   .tab-btn[aria-selected="true"] { background: var(--bg-raised); color: var(--fg); border-color: var(--primary); }
   .tab-btn:hover { color: var(--fg); }
 
+  /* Terminal-styled code blocks — always dark, with a mac-style header.
+     Real terminals are dark; we deliberately override the light theme here so
+     code blocks keep their "about to be executed" aesthetic on every page. */
+  .terminal {
+    --term-bg: #0a0b0f;
+    --term-bg-alt: #11131a;
+    --term-border: #262a35;
+    --term-fg: #e7ecf3;
+    --term-muted: #8a92a5;
+    --term-prompt: #7e8dff;
+    --term-cmd: #a78bfa;
+    --term-flag: #5ed7a8;
+    --term-str: #ffd766;
+    --term-url: #6cb6ff;
+    --term-comment: #60677a;
+    --term-path: #6cb6ff;
+    background: var(--term-bg);
+    border: 1px solid var(--term-border);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+  }
+  .terminal + .terminal { margin-top: 12px; }
+  .terminal-bar {
+    display: flex; align-items: center; gap: 8px;
+    padding: 10px 14px;
+    background: var(--term-bg-alt);
+    border-bottom: 1px solid var(--term-border);
+    font-family: var(--mono); font-size: 12px;
+  }
+  .terminal-dot {
+    width: 12px; height: 12px; border-radius: 50%; display: inline-block;
+  }
+  .terminal-dot.red    { background: #ff5f57; }
+  .terminal-dot.yellow { background: #febc2e; }
+  .terminal-dot.green  { background: #28c840; }
+  .terminal-title {
+    margin-left: auto; margin-right: auto;
+    color: var(--term-muted);
+    padding-right: 40px; /* balance the dots on the left */
+  }
+  .terminal-copy {
+    margin-left: auto;
+    background: transparent; border: 1px solid var(--term-border);
+    color: var(--term-muted); font-family: var(--mono); font-size: 11.5px;
+    padding: 4px 10px; border-radius: 4px; cursor: pointer;
+    transition: color .15s ease, border-color .15s ease, background .15s ease;
+  }
+  .terminal-copy:hover { color: var(--term-fg); border-color: var(--term-cmd); background: rgba(167,139,250,.08); }
+  .terminal pre {
+    margin: 0; padding: 18px 20px;
+    background: transparent; color: var(--term-fg);
+    border: 0; border-radius: 0;
+    font-family: var(--mono); font-size: 13.5px; line-height: 1.75;
+  }
+  .tok-prompt  { color: var(--term-prompt); font-weight: 700; user-select: none; }
+  .tok-cmd     { color: var(--term-cmd);    font-weight: 600; }
+  .tok-flag    { color: var(--term-flag); }
+  .tok-str     { color: var(--term-str); }
+  .tok-url     { color: var(--term-url); text-decoration: underline; text-decoration-color: rgba(108,182,255,0.4); text-underline-offset: 3px; }
+  .tok-comment { color: var(--term-comment); font-style: italic; }
+  .tok-path    { color: var(--term-path); }
+  .tok-op      { color: var(--term-muted); }
+  .tok-var     { color: #ff9a66; }
+
+  .one-liner-grid {
+    display: grid; gap: 14px;
+    grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+    margin: 0 0 26px;
+  }
+
   .table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--bg-raised); }
   .table { width: 100%; border-collapse: collapse; font-size: 14.5px; min-width: 640px; }
   .table th, .table td { text-align: left; padding: 14px 16px; vertical-align: top; border-bottom: 1px solid var(--border); }
@@ -512,40 +583,139 @@
 <section id="install" aria-labelledby="install-title">
   <div class="container">
     <h2 id="install-title">Install</h2>
-    <p class="section-lede">Needs Node.js ≥ 20. Ollama is optional — <code>hfo</code> can install it for you via winget, brew, or the official script. Standalone binaries are published to the GitHub Releases page on every tagged version.</p>
-    <div class="tabs" role="tablist" aria-label="Install command">
-      <button type="button" class="tab-btn" role="tab" aria-selected="true" id="tab-npm" aria-controls="panel-npm" onclick="switchTab('npm')">npm</button>
+    <p class="section-lede">One-line installs for each OS, or a package manager of your choice. Standalone binaries ship on every tagged GitHub release — the install scripts below always fetch the latest one for your OS and architecture.</p>
+
+    <!-- One-liner install — terminal-styled, copy-paste ready -->
+    <h3 style="margin: 4px 0 14px; font-size: 16px; color: var(--muted); font-weight: 600; letter-spacing: 0.2px; text-transform: uppercase;">One-liner install</h3>
+    <div class="one-liner-grid">
+
+      <div class="terminal">
+        <div class="terminal-bar">
+          <span class="terminal-dot red" aria-hidden="true"></span>
+          <span class="terminal-dot yellow" aria-hidden="true"></span>
+          <span class="terminal-dot green" aria-hidden="true"></span>
+          <span class="terminal-title">macOS · Linux</span>
+          <button type="button" class="terminal-copy" data-copy="curl -fsSL https://hfo.carrillo.app/install.sh | sh" aria-label="Copy macOS / Linux install command">copy</button>
+        </div>
+<pre><code><span class="tok-comment"># Detects OS + arch, downloads the latest binary,</span>
+<span class="tok-comment"># drops it on your PATH (no sudo needed on ~/.local/bin).</span>
+<span class="tok-prompt">$</span> <span class="tok-cmd">curl</span> <span class="tok-flag">-fsSL</span> <span class="tok-url">https://hfo.carrillo.app/install.sh</span> <span class="tok-op">|</span> <span class="tok-cmd">sh</span></code></pre>
+      </div>
+
+      <div class="terminal">
+        <div class="terminal-bar">
+          <span class="terminal-dot red" aria-hidden="true"></span>
+          <span class="terminal-dot yellow" aria-hidden="true"></span>
+          <span class="terminal-dot green" aria-hidden="true"></span>
+          <span class="terminal-title">Windows · PowerShell</span>
+          <button type="button" class="terminal-copy" data-copy="irm https://hfo.carrillo.app/install.ps1 | iex" aria-label="Copy Windows PowerShell install command">copy</button>
+        </div>
+<pre><code><span class="tok-comment"># Installs to %LOCALAPPDATA%\Programs\hfo and adds it to user PATH.</span>
+<span class="tok-comment"># No admin prompt required.</span>
+<span class="tok-prompt">PS&gt;</span> <span class="tok-cmd">irm</span> <span class="tok-url">https://hfo.carrillo.app/install.ps1</span> <span class="tok-op">|</span> <span class="tok-cmd">iex</span></code></pre>
+      </div>
+
+    </div>
+
+    <p class="section-lede" style="margin: 0 0 22px;">Prefer a package manager? All three publish the same <code>hfo-cli</code> package — use whichever you already have.</p>
+
+    <div class="tabs" role="tablist" aria-label="Package manager">
+      <button type="button" class="tab-btn" role="tab" aria-selected="true"  id="tab-npm"  aria-controls="panel-npm"  onclick="switchTab('npm')">npm</button>
       <button type="button" class="tab-btn" role="tab" aria-selected="false" id="tab-pnpm" aria-controls="panel-pnpm" onclick="switchTab('pnpm')">pnpm</button>
       <button type="button" class="tab-btn" role="tab" aria-selected="false" id="tab-yarn" aria-controls="panel-yarn" onclick="switchTab('yarn')">yarn</button>
-      <button type="button" class="tab-btn" role="tab" aria-selected="false" id="tab-bin" aria-controls="panel-bin" onclick="switchTab('bin')">binary</button>
+      <button type="button" class="tab-btn" role="tab" aria-selected="false" id="tab-bun"  aria-controls="panel-bun"  onclick="switchTab('bun')">bun</button>
     </div>
-    <div id="panel-npm"  role="tabpanel" aria-labelledby="tab-npm"><pre><code>npm i -g hfo-cli</code></pre></div>
-    <div id="panel-pnpm" role="tabpanel" aria-labelledby="tab-pnpm" hidden><pre><code>pnpm add -g hfo-cli</code></pre></div>
-    <div id="panel-yarn" role="tabpanel" aria-labelledby="tab-yarn" hidden><pre><code>yarn global add hfo-cli</code></pre></div>
-    <div id="panel-bin"  role="tabpanel" aria-labelledby="tab-bin"  hidden><pre><code># Pre-built executables per OS (no Node required) — published on every tagged release.
-# https://github.com/carrilloapps/hfo/releases
 
-# Linux x64
-curl -LO https://github.com/carrilloapps/hfo/releases/latest/download/hfo-linux-x64
-chmod +x hfo-linux-x64 &amp;&amp; sudo mv hfo-linux-x64 /usr/local/bin/hfo
+    <div id="panel-npm" role="tabpanel" aria-labelledby="tab-npm">
+      <div class="terminal">
+        <div class="terminal-bar">
+          <span class="terminal-dot red" aria-hidden="true"></span>
+          <span class="terminal-dot yellow" aria-hidden="true"></span>
+          <span class="terminal-dot green" aria-hidden="true"></span>
+          <span class="terminal-title">npm</span>
+          <button type="button" class="terminal-copy" data-copy="npm i -g hfo-cli">copy</button>
+        </div>
+<pre><code><span class="tok-prompt">$</span> <span class="tok-cmd">npm</span> <span class="tok-cmd">i</span> <span class="tok-flag">-g</span> hfo-cli</code></pre>
+      </div>
+    </div>
 
-# macOS arm64
-curl -LO https://github.com/carrilloapps/hfo/releases/latest/download/hfo-macos-arm64
-chmod +x hfo-macos-arm64 &amp;&amp; sudo mv hfo-macos-arm64 /usr/local/bin/hfo
+    <div id="panel-pnpm" role="tabpanel" aria-labelledby="tab-pnpm" hidden>
+      <div class="terminal">
+        <div class="terminal-bar">
+          <span class="terminal-dot red" aria-hidden="true"></span>
+          <span class="terminal-dot yellow" aria-hidden="true"></span>
+          <span class="terminal-dot green" aria-hidden="true"></span>
+          <span class="terminal-title">pnpm</span>
+          <button type="button" class="terminal-copy" data-copy="pnpm add -g hfo-cli">copy</button>
+        </div>
+<pre><code><span class="tok-prompt">$</span> <span class="tok-cmd">pnpm</span> add <span class="tok-flag">-g</span> hfo-cli</code></pre>
+      </div>
+    </div>
 
-# Windows x64 — download hfo-win-x64.exe from the Releases page and put it on your PATH.</code></pre></div>
+    <div id="panel-yarn" role="tabpanel" aria-labelledby="tab-yarn" hidden>
+      <div class="terminal">
+        <div class="terminal-bar">
+          <span class="terminal-dot red" aria-hidden="true"></span>
+          <span class="terminal-dot yellow" aria-hidden="true"></span>
+          <span class="terminal-dot green" aria-hidden="true"></span>
+          <span class="terminal-title">yarn</span>
+          <button type="button" class="terminal-copy" data-copy="yarn global add hfo-cli">copy</button>
+        </div>
+<pre><code><span class="tok-prompt">$</span> <span class="tok-cmd">yarn</span> global add hfo-cli</code></pre>
+      </div>
+    </div>
 
-    <h3 style="margin-top:32px; font-size:18px;">Then try it</h3>
-    <pre><code># Explore — fullscreen dashboard
-hfo
+    <div id="panel-bun" role="tabpanel" aria-labelledby="tab-bun" hidden>
+      <div class="terminal">
+        <div class="terminal-bar">
+          <span class="terminal-dot red" aria-hidden="true"></span>
+          <span class="terminal-dot yellow" aria-hidden="true"></span>
+          <span class="terminal-dot green" aria-hidden="true"></span>
+          <span class="terminal-title">bun</span>
+          <button type="button" class="terminal-copy" data-copy="bun add -g hfo-cli">copy</button>
+        </div>
+<pre><code><span class="tok-prompt">$</span> <span class="tok-cmd">bun</span> add <span class="tok-flag">-g</span> hfo-cli</code></pre>
+      </div>
+    </div>
 
-# Install a specific repo (opens the Install tab pre-filled)
-hfo bartowski/Llama-3.2-3B-Instruct-GGUF
+    <h3 style="margin: 32px 0 14px; font-size: 16px; color: var(--muted); font-weight: 600; letter-spacing: 0.2px; text-transform: uppercase;">Manual binary download</h3>
+    <p class="section-lede" style="margin: 0 0 16px;">Tagged releases on GitHub ship per-OS executables. Download directly, or use the one-liner scripts above which wrap this for you.</p>
+    <div class="terminal">
+      <div class="terminal-bar">
+        <span class="terminal-dot red" aria-hidden="true"></span>
+        <span class="terminal-dot yellow" aria-hidden="true"></span>
+        <span class="terminal-dot green" aria-hidden="true"></span>
+        <span class="terminal-title">manual · Linux / macOS</span>
+      </div>
+<pre><code><span class="tok-comment"># Pick the binary matching your OS + arch; available after the first tagged release.</span>
+<span class="tok-comment">#   hfo-linux-x64    hfo-linux-arm64</span>
+<span class="tok-comment">#   hfo-macos-x64    hfo-macos-arm64</span>
+<span class="tok-comment">#   hfo-win-x64.exe</span>
+<span class="tok-prompt">$</span> <span class="tok-cmd">curl</span> <span class="tok-flag">-LO</span> <span class="tok-url">https://github.com/carrilloapps/hfo/releases/latest/download/hfo-linux-x64</span>
+<span class="tok-prompt">$</span> <span class="tok-cmd">chmod</span> +x hfo-linux-x64
+<span class="tok-prompt">$</span> <span class="tok-cmd">sudo</span> <span class="tok-cmd">mv</span> hfo-linux-x64 <span class="tok-path">/usr/local/bin/hfo</span>
+<span class="tok-prompt">$</span> <span class="tok-cmd">hfo</span> <span class="tok-flag">--version</span></code></pre>
+    </div>
 
-# Or skip the TUI entirely
-hfo --view
-hfo --list
-hfo --launch claude --model llama3.1:8b</code></pre>
+    <h3 style="margin: 32px 0 14px; font-size: 16px; color: var(--muted); font-weight: 600; letter-spacing: 0.2px; text-transform: uppercase;">Try it</h3>
+    <div class="terminal">
+      <div class="terminal-bar">
+        <span class="terminal-dot red" aria-hidden="true"></span>
+        <span class="terminal-dot yellow" aria-hidden="true"></span>
+        <span class="terminal-dot green" aria-hidden="true"></span>
+        <span class="terminal-title">bash</span>
+      </div>
+<pre><code><span class="tok-comment"># Explore — fullscreen dashboard</span>
+<span class="tok-prompt">$</span> <span class="tok-cmd">hfo</span>
+
+<span class="tok-comment"># Install a specific repo (opens the Install tab pre-filled)</span>
+<span class="tok-prompt">$</span> <span class="tok-cmd">hfo</span> bartowski/Llama-3.2-3B-Instruct-GGUF
+
+<span class="tok-comment"># Or skip the TUI entirely — every capability has a flag</span>
+<span class="tok-prompt">$</span> <span class="tok-cmd">hfo</span> <span class="tok-flag">--view</span>
+<span class="tok-prompt">$</span> <span class="tok-cmd">hfo</span> <span class="tok-flag">--list</span>
+<span class="tok-prompt">$</span> <span class="tok-cmd">hfo</span> <span class="tok-flag">--launch</span> claude <span class="tok-flag">--model</span> llama3.1:8b</code></pre>
+    </div>
   </div>
 </section>
 
@@ -738,15 +908,37 @@ hfo --launch claude --model llama3.1:8b</code></pre>
 
 <script>
   function switchTab(id) {
-    const ids = ['npm', 'pnpm', 'yarn', 'bin'];
+    const ids = ['npm', 'pnpm', 'yarn', 'bun'];
     for (const x of ids) {
       const btn = document.getElementById('tab-' + x);
       const panel = document.getElementById('panel-' + x);
+      if (!btn || !panel) continue;
       const active = x === id;
       btn.setAttribute('aria-selected', active ? 'true' : 'false');
       panel.hidden = !active;
     }
   }
+
+  // Wire up every terminal's copy button. Click writes the data-copy
+  // payload to the clipboard and flashes "copied" for ~1.2s. Falls back
+  // silently when the Clipboard API is unavailable (e.g. non-HTTPS).
+  document.addEventListener('click', (e) => {
+    const btn = e.target.closest('.terminal-copy');
+    if (!btn) return;
+    const text = btn.getAttribute('data-copy');
+    if (!text || !navigator.clipboard) return;
+    navigator.clipboard.writeText(text).then(() => {
+      const prev = btn.textContent;
+      btn.textContent = 'copied';
+      btn.style.color = 'var(--term-flag)';
+      btn.style.borderColor = 'var(--term-flag)';
+      setTimeout(() => {
+        btn.textContent = prev;
+        btn.style.color = '';
+        btn.style.borderColor = '';
+      }, 1200);
+    });
+  });
 </script>
 
 </body>

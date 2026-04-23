@@ -81,29 +81,60 @@ flowchart LR
 
 ## Install
 
-### npm (primary, cross-OS)
+### One-liner scripts (no Node required)
 
-```bash
-npm i -g hfo-cli
-# or
-pnpm add -g hfo-cli
-# or
-yarn global add hfo-cli
+```sh
+# macOS / Linux — detects OS + arch, installs to /usr/local/bin or ~/.local/bin.
+curl -fsSL https://hfo.carrillo.app/install.sh | sh
 ```
 
-Requires Node.js **≥ 20**. Ollama is optional — `hfo` will install it for you via `winget`, `brew`,
-or the official shell script if it isn't already on your PATH.
+```powershell
+# Windows PowerShell — installs to %LOCALAPPDATA%\Programs\hfo and adds it
+# to your user PATH. No admin prompt required.
+irm https://hfo.carrillo.app/install.ps1 | iex
+```
+
+Both scripts always pull the **latest GitHub Release** binary for your
+platform. Override with `HFO_VERSION=v0.2.0` (or `$env:HFO_VERSION`) to
+pin a specific tag, or `HFO_INSTALL_DIR=/some/dir` to relocate.
+
+> **Binaries are built and published only when a `v*.*.*` tag is pushed**,
+> never on regular commits. Every-commit CI runs only typecheck, lint,
+> test and build.
+
+### Package managers
+
+Pick the one you already have. All four ship the same `hfo-cli` package
+from the npm registry.
+
+```bash
+npm  i   -g hfo-cli
+pnpm add -g hfo-cli
+yarn global add hfo-cli
+bun  add -g hfo-cli
+```
+
+Requires Node.js **≥ 20**. Ollama is optional — `hfo` will install it for
+you via `winget`, `brew`, or the official shell script if it isn't
+already on your PATH.
 
 ### Standalone binaries
 
-Each tagged release on GitHub publishes self-contained executables for:
+Each tagged release on GitHub publishes self-contained executables you
+can drop straight onto your PATH:
 
-- Linux x64 / arm64
-- macOS x64 / arm64
-- Windows x64
+| Asset                | OS · Arch                     |
+| -------------------- | ----------------------------- |
+| `hfo-linux-x64`      | Linux x64                     |
+| `hfo-linux-arm64`    | Linux arm64                   |
+| `hfo-macos-x64`      | macOS x64 (Intel)             |
+| `hfo-macos-arm64`    | macOS arm64 (Apple Silicon)   |
+| `hfo-win-x64.exe`    | Windows x64                   |
 
-Download the appropriate file from the [Releases](https://github.com/carrilloapps/hfo/releases)
-page, make it executable, put it on your PATH, and you're done — no Node runtime required.
+Download directly from the
+[Releases](https://github.com/carrilloapps/hfo/releases) page, make it
+executable, and put it on your PATH — no Node runtime required. The
+one-liner scripts above wrap exactly this flow for you.
 
 ## Quick start
 
