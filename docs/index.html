@@ -245,34 +245,47 @@
   .brand:hover { text-decoration: none; color: var(--primary); }
   .brand svg { width: 28px; height: 28px; color: var(--primary); }
 
-  /* Navigation — desktop: inline links. Mobile (<=820px): hamburger <details>
-     dropdown, no JS needed. The <summary> is the toggle; the <nav> is the panel. */
-  .nav-wrap { margin-left: auto; position: relative; }
+  /* Navigation — desktop: inline links always visible. Mobile (<=820px):
+     hamburger label + visually-hidden checkbox drives a dropdown. No JS. */
+  /* Visually-hidden checkbox that drives the mobile dropdown. On desktop
+     we hide it entirely so it doesn't occupy a tab stop; there the nav
+     is always visible and the checkbox state is irrelevant. */
+  .nav-toggle-cb {
+    position: absolute; opacity: 0;
+    width: 1px; height: 1px; margin: 0; padding: 0;
+    pointer-events: none;
+  }
+  @media (min-width: 821px) {
+    .nav-toggle-cb { display: none; }
+  }
   .nav-toggle {
     display: none;
-    list-style: none; cursor: pointer;
-    padding: 8px; border-radius: var(--radius-sm);
+    cursor: pointer; padding: 8px; border-radius: var(--radius-sm);
     color: var(--fg); background: transparent;
     border: 1px solid var(--border);
     align-items: center; justify-content: center;
     transition: border-color .15s ease, background .15s ease, color .15s ease;
+    margin-left: auto;
   }
-  .nav-toggle::-webkit-details-marker { display: none; }
-  .nav-toggle::marker { content: ''; }
   .nav-toggle svg { width: 22px; height: 22px; display: block; }
   .nav-toggle:hover { border-color: var(--border-strong); background: var(--bg-alt); }
-  .nav-wrap[open] .nav-toggle { border-color: var(--border-strong); background: var(--bg-alt); color: var(--primary); }
-  .site-nav { display: flex; gap: 4px; align-items: center; }
+  .nav-toggle-cb:focus-visible ~ .nav-toggle {
+    outline: 2px solid var(--primary); outline-offset: 3px;
+  }
+  .site-nav { margin-left: auto; display: flex; gap: 4px; align-items: center; }
   .site-nav a { color: var(--muted); padding: 8px 12px; border-radius: var(--radius-sm); font-size: 14.5px; font-weight: 500; }
   .site-nav a:hover { color: var(--fg); background: var(--bg-alt); text-decoration: none; }
   .nav-icon-link { display: inline-flex; align-items: center; gap: 6px; }
 
   @media (max-width: 820px) {
     .nav-toggle { display: inline-flex; }
-    .nav-wrap > .site-nav {
-      position: absolute; right: 0; top: calc(100% + 10px);
+    .site-nav {
+      display: none;
+      position: absolute;
+      right: clamp(18px, 4vw, 36px); top: calc(100% - 8px);
       flex-direction: column; align-items: stretch; gap: 2px;
       min-width: 220px;
+      margin-left: 0;
       background: var(--bg-raised);
       border: 1px solid var(--border);
       border-radius: var(--radius-md);
@@ -280,13 +293,20 @@
       box-shadow: var(--shadow);
       z-index: 20;
     }
-    .nav-wrap:not([open]) > .site-nav { display: none; }
+    .nav-toggle-cb:checked ~ .site-nav { display: flex; }
+    .nav-toggle-cb:checked ~ .nav-toggle {
+      border-color: var(--border-strong);
+      background: var(--bg-alt);
+      color: var(--primary);
+    }
     .site-nav a { padding: 10px 12px; font-size: 15px; }
     .nav-icon-link { justify-content: flex-start; }
   }
 
   main { display: block; }
   section { padding: clamp(56px, 9vw, 96px) 0; position: relative; }
+  /* Hero gets more vertical breathing room than a generic section. */
+  section.hero { padding: clamp(72px, 12vw, 128px) 0 clamp(80px, 14vw, 144px); }
   /* Alternating surfaces create scroll rhythm: each section change is
      a quiet lightness shift, not a hard rule. The color change IS the
      separator — no border-top needed. */
@@ -296,16 +316,16 @@
     display: inline-flex; align-items: center; gap: 8px;
     padding: 6px 12px; border: 1px solid var(--border-strong);
     border-radius: 999px; font-size: 12.5px; font-weight: 600; letter-spacing: 0.2px;
-    color: var(--muted); background: var(--bg-alt); margin: 0 0 22px;
+    color: var(--muted); background: var(--bg-alt); margin: 0 0 32px;
   }
   .hero-eyebrow svg { width: 14px; height: 14px; color: var(--success); }
-  .hero h1 { font-size: clamp(40px, 7vw, 72px); line-height: 1.02; margin: 0 0 20px; letter-spacing: -0.035em; font-weight: 800; }
+  .hero h1 { font-size: clamp(40px, 7vw, 72px); line-height: 1.05; margin: 0 0 28px; letter-spacing: -0.035em; font-weight: 800; }
   .hero h1 .grad {
     background: linear-gradient(100deg, var(--primary), var(--accent));
     -webkit-background-clip: text; background-clip: text; color: transparent; padding-right: 2px;
   }
-  .hero .sub { font-size: clamp(17px, 2.2vw, 21px); color: var(--muted); max-width: 680px; margin: 0 0 36px; line-height: 1.55; }
-  .cta-group { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+  .hero .sub { font-size: clamp(17px, 2.2vw, 20px); color: var(--fg-3); max-width: 600px; margin: 0 0 44px; line-height: 1.6; }
+  .cta-group { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; }
   .btn {
     display: inline-flex; align-items: center; gap: 8px;
     padding: 11px 18px; border-radius: var(--radius-md);
@@ -330,7 +350,7 @@
   .install-pill svg { width: 16px; height: 16px; color: var(--muted); flex-shrink: 0; }
   .install-pill code { min-width: 0; word-break: break-word; background: transparent; border: 0; padding: 0; }
 
-  .badges { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 32px; }
+  .badges { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 44px; opacity: 0.72; }
   .badges img { height: 22px; }
 
   h2 { font-size: clamp(26px, 3.5vw, 34px); letter-spacing: -1px; margin: 0 0 14px; font-weight: 800; }
@@ -432,7 +452,13 @@
     display: grid; gap: 14px;
     grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
     margin: 0 0 26px;
+    align-items: stretch;
   }
+  /* Terminals inside the one-liner grid can have different content heights.
+     Flex-column keeps the <pre> filling the remaining space so the two
+     cards line up visually even when one has more lines than the other. */
+  .one-liner-grid .terminal { display: flex; flex-direction: column; }
+  .one-liner-grid .terminal > pre { flex: 1 1 auto; }
 
   .table-wrap {
     overflow-x: auto;
@@ -495,10 +521,11 @@
      so the hero shows what that looks like instead of a screenshot.
      Reuses .terminal's CSS variables; overrides are shadow + caret. */
   .hero-terminal {
-    margin-top: 36px;
+    margin-top: 56px;
     max-width: 760px;
-    box-shadow: 0 24px 48px -12px rgba(0,0,0,0.45), 0 2px 8px rgba(0,0,0,0.25);
+    box-shadow: 0 24px 56px -16px rgba(0,0,0,0.5), 0 2px 8px rgba(0,0,0,0.25);
   }
+  .hero-terminal pre { font-size: 14px; line-height: 1.85; padding: 22px 24px; }
   .hero-caret {
     display: inline-block;
     width: 0.55em; height: 1.05em;
@@ -577,23 +604,22 @@
       </svg>
       <span>hfo</span>
     </a>
-    <details class="nav-wrap">
-      <summary class="nav-toggle" aria-label="Toggle navigation">
-        <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M3 12h18"/><path d="M3 18h18"/></svg>
-      </summary>
-      <nav class="site-nav" aria-label="Primary">
-        <a href="#features">Features</a>
-        <a href="#install">Install</a>
-        <a href="#cli">CLI</a>
-        <a href="#keyboard">Keyboard</a>
-        <a href="#privacy">Privacy</a>
-        <a href="#faq">FAQ</a>
-        <a href="https://github.com/carrilloapps/hfo" target="_blank" rel="noreferrer noopener" class="nav-icon-link">
-          <svg aria-hidden="true" focusable="false" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.4 5.4 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>
-          GitHub
-        </a>
-      </nav>
-    </details>
+    <input type="checkbox" id="nav-open" class="nav-toggle-cb" aria-label="Toggle navigation menu" />
+    <label for="nav-open" class="nav-toggle" aria-hidden="true">
+      <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M3 12h18"/><path d="M3 18h18"/></svg>
+    </label>
+    <nav class="site-nav" aria-label="Primary">
+      <a href="#features">Features</a>
+      <a href="#install">Install</a>
+      <a href="#cli">CLI</a>
+      <a href="#keyboard">Keyboard</a>
+      <a href="#privacy">Privacy</a>
+      <a href="#faq">FAQ</a>
+      <a href="https://github.com/carrilloapps/hfo" target="_blank" rel="noreferrer noopener" class="nav-icon-link">
+        <svg aria-hidden="true" focusable="false" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.4 5.4 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>
+        GitHub
+      </a>
+    </nav>
   </div>
 </header>
 
@@ -642,14 +668,10 @@
         <span class="terminal-title">~ hfo</span>
       </div>
 <pre aria-hidden="true"><code><span class="tok-prompt">$</span> <span class="tok-cmd">hfo</span> bartowski/Qwen2.5-Coder-7B-Instruct-GGUF
-<span class="tok-comment">→ probing hardware… RTX 4090 · 24 GiB VRAM · 64 GiB RAM</span>
-<span class="tok-comment">→ scoring 8 quants…</span>  <span class="tok-flag">Q6_K 97/100</span>  <span class="tok-flag">Q5_K_M 94/100</span>  <span class="tok-flag">Q4_K_M 88/100</span>
-<span class="tok-comment">→ reading model card…</span>  temperature=<span class="tok-str">0.2</span>  top_p=<span class="tok-str">0.9</span>  ctx=<span class="tok-str">8192</span>
+<span class="tok-comment">→ RTX 4090 · 24 GiB VRAM · 64 GiB RAM</span>
+<span class="tok-comment">→ scoring 8 quants…</span>  <span class="tok-flag">Q6_K</span> 97/100  ·  <span class="tok-flag">Q5_K_M</span> 94/100
 
-<span class="tok-prompt">?</span> Install <span class="tok-str">Q6_K</span> to <span class="tok-path">~/AI/LLMs/qwen2-5-coder/q6-k</span>
-  <span class="tok-comment">[Enter] install now  ·  [O] change dir  ·  [C] customize</span>
-
-<span class="tok-prompt">$</span> <span class="hero-caret" aria-hidden="true"></span></code></pre>
+<span class="tok-prompt">?</span> Install <span class="tok-str">Q6_K</span> → <span class="tok-path">~/AI/LLMs/qwen2-5-coder/q6-k</span>  <span class="tok-comment">[Enter]</span> <span class="hero-caret" aria-hidden="true"></span></code></pre>
     </div>
   </div>
 </section>
