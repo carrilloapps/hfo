@@ -64,7 +64,7 @@
   "dependencies": {
     "adm-zip": "~0.5.17",
     "archiver": "~7.0.1",
-    "execa": "~9.5.2",
+    "execa": "~9.6.1",
     "figures": "~6.1.0",
     "ink": "~5.1.0",
     "ink-select-input": "~6.0.0",
