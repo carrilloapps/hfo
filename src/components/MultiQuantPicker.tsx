@@ -5,6 +5,7 @@ import { scoreColor } from '../core/scoring.js';
 import { formatBytes } from '../ui/format.js';
 import { describeQuant } from '../core/describe.js';
 import { icon } from '../ui/icons.js';
+import { t } from '../ui/i18n.js';
 
 interface Props {
   items: QuantScore[];           // already sorted desc by score
@@ -40,8 +41,8 @@ export default function MultiQuantPicker({ items, onConfirm }: Props) {
 
   return (
     <Box flexDirection="column">
-      <Text bold>Quants (sorted by compatibility — highest first)</Text>
-      <Text color="gray">space: toggle · a: toggle all · ↑↓: move · enter: confirm selection</Text>
+      <Text bold>{t('multiQuant.title')}</Text>
+      <Text color="gray">{t('multiQuant.hint', { up: icon.arrowUp, down: icon.arrowDown })}</Text>
       <Box flexDirection="column" marginTop={1}>
         {items.map((item, idx) => {
           const isCursor = idx === cursor;
@@ -81,8 +82,8 @@ export default function MultiQuantPicker({ items, onConfirm }: Props) {
       <Box marginTop={1}>
         <Text color="gray">
           {picked.size === 0
-            ? '(no variants selected — pick at least one)'
-            : `${picked.size} variant${picked.size > 1 ? 's' : ''} queued — press Enter to proceed`}
+            ? t('multiQuant.none')
+            : t('multiQuant.queued', { n: picked.size, s: picked.size > 1 ? 's' : '' })}
         </Text>
       </Box>
     </Box>

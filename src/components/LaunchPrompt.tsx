@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Box, Text, useInput } from 'ink';
 import type { InstalledModel } from './Processor.js';
 import { icon } from '../ui/icons.js';
+import { t } from '../ui/i18n.js';
 
 interface Props {
   installed: InstalledModel[];
@@ -21,8 +22,8 @@ export default function LaunchPrompt({ installed, onChoose }: Props) {
 
   return (
     <Box flexDirection="column">
-      <Text bold color="cyan">{icon.play} Launch Ollama now?</Text>
-      <Text color="gray">↑↓ pick model · Enter launch · N / Esc skip</Text>
+      <Text bold color="cyan">{icon.play} {t('launchPrompt.title')}</Text>
+      <Text color="gray">{t('launchPrompt.hint', { up: icon.arrowUp, down: icon.arrowDown })}</Text>
       <Box flexDirection="column" marginTop={1}>
         {sorted.map((m, i) => (
           <Text key={m.tag} color={i === cursor ? 'cyan' : undefined} bold={i === cursor}>

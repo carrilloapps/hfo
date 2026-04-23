@@ -58,8 +58,8 @@ export default function SettingsTab({ settings, onChange, onFlash }: Props) {
     return {
       id: name,
       label: th.label,
-      detail: th.isDark ? 'dark palette' : 'light palette',
-      description: `Primary: ${th.primary}  ·  accent: ${th.accent}  ·  success/warning/danger pairs tuned for readable contrast.`,
+      detail: th.isDark ? t('settings.theme.darkPalette') : t('settings.theme.lightPalette'),
+      description: t('settings.theme.description', { primary: th.primary, accent: th.accent }),
     };
   });
 
@@ -67,17 +67,21 @@ export default function SettingsTab({ settings, onChange, onFlash }: Props) {
     id: l.code,
     label: `${l.native}`,
     detail: l.label,
-    description: `Translation catalog for ${l.label} (${l.code.toUpperCase()}). Rendered natively as ${l.native}.`,
+    description: t('settings.language.description', {
+      label: l.label,
+      code: l.code.toUpperCase(),
+      native: l.native,
+    }),
   }));
 
   const sortItems: DropdownItem<(typeof SORT_OPTIONS)[number]>[] = SORT_OPTIONS.map((s) => ({
     id: s,
     label: s,
     detail:
-      s === 'trending' ? 'currently popular' :
-      s === 'downloads' ? 'all-time downloads' :
-      s === 'likes7d' ? 'liked over the past 7 days' :
-      'most recently modified',
+      s === 'trending' ? t('settings.sort.trending') :
+      s === 'downloads' ? t('settings.sort.downloads') :
+      s === 'likes7d' ? t('settings.sort.likes7d') :
+      t('settings.sort.modified'),
   }));
 
   useInput((input, key) => {
@@ -110,7 +114,7 @@ export default function SettingsTab({ settings, onChange, onFlash }: Props) {
         }
       } else if (row.kind === 'action' && key.return) {
         onChange({ ...DEFAULT_SETTINGS });
-        onFlash('All settings reset to defaults.');
+        onFlash(t('settings.flash.reset'));
       }
     }
   });
@@ -120,7 +124,7 @@ export default function SettingsTab({ settings, onChange, onFlash }: Props) {
     return (
       <Box flexDirection="column">
         <Text bold color={theme.accent as any}>{t(row.label)}</Text>
-        <Text color={theme.muted as any}>Enter confirm · Esc cancel</Text>
+        <Text color={theme.muted as any}>{t('common.enterEsc')}</Text>
         <Box marginTop={1}>
           <Text color={theme.primary as any}>&gt; </Text>
           <TextInput
@@ -204,7 +208,7 @@ export default function SettingsTab({ settings, onChange, onFlash }: Props) {
           const value = (settings as any)[row.key];
           let display: string;
           if (row.kind === 'action') {
-            display = '[Enter to reset]';
+            display = t('settings.action.enterReset');
           } else if (row.kind === 'toggle') {
             display = value ? `${icon.checkOn} ${t('common.on')}` : `${icon.checkOff} ${t('common.off')}`;
           } else if (row.key === 'theme') {
@@ -215,7 +219,7 @@ export default function SettingsTab({ settings, onChange, onFlash }: Props) {
           } else if (row.key === 'defaultSort') {
             display = `${value}   ${icon.pointer}`;
           } else if (value === null || value === undefined || value === '') {
-            display = '(platform default)';
+            display = t('settings.platformDefault');
           } else {
             display = String(value);
           }
@@ -245,11 +249,11 @@ function ThemePreview({ name }: { name: ThemeName }) {
   const theme = getTheme(name);
   return (
     <Box flexDirection="column">
-      <Text bold color={theme.primary as any}>Theme preview — {theme.label}</Text>
+      <Text bold color={theme.primary as any}>{t('settings.themePreview', { name: theme.label })}</Text>
       <Text>
-        <Text color={theme.primary as any}>primary</Text>  <Text color={theme.accent as any}>accent</Text>  <Text color={theme.success as any}>{icon.tick} success</Text>  <Text color={theme.warning as any}>{icon.warning} warning</Text>  <Text color={theme.danger as any}>{icon.cross} danger</Text>
+        <Text color={theme.primary as any}>{t('settings.preview.primary')}</Text>  <Text color={theme.accent as any}>{t('settings.preview.accent')}</Text>  <Text color={theme.success as any}>{icon.tick} {t('settings.preview.success')}</Text>  <Text color={theme.warning as any}>{icon.warning} {t('settings.preview.warning')}</Text>  <Text color={theme.danger as any}>{icon.cross} {t('settings.preview.danger')}</Text>
       </Text>
-      <Text color={theme.muted as any}>muted secondary text — used for hints, footers, units.</Text>
+      <Text color={theme.muted as any}>{t('settings.preview.muted')}</Text>
     </Box>
   );
 }

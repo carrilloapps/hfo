@@ -5,6 +5,7 @@ import TextInput from 'ink-text-input';
 import { detectAvailableTargets, LAUNCH_TARGETS, type LaunchId } from '../core/launch.js';
 import { icon } from '../ui/icons.js';
 import type { Theme } from '../ui/theme.js';
+import { t } from '../ui/i18n.js';
 
 export interface LaunchSelection {
   id: LaunchId;
@@ -53,7 +54,7 @@ export default function LaunchMenu({ theme, defaultModel, onConfirm, onCancel }:
     return (
       <Box>
         <Text color={theme.primary as any}>
-          <Spinner type="dots" /> Probing `ollama launch --help`...
+          <Spinner type="dots" /> {t('launch.probing')}
         </Text>
       </Box>
     );
@@ -62,9 +63,9 @@ export default function LaunchMenu({ theme, defaultModel, onConfirm, onCancel }:
   if (mode.kind === 'editing-model') {
     return (
       <Box flexDirection="column">
-        <Text bold color={theme.accent as any}>Model override</Text>
+        <Text bold color={theme.accent as any}>{t('launch.modelOverride')}</Text>
         <Text color={theme.muted as any}>
-          Leave empty to let Ollama pick the default; type a registered tag (run Models tab to list).
+          {t('launch.modelOverrideHint')}
         </Text>
         <Box marginTop={1}>
           <Text color={theme.primary as any}>--model </Text>
@@ -83,30 +84,30 @@ export default function LaunchMenu({ theme, defaultModel, onConfirm, onCancel }:
   return (
     <Box flexDirection="column">
       <Box marginBottom={1}>
-        <Text bold color={theme.accent as any}>Launch an Ollama integration</Text>
-        <Text color={theme.muted as any}>  ·  {LAUNCH_TARGETS.length} targets · {active.size} available locally</Text>
+        <Text bold color={theme.accent as any}>{t('launch.title')}</Text>
+        <Text color={theme.muted as any}>  ·  {t('launch.countsBanner', { total: LAUNCH_TARGETS.length, available: active.size })}</Text>
       </Box>
 
       <Box flexDirection="column" borderStyle="round" borderColor={theme.border as any} paddingX={1}>
-        {LAUNCH_TARGETS.map((t, i) => {
+        {LAUNCH_TARGETS.map((target, i) => {
           const isCursor = i === mode.cursor;
-          const supported = active.has(t.id);
+          const supported = active.has(target.id);
           return (
-            <Box key={t.id} flexDirection="column">
+            <Box key={target.id} flexDirection="column">
               <Box>
                 <Text color={isCursor ? (theme.accent as any) : undefined} bold={isCursor}>
-                  {(isCursor ? `${icon.pointer} ` : '  ') + t.id.padEnd(10)}
+                  {(isCursor ? `${icon.pointer} ` : '  ') + target.id.padEnd(10)}
                 </Text>
-                <Text color={theme.text as any}>{t.name.padEnd(18)}</Text>
+                <Text color={theme.text as any}>{target.name.padEnd(18)}</Text>
                 <Text color={supported ? (theme.success as any) : (theme.muted as any)}>
-                  {supported ? `${icon.tick} available` : `${icon.cross} unsupported by this Ollama`}
+                  {supported ? `${icon.tick} ${t('launch.available')}` : `${icon.cross} ${t('launch.unsupported')}`}
                 </Text>
               </Box>
               {isCursor && (
                 <Box marginLeft={4}>
                   <Text color={theme.muted as any}>
-                    {t.description}
-                    {t.aliases && t.aliases.length > 0 ? ` · aliases: ${t.aliases.join(', ')}` : ''}
+                    {target.description}
+                    {target.aliases && target.aliases.length > 0 ? ` · ${t('launch.aliases')}: ${target.aliases.join(', ')}` : ''}
                   </Text>
                 </Box>
               )}
@@ -117,15 +118,15 @@ export default function LaunchMenu({ theme, defaultModel, onConfirm, onCancel }:
 
       <Box flexDirection="column" marginTop={1}>
         <Text>
-          <Text color={theme.muted as any}>Model: </Text>
-          <Text color={theme.primary as any}>{mode.model || '(Ollama default)'}</Text>
-          <Text color={theme.muted as any}>    ·    Config-only: </Text>
+          <Text color={theme.muted as any}>{t('launch.modelLabel')}: </Text>
+          <Text color={theme.primary as any}>{mode.model || t('launch.modelDefault')}</Text>
+          <Text color={theme.muted as any}>    ·    {t('launch.configOnly')}: </Text>
           <Text color={mode.configOnly ? (theme.warning as any) : (theme.muted as any)}>
-            {mode.configOnly ? `${icon.checkOn} yes (no auto-launch)` : `${icon.checkOff} no`}
+            {mode.configOnly ? `${icon.checkOn} ${t('launch.configOnlyYesHint')}` : `${icon.checkOff} ${t('launch.configOnlyNo')}`}
           </Text>
         </Text>
         <Text color={theme.muted as any}>
-          {icon.arrowUp}{icon.arrowDown} nav · M edit model · C toggle --config · Enter launch · Esc cancel
+          {t('launch.navHint', { up: icon.arrowUp, down: icon.arrowDown })}
         </Text>
       </Box>
     </Box>

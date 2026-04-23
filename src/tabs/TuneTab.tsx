@@ -15,6 +15,13 @@ import {
   type PersistResult,
 } from '../infra/ollama.js';
 import { icon } from '../ui/icons.js';
+import { t } from '../ui/i18n.js';
+
+function persistMethodLabel(): string {
+  if (process.platform === 'win32') return t('tune.method.win');
+  if (process.platform === 'darwin') return t('tune.method.mac');
+  return t('tune.method.linux');
+}
 
 interface Props {
   hw: HardwareProfile;
@@ -93,7 +100,7 @@ export default function TuneTab({ hw, onFlash }: Props) {
       const results = await persistEnv(current);
       setMode({ kind: 'restarting' });
       await restartOllama();
-      onFlash('Tuning applied. Ollama restarted.');
+      onFlash(t('tune.flash.applied'));
       setMode({ kind: 'applied', results });
     })();
   }, [mode.kind]);
@@ -103,11 +110,11 @@ export default function TuneTab({ hw, onFlash }: Props) {
     return (
       <Box flexDirection="column">
         <Text bold color="cyan">
-          {icon.pointer} Editing {meta.label}
+          {icon.pointer} {t('tune.editingPrefix')} {meta.label}
         </Text>
         <Text color="gray">{meta.description}</Text>
         <Text color="gray">
-          Allowed shortcut values: {meta.values?.join(', ') ?? '(free text)'}
+          {t('tune.editingAllowed')} {meta.values?.join(', ') ?? t('tune.freeText')}
         </Text>
         <Box marginTop={1}>
           <Text color="cyan">{mode.key} = </Text>
@@ -120,7 +127,7 @@ export default function TuneTab({ hw, onFlash }: Props) {
             }}
           />
         </Box>
-        <Text color="gray">Enter to confirm, Esc to cancel.</Text>
+        <Text color="gray">{t('tune.editingHint')}</Text>
       </Box>
     );
   }
@@ -128,8 +135,8 @@ export default function TuneTab({ hw, onFlash }: Props) {
   return (
     <Box flexDirection="column">
       <Box marginBottom={1}>
-        <Text bold color="cyan">Tune Ollama runtime</Text>
-        <Text color="gray"> · compare Ollama defaults, our suggestion for your hardware, and what you want to apply</Text>
+        <Text bold color="cyan">{t('tune.title')}</Text>
+        <Text color="gray"> · {t('tune.subtitle')}</Text>
       </Box>
 
       <EnvTable
@@ -142,7 +149,12 @@ export default function TuneTab({ hw, onFlash }: Props) {
 
       <Box marginTop={1}>
         <Text color="gray">
-          {icon.arrowUp}{icon.arrowDown} nav   {icon.arrowLeft}{icon.arrowRight}/space cycle values   E edit   D use default   S use suggested   R reset all→suggested   X reset all→defaults   A apply + restart
+          {t('tune.mainHint', {
+            up: icon.arrowUp,
+            down: icon.arrowDown,
+            left: icon.arrowLeft,
+            right: icon.arrowRight,
+          })}
         </Text>
       </Box>
 
@@ -169,11 +181,11 @@ function EnvTable({
   return (
     <Box flexDirection="column" borderStyle="round" borderColor="gray" paddingX={1}>
       <Box>
-        <Text bold color="gray">{'  '}{'Variable'.padEnd(26)}</Text>
-        <Text bold color="gray">{'Default'.padEnd(10)}</Text>
-        <Text bold color="gray">{'Suggested'.padEnd(12)}</Text>
-        <Text bold color="gray">{'Current (editable)'.padEnd(22)}</Text>
-        <Text bold color="gray">State</Text>
+        <Text bold color="gray">{'  '}{t('tune.col.variable').padEnd(26)}</Text>
+        <Text bold color="gray">{t('tune.col.default').padEnd(10)}</Text>
+        <Text bold color="gray">{t('tune.col.suggested').padEnd(12)}</Text>
+        <Text bold color="gray">{t('tune.col.current').padEnd(22)}</Text>
+        <Text bold color="gray">{t('tune.col.state')}</Text>
       </Box>
       {KEYS.map((k, i) => {
         const isCursor = i === cursor;
@@ -187,15 +199,15 @@ function EnvTable({
         const stateDots: React.ReactNode[] = [];
         stateDots.push(
           matchesDefault ? (
-            <Text key="d" color="gray">{icon.off} default</Text>
+            <Text key="d" color="gray">{icon.off} {t('tune.state.default')}</Text>
           ) : matchesSuggested ? (
-            <Text key="s" color="green">{icon.on} suggested</Text>
+            <Text key="s" color="green">{icon.on} {t('tune.state.suggested')}</Text>
           ) : (
-            <Text key="c" color="yellow">{icon.partial} custom</Text>
+            <Text key="c" color="yellow">{icon.partial} {t('tune.state.custom')}</Text>
           ),
         );
         if (changedVsInit) {
-          stateDots.push(<Text key="u"> {icon.warning} unsaved</Text>);
+          stateDots.push(<Text key="u"> {icon.warning} {t('tune.state.unsaved')}</Text>);
         }
 
         return (
@@ -223,10 +235,10 @@ function DetailPane({ k, current }: { k: EnvKey; current: string }) {
       <Text bold color="cyan">{k}</Text>
       <Text color="gray">{meta.description}</Text>
       <Text color="gray">
-        Current value: <Text color="white">{current}</Text>
+        {t('tune.detail.current')} <Text color="white">{current}</Text>
         {meta.values && (
           <Text color="gray">
-            {'  '}· cycle with {icon.arrowLeft}{icon.arrowRight}: {meta.values.join(' | ')}
+            {'  '}· {t('tune.detail.cycle', { left: icon.arrowLeft, right: icon.arrowRight })} {meta.values.join(' | ')}
           </Text>
         )}
       </Text>
@@ -248,8 +260,7 @@ function Footer({
     return (
       <Box marginTop={1}>
         <Text color="yellow">
-          <Spinner type="dots" /> Persisting env vars via{' '}
-          {process.platform === 'win32' ? 'setx' : process.platform === 'darwin' ? 'launchctl + ~/.zprofile' : '~/.profile + systemd override'}...
+          <Spinner type="dots" /> {t('tune.persisting', { method: persistMethodLabel() })}
         </Text>
       </Box>
     );
@@ -258,7 +269,7 @@ function Footer({
     return (
       <Box marginTop={1}>
         <Text color="yellow">
-          <Spinner type="dots" /> Restarting Ollama server so env takes effect...
+          <Spinner type="dots" /> {t('tune.restarting')}
         </Text>
       </Box>
     );
@@ -266,7 +277,7 @@ function Footer({
   if (mode.kind === 'applied') {
     return (
       <Box flexDirection="column" marginTop={1} borderStyle="round" borderColor="green" paddingX={1}>
-        <Text color="green">{icon.ok} Applied. (Enter to return)</Text>
+        <Text color="green">{icon.ok} {t('tune.applied')} {t('tune.applyReminder')}</Text>
         {mode.results.map((r) => (
           <Text key={r.key} color={r.applied ? 'gray' : 'red'}>
             {r.applied ? `  ${icon.tick} ` : `  ${icon.cross} `}
@@ -280,7 +291,7 @@ function Footer({
   return (
     <Box marginTop={1}>
       <Text color={pending > 0 ? 'yellow' : 'gray'}>
-        {pending > 0 ? `${pending} var${pending > 1 ? 's' : ''} changed since launch · press A to apply.` : 'No changes to apply.'}
+        {pending > 0 ? t('tune.pending', { n: pending, s: pending > 1 ? 's' : '' }) : t('tune.noChanges')}
       </Text>
     </Box>
   );

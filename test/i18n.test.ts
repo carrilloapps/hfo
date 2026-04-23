@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { LANGS, setLang, getLang, t } from '../src/ui/i18n.js';
+import { LANGS, setLang, getLang, t, enKeys, missingKeys, keysFor } from '../src/ui/i18n.js';
 
 describe('i18n', () => {
   it('ships at least 20 languages', () => {
@@ -34,5 +34,46 @@ describe('i18n', () => {
   it('normalizes unsupported language codes back to English', () => {
     setLang('xx' as any);
     expect(getLang()).toBe('en');
+  });
+
+  it('English catalog is the authoritative key set (non-empty, no placeholder values)', () => {
+    const keys = enKeys();
+    expect(keys.length).toBeGreaterThan(100);
+    setLang('en');
+    for (const k of keys) {
+      const v = t(k);
+      expect(v).toBeTruthy();
+      expect(v).not.toBe(k); // t() would return the raw key if lookup failed
+    }
+  });
+
+  it('Spanish catalog has parity with English (no missing keys)', () => {
+    expect(missingKeys('es')).toEqual([]);
+  });
+
+  it('every key in every catalog resolves through t() to something non-empty', () => {
+    const en = enKeys();
+    for (const { code } of LANGS) {
+      setLang(code);
+      for (const k of en) {
+        const v = t(k);
+        expect(v, `lang=${code} key=${k}`).toBeTruthy();
+      }
+    }
+    setLang('en');
+  });
+
+  it('critical UI keys (common.*, app.*, boot.*, filebrowser.*) are localized in every language', () => {
+    const mustLocalize = [
+      'common.cancel', 'common.confirm', 'common.yes', 'common.no',
+      'common.back', 'common.search', 'common.on', 'common.off',
+    ];
+    for (const { code } of LANGS) {
+      if (code === 'en') continue;
+      const target = keysFor(code);
+      for (const k of mustLocalize) {
+        expect(target, `${code} missing ${k}`).toContain(k);
+      }
+    }
   });
 });

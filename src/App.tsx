@@ -11,6 +11,7 @@ import { loadCardParams, type CardInfo } from './core/readme.js';
 import { buildDefaultParams, buildPlans, type PlannedInstall, type ResolvedParams } from './core/plan.js';
 import { suggestTag } from './core/modelfile.js';
 import { icon } from './ui/icons.js';
+import { t } from './ui/i18n.js';
 import HardwareReport from './components/HardwareReport.js';
 import MultiQuantPicker from './components/MultiQuantPicker.js';
 import FileBrowser from './components/FileBrowser.js';
@@ -138,7 +139,7 @@ export default function App(props: Props) {
         ]);
         const ggufs = repo.ggufFiles.filter((f) => !/mmproj|projector/i.test(f.path));
         if (ggufs.length === 0) {
-          setPhase({ kind: 'error', message: `No runnable .gguf files in repo "${phase.repoId}".` });
+          setPhase({ kind: 'error', message: t('app.noRunnable', { repo: phase.repoId }) });
           return;
         }
         const score = scoreRepo(ggufs, phase.hw);
@@ -218,7 +219,7 @@ export default function App(props: Props) {
     return (
       <Box>
         <Text color={theme.primary as any}>
-          <Spinner type="dots" /> Probing Ollama and detecting hardware...
+          <Spinner type="dots" /> {t('app.probing')}
         </Text>
       </Box>
     );
@@ -241,7 +242,7 @@ export default function App(props: Props) {
           const hw = hwCache!;
           setPhase(skipTune ? { kind: 'loading-repo', hw, repoId } : { kind: 'offer-tune', hw, repoId });
         }}
-        onSkip={() => setPhase({ kind: 'error', message: 'Cannot continue without a running Ollama.' })}
+        onSkip={() => setPhase({ kind: 'error', message: t('app.cantContinue') })}
         onRestartOllama={async () => {
           await restartOllama();
         }}
@@ -264,7 +265,7 @@ export default function App(props: Props) {
     return (
       <Box>
         <Text color={theme.primary as any}>
-          <Spinner type="dots" /> Fetching HuggingFace repo metadata + README, scoring compatibility...
+          <Spinner type="dots" /> {t('app.loadingRepo')}
         </Text>
       </Box>
     );
@@ -277,7 +278,7 @@ export default function App(props: Props) {
         <HardwareReport hw={hw} repoId={repo.id} repoScore={score.best} avgScore={score.avg} quantCount={score.perQuant.length} />
         {card.foundKeys.length > 0 && (
           <Box marginTop={1}>
-            <Text color={theme.success as any}>{icon.star} HF model card contributed recommendations for: {card.foundKeys.join(', ')}</Text>
+            <Text color={theme.success as any}>{icon.star} {t('app.cardMarker')} {card.foundKeys.join(', ')}</Text>
           </Box>
         )}
         <Box marginTop={1}>
@@ -294,7 +295,7 @@ export default function App(props: Props) {
     return (
       <Box>
         <Text color={theme.primary as any}>
-          <Spinner type="dots" /> Scanning for existing tags / cached files...
+          <Spinner type="dots" /> {t('app.scanning')}
         </Text>
       </Box>
     );
@@ -315,7 +316,6 @@ export default function App(props: Props) {
       const params = buildDefaultParams(quant, hw, card.params, codeModel);
       if (contextSize) params.numCtx = contextSize;
 
-      const quantFolder = quant.quant.toLowerCase().replace(/_/g, '-');
       const planDir = destDir;
       const plan: PlannedInstall = {
         quant,
@@ -354,7 +354,7 @@ export default function App(props: Props) {
     const suggestedFolder = repoSlugFolder(repo.id);
     return (
       <Box flexDirection="column">
-        <Text bold>Pick where to install {quant.quant}:</Text>
+        <Text bold>{t('app.pickWhereQuant', { quant: quant.quant })}</Text>
         <Box marginTop={1}>
           <FileBrowser
             initialPath={baseDir}
@@ -376,7 +376,7 @@ export default function App(props: Props) {
     return (
       <Box>
         <Text color={theme.primary as any}>
-          <Spinner type="dots" /> Scanning for existing tags / cached files...
+          <Spinner type="dots" /> {t('app.scanning')}
         </Text>
       </Box>
     );
@@ -391,7 +391,7 @@ export default function App(props: Props) {
         onConfirm={(resolved) => {
           const actionable = resolved.filter((p) => p.action !== 'skip');
           if (actionable.length === 0) {
-            setPhase({ kind: 'error', message: 'All items were skipped.' });
+            setPhase({ kind: 'error', message: t('app.allItemsSkipped') });
             return;
           }
           const ref = actionable[0].quant;
@@ -399,7 +399,7 @@ export default function App(props: Props) {
           if (contextSize) params.numCtx = contextSize;
           setPhase({ kind: 'processing', repo, hw, card, plans: resolved, params });
         }}
-        onCancel={() => setPhase({ kind: 'error', message: 'Cancelled by user.' })}
+        onCancel={() => setPhase({ kind: 'error', message: t('common.cancelled') })}
       />
     );
   }
@@ -439,20 +439,20 @@ export default function App(props: Props) {
     if (actionable.length === 0) {
       return (
         <Box flexDirection="column">
-          <Text color={theme.warning as any}>All items were skipped — nothing to launch.</Text>
+          <Text color={theme.warning as any}>{t('app.allSkipped')}</Text>
         </Box>
       );
     }
     return (
       <Box flexDirection="column">
-        <Text color={theme.success as any} bold>{icon.tick} Install complete.</Text>
+        <Text color={theme.success as any} bold>{icon.tick} {t('app.installComplete')}</Text>
         <Box flexDirection="column" marginY={1}>
           {installed.map((m) => (
             <Text key={m.tag} color={m.skipped ? (theme.muted as any) : undefined}>
               {m.skipped ? `${icon.cross} ` : `${icon.bullet} `}
-              <Text color={theme.primary as any}>{m.tag}</Text> <Text color={theme.muted as any}>({m.quant}, score {m.score}/100)</Text>
-              {m.reusedFile && <Text color={theme.success as any}> · file reused</Text>}
-              {m.skipped && <Text color={theme.muted as any}> · skipped</Text>}
+              <Text color={theme.primary as any}>{m.tag}</Text> <Text color={theme.muted as any}>{t('app.installedSummary', { quant: m.quant, score: m.score })}</Text>
+              {m.reusedFile && <Text color={theme.success as any}> · {t('app.fileReused')}</Text>}
+              {m.skipped && <Text color={theme.muted as any}> · {t('app.skipped')}</Text>}
             </Text>
           ))}
         </Box>
@@ -468,14 +468,14 @@ export default function App(props: Props) {
     const { installed, launchedTag } = phase;
     return (
       <Box flexDirection="column">
-        <Text color={theme.success as any} bold>{icon.tick} Done.</Text>
+        <Text color={theme.success as any} bold>{icon.tick} {t('app.doneTitle')}</Text>
         {installed.map((m) => (
-          <Text key={m.tag} color={theme.muted as any}>{icon.bullet} {m.tag} at {m.dir}</Text>
+          <Text key={m.tag} color={theme.muted as any}>{icon.bullet} {t('app.tagAt', { tag: m.tag, dir: m.dir })}</Text>
         ))}
         {launchedTag ? (
-          <Text>Handing off to: <Text color={theme.primary as any}>ollama run {launchedTag}</Text></Text>
+          <Text>{t('app.handingOff')} <Text color={theme.primary as any}>ollama run {launchedTag}</Text></Text>
         ) : (
-          <Text color={theme.muted as any}>(Skipped launch. Use `ollama run &lt;tag&gt;` when ready.)</Text>
+          <Text color={theme.muted as any}>{t('app.skippedLaunch')}</Text>
         )}
       </Box>
     );

@@ -74,7 +74,7 @@ export default function DashboardTab({ hw, ollama, theme, refreshIntervalMs, bod
     }
     if (input === 'r' || input === 'R') {
       refreshLive();
-      onFlash('Live metrics refreshed.');
+      onFlash(t('dashboard.flash.refreshed'));
       return;
     }
     if (focus === 'browse') {

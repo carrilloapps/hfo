@@ -9,6 +9,7 @@ import { restoreBackup, readBackupManifest } from './core/restore.js';
 import { buildEnvProfile, persistEnv, restartOllama } from './infra/ollama.js';
 import { formatBytes } from './ui/format.js';
 import { APP } from './infra/about.js';
+import { setLang, t } from './ui/i18n.js';
 import { execa } from 'execa';
 import { rm } from 'node:fs/promises';
 
@@ -17,7 +18,17 @@ function hr(label: string): void {
   console.log(`── ${label} ${pad}`);
 }
 
+async function applyLanguage(): Promise<void> {
+  try {
+    const s = await loadSettings();
+    if (s?.language) setLang(s.language);
+  } catch {
+    /* keep default EN */
+  }
+}
+
 export async function cmdView(): Promise<void> {
+  await applyLanguage();
   const [hw, ollama, gpu, ram] = await Promise.all([detectHardware(), checkOllama(), sampleGpu(), sampleRam()]);
   const power = scoreHardware(hw);
   const tier = tierFor(hw);
@@ -45,7 +56,7 @@ export async function cmdView(): Promise<void> {
   console.log(`Tier          ${tier.label}`);
   console.log(`Overall score ${power.score}/100  (GPU ${power.gpuScore} · RAM ${power.ramScore} · CPU ${power.cpuScore})`);
   console.log(`Summary       ${tier.summary}`);
-  console.log('What you can run:');
+  console.log(t('headless.whatCanRun'));
   for (const r of tier.runs) {
     const prefix = r.level === 'ok' ? '  [+]' : r.level === 'warn' ? '  [!]' : '  [x]';
     console.log(`${prefix} ${r.text}`);
@@ -72,6 +83,7 @@ export async function cmdView(): Promise<void> {
 }
 
 export async function cmdList(): Promise<void> {
+  await applyLanguage();
   const [models, ps, settings] = await Promise.all([sampleOllamaList(), sampleOllamaPs(), loadSettings()]);
   const loadedTags = new Set(ps.map((m) => m.name));
   const registeredTags = new Set(models.map((m) => m.name));
@@ -105,6 +117,7 @@ export async function cmdList(): Promise<void> {
 }
 
 export async function cmdTune(): Promise<void> {
+  await applyLanguage();
   const hw = await detectHardware();
   const profile = buildEnvProfile({ ramMiB: hw.ramMiB, vramMiB: hw.vramMiB, cpuCores: hw.cpuCores });
   hr('Applying Ollama env profile (~90% capacity)');
@@ -120,6 +133,7 @@ export async function cmdTune(): Promise<void> {
 }
 
 export async function cmdBackup(tag: string): Promise<void> {
+  await applyLanguage();
   const install = await findInstallation(tag);
   if (!install) {
     console.error(`No installation record for "${tag}". Install via hfo first or pass a known tag.`);
@@ -147,6 +161,7 @@ export async function cmdBackup(tag: string): Promise<void> {
 }
 
 export async function cmdRestore(zipPath: string): Promise<void> {
+  await applyLanguage();
   const hw = await detectHardware();
   const manifest = await readBackupManifest(zipPath);
   hr(`Restoring ${zipPath}`);
@@ -165,6 +180,7 @@ export async function cmdRestore(zipPath: string): Promise<void> {
 }
 
 export async function cmdDelete(tag: string, opts: { deep?: boolean }): Promise<void> {
+  await applyLanguage();
   hr(`Removing ${tag}${opts.deep ? ' + directory' : ''}`);
   try {
     await execa('ollama', ['rm', tag]);

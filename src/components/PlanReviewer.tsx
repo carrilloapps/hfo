@@ -4,6 +4,7 @@ import TextInput from 'ink-text-input';
 import type { PlannedInstall } from '../core/plan.js';
 import { formatBytes } from '../ui/format.js';
 import { icon } from '../ui/icons.js';
+import { t } from '../ui/i18n.js';
 
 interface Props {
   initialPlans: PlannedInstall[];
@@ -73,26 +74,26 @@ export default function PlanReviewer({ initialPlans, existingTags, onConfirm, on
 
   return (
     <Box flexDirection="column">
-      <Text bold>Review &amp; customize installs</Text>
-      <Text color="gray">↑↓ nav · E/R edit name · T cycle action · O overwrite · S skip · Enter/A apply · Esc cancel</Text>
+      <Text bold>{t('plan.title')}</Text>
+      <Text color="gray">{t('plan.hint', { up: icon.arrowUp, down: icon.arrowDown })}</Text>
 
       <Box flexDirection="column" marginTop={1}>
         {plans.map((p, idx) => {
           const isCursor = idx === cursor;
           const flags: string[] = [];
-          if (p.tagExists) flags.push(`${icon.warning} tag already in Ollama`);
+          if (p.tagExists) flags.push(`${icon.warning} ${t('plan.tagExists')}`);
           if (p.fileExistsBytes != null) {
             const matches = p.fileExistsBytes === p.quant.file.size;
             flags.push(matches
-              ? `${icon.tick} file on disk (${formatBytes(p.fileExistsBytes)}) — will reuse`
-              : `${icon.warning} partial file (${formatBytes(p.fileExistsBytes)}/${formatBytes(p.quant.file.size)}) — will resume`);
+              ? `${icon.tick} ${t('plan.fileReuse', { size: formatBytes(p.fileExistsBytes) })}`
+              : `${icon.warning} ${t('plan.fileResume', { have: formatBytes(p.fileExistsBytes), total: formatBytes(p.quant.file.size) })}`);
           }
           const actionLabel =
             p.action === 'skip'
-              ? <Text color="gray">[SKIP]</Text>
+              ? <Text color="gray">[{t('plan.action.skip')}]</Text>
               : p.action === 'overwrite'
-                ? <Text color="yellow">[OVERWRITE]</Text>
-                : <Text color="green">[INSTALL]</Text>;
+                ? <Text color="yellow">[{t('plan.action.overwrite')}]</Text>
+                : <Text color="green">[{t('plan.action.install')}]</Text>;
 
           return (
             <Box key={idx} flexDirection="column" marginBottom={1}>
@@ -102,10 +103,10 @@ export default function PlanReviewer({ initialPlans, existingTags, onConfirm, on
                   {p.quant.quant.padEnd(8)}
                 </Text>
                 <Text> {actionLabel} </Text>
-                <Text color="gray">· {formatBytes(p.quant.file.size)} · score {p.quant.score}/100</Text>
+                <Text color="gray">· {formatBytes(p.quant.file.size)} · {t('plan.scoreSuffix', { score: p.quant.score })}</Text>
               </Box>
               <Box marginLeft={4}>
-                <Text color="gray">tag:</Text>
+                <Text color="gray">{t('plan.tagLabel')}</Text>
                 <Text> </Text>
                 {mode.kind === 'edit-tag' && mode.idx === idx ? (
                   <TextInput
@@ -134,7 +135,7 @@ export default function PlanReviewer({ initialPlans, existingTags, onConfirm, on
 
       <Box marginTop={1}>
         <Text color="gray">
-          {plans.filter((p) => p.action !== 'skip').length} / {plans.length} queued — press Enter to proceed
+          {t('plan.queued', { active: plans.filter((p) => p.action !== 'skip').length, total: plans.length })}
         </Text>
       </Box>
     </Box>

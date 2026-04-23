@@ -6,6 +6,7 @@ import type { HardwareProfile } from '../core/hardware.js';
 import { icon } from '../ui/icons.js';
 import LaunchMenu, { type LaunchSelection } from '../components/LaunchMenu.js';
 import type { Theme } from '../ui/theme.js';
+import { t } from '../ui/i18n.js';
 
 interface Props {
   baseDir: string;
@@ -87,9 +88,9 @@ export default function InstallTab(props: Props) {
         )}
         <Box marginTop={1}>
           <Text>
-            <Text color={props.theme.accent as any}>L</Text> launch an integration
+              <Text color={props.theme.accent as any}>L</Text> {t('install.done.launchOption')}
             <Text color={props.theme.muted as any}>   ·   </Text>
-            <Text color={props.theme.accent as any}>Enter / Esc</Text> install another
+            <Text color={props.theme.accent as any}>Enter / Esc</Text> {t('install.done.anotherOption')}
           </Text>
         </Box>
       </Box>
@@ -98,13 +99,13 @@ export default function InstallTab(props: Props) {
 
   return (
     <Box flexDirection="column">
-      <Text bold color={props.theme.primary as any}>Install a model from Hugging Face</Text>
-      <Text color={props.theme.muted as any}>Paste a Hugging Face URL or `org/repo` slug, then press Enter.</Text>
-      <Text color={props.theme.muted as any}>Examples:</Text>
+      <Text bold color={props.theme.primary as any}>{t('install.titleHeading')}</Text>
+      <Text color={props.theme.muted as any}>{t('install.promptLong')}</Text>
+      <Text color={props.theme.muted as any}>{t('common.examples')}</Text>
       <Text color={props.theme.muted as any}>  bartowski/Llama-3.2-3B-Instruct-GGUF</Text>
       <Text color={props.theme.muted as any}>  https://huggingface.co/HauhauCS/Gemma-4-E2B-Uncensored-HauhauCS-Aggressive</Text>
       <Box marginTop={1}>
-        <Text color={props.theme.primary as any}>URL / repo-id: </Text>
+        <Text color={props.theme.primary as any}>{t('install.urlLabel')} </Text>
         <TextInput
           value={stage.url}
           onChange={(v) => setStage({ kind: 'idle', url: v })}
@@ -117,7 +118,7 @@ export default function InstallTab(props: Props) {
       </Box>
       <Box marginTop={1}>
         <Text color={props.theme.muted as any}>
-          Hardware target: {props.hw.gpuName ?? 'no GPU'} · {props.hw.vramMiB} MiB VRAM · {props.hw.ramMiB} MiB RAM
+          {t('install.hardwareTarget')} {props.hw.gpuName ?? 'no GPU'} · {props.hw.vramMiB} MiB VRAM · {props.hw.ramMiB} MiB RAM
         </Text>
       </Box>
     </Box>

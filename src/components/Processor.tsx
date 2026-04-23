@@ -11,6 +11,7 @@ import { ollamaCreate } from '../infra/ollama.js';
 import { formatBytes, formatEta, formatRate, progressBar } from '../ui/format.js';
 import { icon } from '../ui/icons.js';
 import { recordInstallation } from '../infra/settings.js';
+import { t } from '../ui/i18n.js';
 
 export interface InstalledModel {
   tag: string;
@@ -161,7 +162,7 @@ export default function Processor(props: Props) {
   if (idx >= plans.length) {
     return (
       <Box>
-        <Text color="green">{icon.tick} All items processed.</Text>
+        <Text color="green">{icon.tick} {t('processor.allDone')}</Text>
       </Box>
     );
   }
@@ -175,7 +176,7 @@ export default function Processor(props: Props) {
   return (
     <Box flexDirection="column">
       <Text>
-        <Text bold>Processing </Text>
+        <Text bold>{t('processor.processing')} </Text>
         <Text color="cyan">[{idx + 1}/{plans.length}]</Text>
         <Text> {plan.quant.quant} → {plan.tag}</Text>
       </Text>
@@ -183,28 +184,28 @@ export default function Processor(props: Props) {
         <Box>
           <Text color="cyan"><Spinner type="dots" /> </Text>
           <Text>
-            Download [{progressBar(ratio)}] {(ratio * 100).toFixed(1)}% · {formatBytes(received)}
-            {total > 0 ? ` / ${formatBytes(total)}` : ''} @ {formatRate(rate)} · ETA {formatEta(eta)}
+            {t('processor.download')} [{progressBar(ratio)}] {(ratio * 100).toFixed(1)}% · {formatBytes(received)}
+            {total > 0 ? ` / ${formatBytes(total)}` : ''} @ {formatRate(rate)} · {t('processor.eta')} {formatEta(eta)}
           </Text>
         </Box>
       )}
       {step === 'reusing' && (
-        <Text color="green">{icon.circleDouble} Reusing existing GGUF file on disk.</Text>
+        <Text color="green">{icon.circleDouble} {t('processor.reusing')}</Text>
       )}
       {step === 'writing-modelfile' && (
-        <Text color="yellow"><Spinner type="dots" /> Writing Modelfile...</Text>
+        <Text color="yellow"><Spinner type="dots" /> {t('processor.writingModelfile')}</Text>
       )}
       {step === 'creating-ollama' && (
-        <Text color="magenta"><Spinner type="dots" /> ollama create {plan.tag} ...</Text>
+        <Text color="magenta"><Spinner type="dots" /> {t('processor.creating', { tag: plan.tag })}</Text>
       )}
       {installed.length > 0 && (
         <Box flexDirection="column" marginTop={1}>
-          <Text color="gray">Done so far:</Text>
+          <Text color="gray">{t('processor.doneSoFar')}</Text>
           {installed.map((m, i) => (
             <Text key={i} color={m.skipped ? 'gray' : 'green'}>
               {m.skipped ? `  ${icon.cross} ` : `  ${icon.tick} `}{m.tag}
-              {m.reusedFile && !m.skipped ? ' (reused file)' : ''}
-              {m.skipped ? ' (skipped)' : ''}
+              {m.reusedFile && !m.skipped ? ` ${t('processor.reusedFile')}` : ''}
+              {m.skipped ? ` ${t('processor.skippedSuffix')}` : ''}
             </Text>
           ))}
         </Box>

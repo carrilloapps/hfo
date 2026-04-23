@@ -4,6 +4,7 @@ import TextInput from 'ink-text-input';
 import { readdir, mkdir, rm, stat } from 'node:fs/promises';
 import { join, parse, resolve } from 'node:path';
 import { icon } from '../ui/icons.js';
+import { t } from '../ui/i18n.js';
 
 interface Props {
   initialPath: string;
@@ -116,11 +117,11 @@ export default function FileBrowser({ initialPath, onSelect, onCancel, defaultFo
         <Text color="white">{cwd}</Text>
       </Box>
       <Text color="gray">
-        ↑↓ move · → / Enter open · ← back · S select this · N new folder · D delete · Esc cancel
+        {t('filebrowser.hints', { up: icon.arrowUp, down: icon.arrowDown, left: icon.arrowLeft, right: icon.arrowRight })}
       </Text>
 
       <Box flexDirection="column" marginTop={1} borderStyle="single" borderColor="gray" paddingX={1}>
-        {visible.length === 0 && <Text color="gray">(empty folder)</Text>}
+        {visible.length === 0 && <Text color="gray">{t('filebrowser.empty')}</Text>}
         {visible.map((entry, i) => {
           const idx = i + scroll;
           const isCursor = idx === cursor;
@@ -134,7 +135,7 @@ export default function FileBrowser({ initialPath, onSelect, onCancel, defaultFo
         })}
         {entries.length > MAX_VISIBLE && (
           <Text color="gray">
-            — showing {scroll + 1}-{Math.min(scroll + MAX_VISIBLE, entries.length)} of {entries.length} —
+            {t('filebrowser.showing', { from: scroll + 1, to: Math.min(scroll + MAX_VISIBLE, entries.length), total: entries.length })}
           </Text>
         )}
       </Box>
@@ -142,10 +143,10 @@ export default function FileBrowser({ initialPath, onSelect, onCancel, defaultFo
       {mode.kind === 'new-folder' && (
         <Box flexDirection="column" marginTop={1}>
           {defaultFolderName && (
-            <Text color="gray">Suggested name preloaded — edit or press Enter to accept.</Text>
+            <Text color="gray">{t('filebrowser.suggested')}</Text>
           )}
           <Box>
-            <Text color="yellow">New folder name: </Text>
+            <Text color="yellow">{t('filebrowser.newFolder')} </Text>
             <TextInput
               value={mode.value}
             onChange={(v) => setMode({ kind: 'new-folder', value: v })}
@@ -174,14 +175,14 @@ export default function FileBrowser({ initialPath, onSelect, onCancel, defaultFo
 
       {mode.kind === 'confirm-delete' && (
         <Box marginTop={1}>
-          <Text color="red">{icon.warning} Delete folder "{mode.target}" recursively? (y/N)</Text>
+          <Text color="red">{icon.warning} {t('filebrowser.confirmDelete', { name: mode.target })}</Text>
         </Box>
       )}
 
       {mode.kind === 'error' && (
         <Box marginTop={1}>
           <Text color="red">{icon.cross} {mode.message}  </Text>
-          <Text color="gray">(Enter to continue)</Text>
+          <Text color="gray">{t('common.enterContinue')}</Text>
         </Box>
       )}
     </Box>

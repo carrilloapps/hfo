@@ -4,6 +4,7 @@ import type { HardwareProfile } from '../core/hardware.js';
 import { scoreColor } from '../core/scoring.js';
 import { formatBytes } from '../ui/format.js';
 import { icon } from '../ui/icons.js';
+import { t } from '../ui/i18n.js';
 
 interface Props {
   hw: HardwareProfile;
@@ -17,32 +18,32 @@ export default function HardwareReport({ hw, repoId, repoScore, avgScore, quantC
   return (
     <Box flexDirection="column">
       <Box borderStyle="round" borderColor="gray" paddingX={1} flexDirection="column">
-        <Text bold color="cyan">Hardware</Text>
+        <Text bold color="cyan">{t('hardwareReport.hardware')}</Text>
         <Text>
-          GPU: <Text color="white">{hw.gpuName ?? 'none detected'}</Text>
-          {hw.vramMiB > 0 && <Text color="gray">  ·  VRAM {formatBytes(hw.vramMiB * 1024 * 1024)}</Text>}
+          {t('hardwareReport.gpu')}: <Text color="white">{hw.gpuName ?? t('hardwareReport.noneDetected')}</Text>
+          {hw.vramMiB > 0 && <Text color="gray">  ·  {t('hardwareReport.vram')} {formatBytes(hw.vramMiB * 1024 * 1024)}</Text>}
         </Text>
         <Text>
-          RAM: <Text color="white">{formatBytes(hw.ramMiB * 1024 * 1024)}</Text>
-          <Text color="gray">  ·  CPU {hw.cpuCores} cores  ·  OS {hw.platform}</Text>
+          {t('hardwareReport.ram')}: <Text color="white">{formatBytes(hw.ramMiB * 1024 * 1024)}</Text>
+          <Text color="gray">  ·  {t('hardwareReport.cpu')} {t('hardwareReport.cores', { n: hw.cpuCores })}  ·  {t('hardwareReport.os')} {hw.platform}</Text>
         </Text>
       </Box>
       <Box borderStyle="round" borderColor="cyan" paddingX={1} flexDirection="column" marginTop={1}>
-        <Text bold color="cyan">Compatibility for <Text color="white">{repoId}</Text></Text>
+        <Text bold color="cyan">{t('hardwareReport.compatibilityFor')} <Text color="white">{repoId}</Text></Text>
         <Text>
-          Best quant:{' '}
+          {t('hardwareReport.bestQuant')}{' '}
           <Text color={scoreColor(repoScore)} bold>
             {repoScore}/100
           </Text>
-          <Text color="gray">  ·  Avg across {quantCount} variants: </Text>
+          <Text color="gray">  ·  {t('hardwareReport.avgAcross', { n: quantCount })} </Text>
           <Text color={scoreColor(avgScore)}>{avgScore}/100</Text>
         </Text>
         <Text color="gray">
           {repoScore >= 80
-            ? `${icon.tick} This model runs great on your hardware.`
+            ? `${icon.tick} ${t('hardwareReport.great')}`
             : repoScore >= 55
-              ? `${icon.warning} Runnable with partial offload — pick a lower quant for best throughput.`
-              : `${icon.cross} Marginal fit. Consider a smaller model or accept slow inference.`}
+              ? `${icon.warning} ${t('hardwareReport.partial')}`
+              : `${icon.cross} ${t('hardwareReport.marginal')}`}
         </Text>
       </Box>
     </Box>

@@ -3,6 +3,7 @@ import { Box, Text } from 'ink';
 import Spinner from 'ink-spinner';
 import { APP } from '../infra/about.js';
 import { icon } from '../ui/icons.js';
+import { t } from '../ui/i18n.js';
 import type { Theme } from '../ui/theme.js';
 
 /**
@@ -35,11 +36,12 @@ export interface BootScreenProps {
 
 export default function BootScreen({
   theme,
-  message = 'Initializing',
+  message,
   detail,
   spinner = true,
   tone = 'accent',
 }: BootScreenProps) {
+  const statusMessage = message ?? t('boot.initializing');
   const logoColor =
     tone === 'primary' ? theme.primary :
     tone === 'muted'   ? theme.muted   :
@@ -50,17 +52,17 @@ export default function BootScreen({
         <Text key={i} color={logoColor as any} bold>{line}</Text>
       ))}
       <Box marginTop={1}>
-        <Text bold color={theme.text as any}>hfo</Text>
+        <Text bold color={theme.text as any}>{APP.binary}</Text>
         <Text color={theme.muted as any}>  v{APP.version}  ·  {APP.license}  ·  {APP.author.name}</Text>
       </Box>
       <Box marginTop={1}>
         {spinner ? (
           <>
             <Text color={theme.primary as any}><Spinner type="dots" /></Text>
-            <Text color={theme.muted as any}>  {message}</Text>
+            <Text color={theme.muted as any}>  {statusMessage}</Text>
           </>
         ) : (
-          <Text color={theme.muted as any}>{icon.tick}  {message}</Text>
+          <Text color={theme.muted as any}>{icon.tick}  {statusMessage}</Text>
         )}
       </Box>
       {detail && (

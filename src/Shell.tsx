@@ -122,7 +122,7 @@ export default function Shell(props: Props) {
       const url = APP.author.url || APP.homepage;
       if (url) {
         void openUrl(url);
-        setFlash(`Opened ${url}`);
+        setFlash(t('header.opened', { url }));
       }
     }
   });
@@ -148,14 +148,14 @@ export default function Shell(props: Props) {
   if (closing) {
     return (
       <Box flexDirection="column" width={cols} height={rows} alignItems="center" justifyContent="center">
-        <BootScreen theme={theme} message="Goodbye." spinner={false} tone="muted" />
+        <BootScreen theme={theme} message={t('boot.goodbye')} spinner={false} tone="muted" />
       </Box>
     );
   }
   if (hw == null || ollama == null || settings == null) {
     return (
       <Box flexDirection="column" width={cols} height={rows} alignItems="center" justifyContent="center">
-        <BootScreen theme={theme} message={bootStep} detail="Preparing the workspace…" />
+        <BootScreen theme={theme} message={bootStep} detail={t('boot.preparing')} />
       </Box>
     );
   }
@@ -242,7 +242,7 @@ function Header({
         {authorLink && <Text color={theme.muted as any}> ({authorLink})</Text>}
         {hw && (
           <Text color={theme.muted as any}>
-            {'  '}· {hw.gpuName?.replace(/NVIDIA GeForce /, '') ?? 'no GPU'}
+            {'  '}· {hw.gpuName?.replace(/NVIDIA GeForce /, '') ?? t('header.noGpu')}
             {hw.vramMiB > 0 ? ` · ${formatBytes(hw.vramMiB * 1024 * 1024)} VRAM` : ''} · {formatBytes(hw.ramMiB * 1024 * 1024)} RAM · {hw.cpuCores}c
           </Text>
         )}
@@ -299,7 +299,7 @@ function Footer({
   theme: ReturnType<typeof getTheme>;
 }) {
   if (flash) return <Text color={theme.success as any}>{flash}</Text>;
-  if (installLocked) return <Text color={theme.warning as any}>Install flow has focus — use its keys until it completes or cancels.</Text>;
+  if (installLocked) return <Text color={theme.warning as any}>{t('footer.installLocked')}</Text>;
   const hints: Record<TabKey, string> = {
     dashboard: t('hints.dashboard.grid'),
     models: t('hints.models'),

@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Box, Text, useInput } from 'ink';
 import TextInput from 'ink-text-input';
 import type { ResolvedParams } from '../core/plan.js';
+import { t } from '../ui/i18n.js';
+import { icon } from '../ui/icons.js';
 
 interface Row {
   key: keyof ResolvedParams;
@@ -74,7 +76,7 @@ export default function ParamsEditor({ params, cardKeys, onConfirm, onSkip }: Pr
     return (
       <Box flexDirection="column">
         <Text bold>
-          Editing <Text color="cyan">{row.label}</Text>
+          {t('params.editingPrefix')} <Text color="cyan">{row.label}</Text>
         </Text>
         <Text color="gray">{row.hint}</Text>
         <Box marginTop={1}>
@@ -99,8 +101,8 @@ export default function ParamsEditor({ params, cardKeys, onConfirm, onSkip }: Pr
 
   return (
     <Box flexDirection="column">
-      <Text bold>Modelfile parameters (pre-filled from hardware + HF model card)</Text>
-      <Text color="gray">↑↓ nav · Enter/E edit · R reset · S save · Esc/Q skip (use defaults)</Text>
+      <Text bold>{t('params.title')}</Text>
+      <Text color="gray">{t('params.hint', { up: icon.arrowUp, down: icon.arrowDown })}</Text>
       <Box flexDirection="column" marginTop={1} borderStyle="single" borderColor="gray" paddingX={1}>
         {rows.map((row, i) => {
           const v = values[row.key];
@@ -114,7 +116,7 @@ export default function ParamsEditor({ params, cardKeys, onConfirm, onSkip }: Pr
               </Text>
               <Text color="white">= </Text>
               <Text color={row.fromCard ? 'green' : 'yellow'}>
-                {display === '' ? '(auto)' : display}
+                {display === '' ? t('params.autoValue') : display}
               </Text>
               {row.fromCard && <Text color="green"> ★</Text>}
               <Text color="gray">   {row.hint}</Text>
@@ -122,7 +124,7 @@ export default function ParamsEditor({ params, cardKeys, onConfirm, onSkip }: Pr
           );
         })}
       </Box>
-      <Text color="gray">★ = value taken from the model's HF README</Text>
+      <Text color="gray">{t('params.fromCardLegend')}</Text>
     </Box>
   );
 }

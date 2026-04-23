@@ -4,6 +4,7 @@ import Spinner from 'ink-spinner';
 import type { InstallPlan } from '../infra/ollama.js';
 import { checkOllama, planInstall, runInstall } from '../infra/ollama.js';
 import { icon } from '../ui/icons.js';
+import { t } from '../ui/i18n.js';
 
 interface Props {
   missing: 'no-binary' | 'no-server';
@@ -109,14 +110,14 @@ export default function OllamaInstaller({ missing, onReady, onSkip, onRestartOll
   if (stage.kind === 'ask-binary') {
     return (
       <Box flexDirection="column" borderStyle="double" borderColor="red" paddingX={1}>
-        <Text color="red" bold>{icon.warning} Ollama is not installed.</Text>
+        <Text color="red" bold>{icon.warning} {t('ollamaInstaller.notInstalled')}</Text>
         <Text />
-        <Text>runllama can install it for you using <Text color="cyan">{plan.method}</Text>:</Text>
+        <Text>{t('ollamaInstaller.canInstall', { method: plan.method })}</Text>
         <Text color="cyan">  {plan.humanCommand}</Text>
         <Text color="gray">{plan.note}</Text>
-        <Text color="gray">Fallback: {plan.fallbackUrl}</Text>
+        <Text color="gray">{t('ollamaInstaller.fallback')} {plan.fallbackUrl}</Text>
         <Text />
-        <Text>Install now? <Text color="green">[Y]</Text> / <Text color="red">[N] skip</Text></Text>
+        <Text>{t('ollamaInstaller.installNow')} <Text color="green">[Y]</Text> / <Text color="red">{t('ollamaInstaller.skipOption')}</Text></Text>
       </Box>
     );
   }
@@ -125,10 +126,10 @@ export default function OllamaInstaller({ missing, onReady, onSkip, onRestartOll
     return (
       <Box flexDirection="column">
         <Text color="cyan">
-          <Spinner type="dots" /> Installing Ollama via {stage.plan.method}... (this can take 1-3 minutes)
+          <Spinner type="dots" /> {t('ollamaInstaller.installing', { method: stage.plan.method })}
         </Text>
         <Box flexDirection="column" borderStyle="single" borderColor="gray" paddingX={1} marginTop={1}>
-          {log.length === 0 && <Text color="gray">(no output yet)</Text>}
+          {log.length === 0 && <Text color="gray">{t('ollamaInstaller.noOutput')}</Text>}
           {log.map((line, i) => (
             <Text key={i} color="gray">{line}</Text>
           ))}
@@ -140,11 +141,11 @@ export default function OllamaInstaller({ missing, onReady, onSkip, onRestartOll
   if (stage.kind === 'install-failed') {
     return (
       <Box flexDirection="column">
-        <Text color="red">{icon.cross} Install failed (exit {stage.exitCode}).</Text>
-        <Text>Try manually:</Text>
+        <Text color="red">{icon.cross} {t('ollamaInstaller.failed', { code: stage.exitCode })}</Text>
+        <Text>{t('ollamaInstaller.tryManually')}</Text>
         <Text color="cyan">  {stage.plan.humanCommand}</Text>
-        <Text color="gray">Or download from: {stage.plan.fallbackUrl}</Text>
-        <Text color="gray">(Enter to exit)</Text>
+        <Text color="gray">{t('ollamaInstaller.orDownload')} {stage.plan.fallbackUrl}</Text>
+        <Text color="gray">{t('common.enterContinue')}</Text>
       </Box>
     );
   }
@@ -153,7 +154,7 @@ export default function OllamaInstaller({ missing, onReady, onSkip, onRestartOll
     return (
       <Box>
         <Text color="cyan">
-          <Spinner type="dots" /> Verifying the install (checking `ollama --version` and server reachability)...
+          <Spinner type="dots" /> {t('ollamaInstaller.verifying')}
         </Text>
       </Box>
     );
@@ -162,9 +163,9 @@ export default function OllamaInstaller({ missing, onReady, onSkip, onRestartOll
   if (stage.kind === 'asking-start-server') {
     return (
       <Box flexDirection="column" borderStyle="round" borderColor="yellow" paddingX={1}>
-        <Text color="yellow" bold>{icon.warning} Ollama server is not responding.</Text>
-        <Text>Binary is installed but the API at http://127.0.0.1:11434 is unreachable.</Text>
-        <Text>Start / restart it now? <Text color="green">[Y]</Text> / <Text color="red">[N] skip</Text></Text>
+        <Text color="yellow" bold>{icon.warning} {t('ollamaInstaller.serverDown')}</Text>
+        <Text>{t('ollamaInstaller.binaryPresent')}</Text>
+        <Text>{t('ollamaInstaller.startNow')} <Text color="green">[Y]</Text> / <Text color="red">{t('ollamaInstaller.skipOption')}</Text></Text>
       </Box>
     );
   }
@@ -173,7 +174,7 @@ export default function OllamaInstaller({ missing, onReady, onSkip, onRestartOll
     return (
       <Box>
         <Text color="cyan">
-          <Spinner type="dots" /> Starting Ollama server...
+          <Spinner type="dots" /> {t('ollamaInstaller.starting')}
         </Text>
       </Box>
     );
@@ -183,7 +184,7 @@ export default function OllamaInstaller({ missing, onReady, onSkip, onRestartOll
     return (
       <Box flexDirection="column">
         <Text color="red">{icon.cross} {stage.reason}</Text>
-        <Text color="gray">(Enter to exit)</Text>
+        <Text color="gray">{t('common.enterContinue')}</Text>
       </Box>
     );
   }

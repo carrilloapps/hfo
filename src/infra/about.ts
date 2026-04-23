@@ -1,12 +1,7 @@
-import { createRequire } from 'node:module';
+import { readFileSync, existsSync } from 'node:fs';
+import { dirname, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-const require = createRequire(import.meta.url);
-
-/**
- * Static metadata read from the project's package.json at load time. Bundled
- * as a dedicated module so every consumer (header, Help tab, CLI --version,
- * etc.) sees the same canonical values.
- */
 interface PkgShape {
   name?: string;
   version?: string;
@@ -19,13 +14,30 @@ interface PkgShape {
   bin?: Record<string, string>;
 }
 
-const pkg: PkgShape = (() => {
-  try {
-    return require('../package.json') as PkgShape;
-  } catch {
-    return {};
+function findPackageJson(): PkgShape {
+  const here = dirname(fileURLToPath(import.meta.url));
+  let dir = here;
+  for (let i = 0; i < 6; i++) {
+    const candidate = resolve(dir, 'package.json');
+    if (existsSync(candidate)) {
+      try {
+        const raw = readFileSync(candidate, 'utf8');
+        const parsed = JSON.parse(raw) as PkgShape;
+        if (parsed && typeof parsed === 'object' && (parsed.name || parsed.version)) {
+          return parsed;
+        }
+      } catch {
+        // keep walking — unreadable JSON at this level doesn't mean we should stop
+      }
+    }
+    const parent = dirname(dir);
+    if (parent === dir) break;
+    dir = parent;
   }
-})();
+  return {};
+}
+
+const pkg: PkgShape = findPackageJson();
 
 function normalizeAuthor(a: PkgShape['author']) {
   if (!a) return { name: 'unknown', email: undefined as string | undefined, url: undefined as string | undefined };

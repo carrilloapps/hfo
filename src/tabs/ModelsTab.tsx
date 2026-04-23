@@ -86,9 +86,9 @@ export default function ModelsTab({ theme, onFlash, onLaunch }: Props) {
     try {
       await execa('ollama', ['rm', tag]);
       await forgetInstallation(tag);
-      onFlash(`Removed ${tag}`);
+      onFlash(t('models.flash.removed', { tag }));
     } catch (err) {
-      onFlash(`Failed to remove: ${err instanceof Error ? err.message : err}`);
+      onFlash(t('models.flash.removeFailed', { error: err instanceof Error ? err.message : String(err) }));
     }
     setMode({ kind: 'list' });
     refresh();
@@ -106,7 +106,7 @@ export default function ModelsTab({ theme, onFlash, onLaunch }: Props) {
       await forgetInstallation(tag);
       onFlash(`${t('models.deepDelete.done')} (${install.dir})`);
     } catch (err) {
-      onFlash(`Failed: ${err instanceof Error ? err.message : err}`);
+      onFlash(t('models.flash.failed', { error: err instanceof Error ? err.message : String(err) }));
     }
     setMode({ kind: 'list' });
     refresh();
@@ -119,7 +119,7 @@ export default function ModelsTab({ theme, onFlash, onLaunch }: Props) {
       const result = await reinstallInstallation(install, hw);
       onFlash(
         result.modelfileGenerated
-          ? `${t('models.reinstall.done')} · ${result.tag} · Modelfile generated`
+          ? `${t('models.reinstall.done')} · ${result.tag} · ${t('models.reinstall.modelfileGenerated')}`
           : `${t('models.reinstall.done')} · ${result.tag}`,
       );
     } catch (err) {
@@ -182,7 +182,7 @@ export default function ModelsTab({ theme, onFlash, onLaunch }: Props) {
       setMode({ kind: 'confirm-delete', row: activeRow });
     } else if (input === 'r' || input === 'R') {
       refresh();
-      onFlash('Refreshed');
+      onFlash(t('models.flash.refreshed'));
     } else if (input === 'l' || input === 'L') {
       if (!activeRow) return;
       const name = activeRow.kind === 'installed' ? activeRow.model.name : activeRow.install.tag;
@@ -193,14 +193,14 @@ export default function ModelsTab({ theme, onFlash, onLaunch }: Props) {
       if (activeRow?.kind === 'orphan' && (activeRow.inspection.kind === 'ready' || activeRow.inspection.kind === 'needs-generation')) {
         await reinstall(activeRow.install);
       } else {
-        onFlash('Select an orphan row (Available section) to reinstall.');
+        onFlash(t('models.flash.selectOrphan'));
       }
     } else if (input === 'b' || input === 'B') {
       if (!activeRow) return;
       if (activeRow.kind === 'installed') {
         const i = activeRow.install;
         if (i) await backup({ tag: i.tag, dir: i.dir, repoId: i.repoId, quant: i.quant });
-        else onFlash('This model was not installed via hfo — no directory known to back up.');
+        else onFlash(t('models.flash.noInstallRecord'));
       } else {
         const i = activeRow.install;
         await backup({ tag: i.tag, dir: i.dir, repoId: i.repoId, quant: i.quant });
@@ -327,21 +327,21 @@ export default function ModelsTab({ theme, onFlash, onLaunch }: Props) {
       {mode.kind === 'confirm-deep-delete' && (
         <Box flexDirection="column" marginTop={1} borderStyle="round" borderColor={theme.danger as any} paddingX={1}>
           <Text color={theme.danger as any} bold>{icon.warning} {t('models.deepDelete.title')}</Text>
-          <Text color={theme.text as any}>Tag: <Text bold>{mode.row.kind === 'installed' ? mode.row.model.name : mode.row.install.tag}</Text></Text>
+          <Text color={theme.text as any}>{t('models.deepDelete.tag')} <Text bold>{mode.row.kind === 'installed' ? mode.row.model.name : mode.row.install.tag}</Text></Text>
           {mode.install ? (
             <>
-              <Text color={theme.text as any}>Directory: <Text bold>{mode.install.dir}</Text></Text>
-              <Text color={theme.muted as any}>Repo: {mode.install.repoId}  ·  Quant: {mode.install.quant}  ·  Installed {mode.install.installedAt.slice(0, 10)}</Text>
+              <Text color={theme.text as any}>{t('models.deepDelete.dir')} <Text bold>{mode.install.dir}</Text></Text>
+              <Text color={theme.muted as any}>{t('models.deepDelete.meta', { repo: mode.install.repoId, quant: mode.install.quant, date: mode.install.installedAt.slice(0, 10) })}</Text>
             </>
           ) : (
             <Text color={theme.warning as any}>{t('models.deepDelete.noRecord')}</Text>
           )}
-          <Text color={theme.muted as any}>(y confirm / N cancel)</Text>
+          <Text color={theme.muted as any}>{t('models.deepDelete.confirmHint')}</Text>
         </Box>
       )}
       {mode.kind === 'deleting' && (
         <Text color={theme.warning as any}>
-          <Spinner type="dots" /> {mode.deep ? 'Removing tag + directory' : 'Removing tag'}: {mode.tag}
+          <Spinner type="dots" /> {mode.deep ? t('models.removing.tagDir') : t('models.removing.tag')}: {mode.tag}
         </Text>
       )}
       {mode.kind === 'reinstalling' && (

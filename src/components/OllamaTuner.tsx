@@ -4,6 +4,7 @@ import Spinner from 'ink-spinner';
 import type { HardwareProfile } from '../core/hardware.js';
 import { buildEnvProfile, persistEnv, restartOllama, type PersistResult } from '../infra/ollama.js';
 import { icon } from '../ui/icons.js';
+import { t } from '../ui/i18n.js';
 
 interface Props {
   hw: HardwareProfile;
@@ -59,8 +60,8 @@ export default function OllamaTuner({ hw, onDone, onSkip }: Props) {
   if (stage.kind === 'ask') {
     return (
       <Box flexDirection="column" borderStyle="round" borderColor="cyan" paddingX={1}>
-        <Text bold color="cyan">Tune Ollama to ~90% of your hardware capacity?</Text>
-        <Text color="gray">Persists these env vars system-wide and restarts Ollama:</Text>
+        <Text bold color="cyan">{t('ollamaTuner.title')}</Text>
+        <Text color="gray">{t('ollamaTuner.explain')}</Text>
         <Box flexDirection="column" marginTop={1}>
           {entries.map(([k, v]) => (
             <Text key={k}>
@@ -69,19 +70,25 @@ export default function OllamaTuner({ hw, onDone, onSkip }: Props) {
           ))}
         </Box>
         <Text />
-        <Text color="gray">Flash attention + q8 KV cache reduce VRAM; keep-alive pins the model in memory;</Text>
-        <Text color="gray">parallel/loaded-models sized to your {hw.vramMiB} MiB VRAM to avoid OOM.</Text>
+        <Text color="gray">{t('ollamaTuner.flashAttn')}</Text>
+        <Text color="gray">{t('ollamaTuner.sized', { vram: hw.vramMiB })}</Text>
         <Text />
-        <Text>Apply now? <Text color="green">[Y]</Text> / <Text color="red">[N] skip</Text></Text>
+        <Text>{t('ollamaTuner.applyPrompt')} <Text color="green">[Y]</Text> / <Text color="red">{t('ollamaInstaller.skipOption')}</Text></Text>
       </Box>
     );
   }
 
   if (stage.kind === 'applying') {
+    const method =
+      process.platform === 'win32'
+        ? t('tune.method.win')
+        : process.platform === 'darwin'
+          ? t('tune.method.mac')
+          : t('tune.method.linux');
     return (
       <Box>
         <Text color="cyan">
-          <Spinner type="dots" /> Persisting env vars ({process.platform === 'win32' ? 'setx' : process.platform === 'darwin' ? 'launchctl + rc file' : 'rc file + systemd override'})...
+          <Spinner type="dots" /> {t('ollamaTuner.applying', { method })}
         </Text>
       </Box>
     );
@@ -91,7 +98,7 @@ export default function OllamaTuner({ hw, onDone, onSkip }: Props) {
     return (
       <Box>
         <Text color="cyan">
-          <Spinner type="dots" /> Restarting Ollama so the new env takes effect...
+          <Spinner type="dots" /> {t('ollamaTuner.restarting')}
         </Text>
       </Box>
     );
@@ -101,7 +108,7 @@ export default function OllamaTuner({ hw, onDone, onSkip }: Props) {
     const failed = results.filter((r) => !r.applied);
     return (
       <Box flexDirection="column">
-        <Text color="green" bold>{icon.tick} Tuning applied.</Text>
+        <Text color="green" bold>{icon.tick} {t('ollamaTuner.done')}</Text>
         {results.map((r) => (
           <Text key={r.key} color={r.applied ? 'gray' : 'red'}>
             {r.applied ? `  ${icon.tick} ` : `  ${icon.cross} `}
@@ -110,9 +117,9 @@ export default function OllamaTuner({ hw, onDone, onSkip }: Props) {
           </Text>
         ))}
         {failed.length > 0 && (
-          <Text color="yellow">Some vars could not be persisted — you may need elevated privileges.</Text>
+          <Text color="yellow">{t('ollamaTuner.someFailed')}</Text>
         )}
-        <Text color="gray">(Enter to continue)</Text>
+        <Text color="gray">{t('common.enterContinue')}</Text>
       </Box>
     );
   }
