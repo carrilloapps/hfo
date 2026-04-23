@@ -79,7 +79,7 @@ export default function OllamaInstaller({ missing, onReady, onSkip, onRestartOll
         setStage({ kind: 'asking-start-server' });
       } else if (tries >= 20) {
         clearInterval(interval);
-        setStage({ kind: 'failed', reason: 'Binary still not detected after install. Open a new terminal and run `ollama --version` to verify.' });
+        setStage({ kind: 'failed', reason: t('ollamaInstaller.binaryNotDetected') });
       }
     }, 1500);
     return () => clearInterval(interval);
@@ -87,24 +87,30 @@ export default function OllamaInstaller({ missing, onReady, onSkip, onRestartOll
 
   useEffect(() => {
     if (stage.kind !== 'starting-server') return;
+    // Interval lives outside the IIFE so the effect's cleanup can clear it.
+    // Without this the interval would keep firing after the component unmounts.
+    let interval: ReturnType<typeof setInterval> | null = null;
+    let cancelled = false;
     (async () => {
       await onRestartOllama();
+      if (cancelled) return;
       let tries = 0;
-      const interval = setInterval(async () => {
+      interval = setInterval(async () => {
         tries++;
         const st = await checkOllama();
         if (st.status === 'ok') {
-          clearInterval(interval);
+          if (interval) clearInterval(interval);
           onReady();
         } else if (tries >= 15) {
-          clearInterval(interval);
-          setStage({
-            kind: 'failed',
-            reason: 'Server did not come up. Start Ollama from your OS (tray/app/systemd) and rerun runllama.',
-          });
+          if (interval) clearInterval(interval);
+          setStage({ kind: 'failed', reason: t('ollamaInstaller.serverNotUp') });
         }
       }, 1500);
     })();
+    return () => {
+      cancelled = true;
+      if (interval) clearInterval(interval);
+    };
   }, [stage.kind]);
 
   if (stage.kind === 'ask-binary') {

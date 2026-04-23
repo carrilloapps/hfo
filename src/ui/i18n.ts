@@ -324,7 +324,7 @@ const EN: Catalog = {
   'filebrowser.showing': '— showing {from}-{to} of {total} —',
 
   'ollamaInstaller.notInstalled': 'Ollama is not installed.',
-  'ollamaInstaller.canInstall': 'runllama can install it for you using {method}:',
+  'ollamaInstaller.canInstall': 'hfo can install it for you using {method}:',
   'ollamaInstaller.fallback': 'Fallback:',
   'ollamaInstaller.installNow': 'Install now?',
   'ollamaInstaller.skipOption': '[N] skip',
@@ -338,6 +338,8 @@ const EN: Catalog = {
   'ollamaInstaller.binaryPresent': 'Binary is installed but the API at http://127.0.0.1:11434 is unreachable.',
   'ollamaInstaller.startNow': 'Start / restart it now?',
   'ollamaInstaller.starting': 'Starting Ollama server...',
+  'ollamaInstaller.binaryNotDetected': 'Binary still not detected after install. Open a new terminal and run `ollama --version` to verify.',
+  'ollamaInstaller.serverNotUp': 'Server did not come up. Start Ollama from your OS (tray/app/systemd) and rerun hfo.',
 
   'ollamaTuner.title': 'Tune Ollama to ~90% of your hardware capacity?',
   'ollamaTuner.explain': 'Persists these env vars system-wide and restarts Ollama:',
@@ -699,6 +701,8 @@ const ES: Catalog = {
   'ollamaInstaller.binaryPresent': 'El binario está instalado pero la API en http://127.0.0.1:11434 no responde.',
   'ollamaInstaller.startNow': '¿Iniciar / reiniciar ahora?',
   'ollamaInstaller.starting': 'Iniciando servidor de Ollama...',
+  'ollamaInstaller.binaryNotDetected': 'El binario sigue sin detectarse tras la instalación. Abre una nueva terminal y ejecuta `ollama --version` para verificar.',
+  'ollamaInstaller.serverNotUp': 'El servidor no levantó. Inicia Ollama desde tu OS (tray/app/systemd) y vuelve a ejecutar hfo.',
 
   'ollamaTuner.title': '¿Ajustar Ollama al ~90% de la capacidad de tu equipo?',
   'ollamaTuner.explain': 'Persiste estas env vars a nivel sistema y reinicia Ollama:',
