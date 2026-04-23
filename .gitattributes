@@ -1,0 +1,15 @@
+# Cross-platform line endings — keep LF in the repo, let Git convert on checkout.
+* text=auto eol=lf
+
+# Binary-ish blobs
+*.png binary
+*.jpg binary
+*.ico binary
+*.gguf binary
+*.zip binary
+
+# Files that must stay LF on every platform (shell scripts, CI YAML, .bin shebangs)
+*.sh       text eol=lf
+*.yml      text eol=lf
+*.yaml     text eol=lf
+bin/*      text eol=lf

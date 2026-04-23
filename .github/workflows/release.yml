@@ -1,0 +1,86 @@
+name: Release
+
+on:
+  push:
+    tags: ['v*.*.*']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  # -----------------------------------------------------------------------
+  # Primary distribution channel. npm publish runs on Linux only; the
+  # published package is cross-OS (pure Node + @pkg of ink).
+  # -----------------------------------------------------------------------
+  npm-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          registry-url: https://registry.npmjs.org
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm typecheck
+      - run: pnpm lint
+      - run: pnpm test
+      - run: pnpm build
+      - run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+  # -----------------------------------------------------------------------
+  # Secondary distribution: standalone binaries per OS. Uses @yao-pkg/pkg
+  # which has known rough edges with ESM-first deps (ink, execa). The job
+  # is `continue-on-error: true` so a partial failure here never blocks the
+  # npm release — users can always fall back to `npm i -g hfo-cli`.
+  # -----------------------------------------------------------------------
+  binary:
+    needs: npm-publish
+    continue-on-error: true
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            target: node22-linux-x64
+            artifact: hfo-linux-x64
+          - os: ubuntu-latest
+            target: node22-linux-arm64
+            artifact: hfo-linux-arm64
+          - os: macos-latest
+            target: node22-macos-x64
+            artifact: hfo-macos-x64
+          - os: macos-latest
+            target: node22-macos-arm64
+            artifact: hfo-macos-arm64
+          - os: windows-latest
+            target: node22-win-x64
+            artifact: hfo-win-x64.exe
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+      - run: npm i -g @yao-pkg/pkg
+      - name: Build binary
+        shell: bash
+        run: |
+          mkdir -p dist-bin
+          pkg . --targets ${{ matrix.target }} --output dist-bin/${{ matrix.artifact }} || {
+            echo "::warning::pkg failed for ${{ matrix.target }} — ESM bundling is best-effort"
+            exit 0
+          }
+      - uses: softprops/action-gh-release@v2
+        if: hashFiles('dist-bin/*') != ''
+        with:
+          files: dist-bin/*
+          fail_on_unmatched_files: false

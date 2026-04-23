@@ -1,0 +1,12 @@
+src/
+node_modules/
+.github/
+.vscode/
+*.log
+*.tsbuildinfo
+tsconfig.json
+pnpm-lock.yaml
+.gitignore
+.npmignore
+CONTRIBUTING.md
+CHANGELOG.md

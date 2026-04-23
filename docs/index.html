@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>hfo — Hugging Face · Ollama, in your terminal</title>
+<meta name="description" content="A fullscreen terminal UI to discover, install, tune, back up, restore and launch Hugging Face GGUF models through Ollama — auto-tuned to your hardware." />
+<meta property="og:title" content="hfo — Hugging Face · Ollama in your terminal" />
+<meta property="og:description" content="Fullscreen TUI for local LLMs via Ollama. Auto-tuned to your hardware. Free, MIT, cross-OS." />
+<meta property="og:url" content="https://hfo.carrillo.app" />
+<meta property="og:type" content="website" />
+<meta name="theme-color" content="#0a0b0f" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='0.9em' font-size='88'%3E%23%3C/text%3E%3C/svg%3E" />
+<style>
+  :root {
+    --bg: #0a0b0f;
+    --bg-alt: #11131a;
+    --bg-raised: #171922;
+    --fg: #e7ecf3;
+    --muted: #8a92a5;
+    --primary: #6cb6ff;
+    --primary-dim: #2b5478;
+    --accent: #c6aaff;
+    --success: #5ed7a8;
+    --warning: #ffd766;
+    --danger: #ff7a7a;
+    --border: #262a35;
+    --mono: ui-monospace, "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace;
+    --sans: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, sans-serif;
+  }
+  @media (prefers-color-scheme: light) {
+    :root {
+      --bg: #ffffff;
+      --bg-alt: #f6f7fa;
+      --bg-raised: #ffffff;
+      --fg: #14161c;
+      --muted: #60677a;
+      --primary: #2d64b9;
+      --primary-dim: #cfdcf2;
+      --accent: #7d55d7;
+      --success: #1f9d6c;
+      --warning: #b4820a;
+      --danger: #c03b3b;
+      --border: #e4e7ee;
+    }
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    font-family: var(--sans);
+    background: var(--bg);
+    color: var(--fg);
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--primary); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  code, pre { font-family: var(--mono); }
+  pre {
+    background: var(--bg-alt);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 16px;
+    overflow-x: auto;
+    font-size: 13.5px;
+    margin: 0;
+  }
+  code { font-size: 0.92em; background: var(--bg-alt); padding: 0 6px; border-radius: 4px; border: 1px solid var(--border); }
+  pre code { background: none; border: 0; padding: 0; }
+
+  .container { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+
+  header.site {
+    position: sticky; top: 0; z-index: 10;
+    background: color-mix(in oklab, var(--bg) 85%, transparent);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+  header.site .row { display: flex; align-items: center; gap: 16px; height: 60px; }
+  header.site .brand { font-family: var(--mono); font-weight: 700; font-size: 18px; letter-spacing: -0.5px; }
+  header.site nav { margin-left: auto; display: flex; gap: 18px; font-size: 14px; }
+  header.site nav a { color: var(--muted); }
+  header.site nav a:hover { color: var(--fg); text-decoration: none; }
+
+  section { padding: 72px 0; }
+  section + section { border-top: 1px solid var(--border); }
+
+  .hero h1 { font-size: clamp(36px, 6vw, 56px); line-height: 1.1; margin: 0 0 18px; letter-spacing: -1.5px; }
+  .hero h1 .grad { background: linear-gradient(90deg, var(--primary), var(--accent)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .hero .sub { font-size: 19px; color: var(--muted); max-width: 720px; margin: 0 0 32px; }
+  .hero .cta { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+  .hero .pill { font-family: var(--mono); font-size: 14px; background: var(--bg-alt); border: 1px solid var(--border); padding: 10px 14px; border-radius: 8px; }
+  .badges { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 28px; }
+  .badges img { height: 20px; }
+
+  .grid {
+    display: grid; gap: 18px;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  }
+  .card { background: var(--bg-raised); border: 1px solid var(--border); border-radius: 12px; padding: 22px; }
+  .card h3 { margin: 0 0 8px; font-size: 16px; letter-spacing: -0.2px; color: var(--fg); }
+  .card p { margin: 0; color: var(--muted); font-size: 14.5px; }
+
+  h2 { font-size: 30px; letter-spacing: -0.8px; margin: 0 0 12px; }
+  .lede { color: var(--muted); margin: 0 0 36px; max-width: 680px; }
+
+  .table { width: 100%; border-collapse: collapse; font-size: 14.5px; }
+  .table th, .table td { text-align: left; padding: 12px 14px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  .table th { color: var(--muted); font-weight: 600; }
+  .table code { font-size: 13px; }
+
+  .cmd-table tr:hover { background: var(--bg-alt); }
+
+  footer.site { padding: 48px 0; color: var(--muted); font-size: 14px; border-top: 1px solid var(--border); }
+  footer.site .row { display: flex; flex-wrap: wrap; gap: 24px; align-items: center; justify-content: space-between; }
+  footer.site a { color: var(--muted); }
+  footer.site a:hover { color: var(--fg); }
+  footer.site .social { display: flex; flex-wrap: wrap; gap: 16px; }
+
+  .kbd { display: inline-block; border: 1px solid var(--border); background: var(--bg-alt); border-radius: 4px; padding: 1px 6px; font-family: var(--mono); font-size: 12.5px; }
+
+  .hl-ok { color: var(--success); }
+  .hl-warn { color: var(--warning); }
+  .hl-bad { color: var(--danger); }
+</style>
+</head>
+<body>
+
+<header class="site">
+  <div class="container row">
+    <span class="brand">hfo</span>
+    <nav>
+      <a href="#features">Features</a>
+      <a href="#install">Install</a>
+      <a href="#commands">Commands</a>
+      <a href="#keyboard">Keyboard</a>
+      <a href="#privacy">Privacy</a>
+      <a href="https://github.com/carrilloapps/hfo" target="_blank" rel="noreferrer">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="container">
+    <h1>Hugging Face · Ollama,<br /><span class="grad">in your terminal.</span></h1>
+    <p class="sub">
+      hfo is a fullscreen terminal UI that turns any Hugging Face repo URL into a running Ollama model — auto-tuned to your hardware.
+      Discover, install, tune, back up, restore, and launch integrations (Claude Code, Codex, Copilot CLI, OpenCode, Droid, Cline,
+      Hermes, Kimi, OpenClaw, Pi, VS Code) without leaving your shell.
+    </p>
+    <div class="cta">
+      <span class="pill">npm i -g hfo-cli</span>
+      <a class="pill" href="https://github.com/carrilloapps/hfo" target="_blank" rel="noreferrer">View on GitHub →</a>
+    </div>
+    <div class="badges">
+      <img alt="npm" src="https://img.shields.io/npm/v/hfo-cli.svg?style=flat" />
+      <img alt="license" src="https://img.shields.io/npm/l/hfo-cli.svg?style=flat" />
+      <img alt="node" src="https://img.shields.io/node/v/hfo-cli.svg?style=flat" />
+      <img alt="ci" src="https://github.com/carrilloapps/hfo/actions/workflows/ci.yml/badge.svg" />
+    </div>
+  </div>
+</section>
+
+<section id="features">
+  <div class="container">
+    <h2>What it does</h2>
+    <p class="lede">Everything that normally takes a dozen shell commands and a hand-written Modelfile — folded into one TUI that understands your rig.</p>
+    <div class="grid">
+      <div class="card"><h3>Fullscreen TUI</h3><p>Tab-based shell with a live dashboard (GPU / VRAM / RAM meters, loaded models, tier score). Alt-screen buffer preserves your scrollback on exit.</p></div>
+      <div class="card"><h3>Hardware-aware install</h3><p>Scores every GGUF quant in a repo against your VRAM, parses the HF model card for recommended temperature / top_p / ctx, synthesizes a tuned Modelfile, and registers with <code>ollama create</code>.</p></div>
+      <div class="card"><h3>Launch integrations</h3><p>One-key <span class="kbd">L</span> spawns any Ollama integration (Claude Code, Codex, Copilot CLI, OpenCode, Droid, Cline, Hermes, Kimi, OpenClaw, Pi, VS Code) using the selected model as the local backend.</p></div>
+      <div class="card"><h3>Backup · Restore</h3><p>Zip the model folder with level-9 compression, write a sidecar <code>metadata.json</code>, then restore with one command — regenerating the Modelfile if it's missing.</p></div>
+      <div class="card"><h3>Orphan reinstall</h3><p>Models removed from Ollama but still on disk surface as "available to reinstall". <span class="kbd">I</span> rebuilds the Modelfile from the GGUF alone using your hardware + HF card.</p></div>
+      <div class="card"><h3>Tune Ollama to 90%</h3><p>Side-by-side default / suggested / current view of <code>OLLAMA_FLASH_ATTENTION</code>, <code>OLLAMA_KV_CACHE_TYPE</code>, <code>OLLAMA_KEEP_ALIVE</code>, etc. Persists via setx · launchctl · systemd depending on OS.</p></div>
+      <div class="card"><h3>Themes &amp; i18n</h3><p>Seven built-in themes (dark, light, Dracula, Solarized, Nord, Monokai) and translations for 20 languages including English, Spanish, Chinese, Hindi, Arabic, Portuguese, Bengali, Russian, Japanese, German, French, Korean, and more.</p></div>
+      <div class="card"><h3>Headless commands</h3><p><code>--view</code>, <code>--list</code>, <code>--backup</code>, <code>--restore</code>, <code>--tune</code>, <code>--launch</code>, <code>--delete</code> let you script every TUI capability from CI, cron, or an editor plugin.</p></div>
+      <div class="card"><h3>Cross-OS, free, private</h3><p>Windows · macOS · Linux. Talks only to the public Hugging Face API and your local Ollama daemon. No telemetry, no accounts.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="install">
+  <div class="container">
+    <h2>Install</h2>
+    <p class="lede">Needs Node.js 20+. Ollama is optional — hfo can install it for you via winget / brew / the official script.</p>
+    <pre><code>npm i -g hfo-cli
+
+# Open the TUI
+hfo
+
+# Pre-fill the Install tab with a model
+hfo bartowski/Llama-3.2-3B-Instruct-GGUF</code></pre>
+  </div>
+</section>
+
+<section id="commands">
+  <div class="container">
+    <h2>Every capability, non-interactively</h2>
+    <p class="lede">Every TUI feature has a one-shot command equivalent that exits with a status code — ideal for scripts, CI, or editor integrations.</p>
+    <table class="table cmd-table">
+      <thead><tr><th>Command</th><th>What it does</th></tr></thead>
+      <tbody>
+        <tr><td><code>hfo</code></td><td>Open the fullscreen TUI</td></tr>
+        <tr><td><code>hfo --help</code> · <code>-h</code></td><td>Print the full flag reference</td></tr>
+        <tr><td><code>hfo --version</code></td><td>Print <code>hfo vX.Y.Z · MIT · José Carrillo · https://carrillo.app</code></td></tr>
+        <tr><td><code>hfo --view</code></td><td>Print hardware profile, capacity score, tier, hand-picked repos and pre-filtered HF search URLs</td></tr>
+        <tr><td><code>hfo --list</code></td><td>List installed models + orphaned GGUFs on disk</td></tr>
+        <tr><td><code>hfo --tune</code></td><td>Persist the ~90% capacity Ollama env profile + restart the daemon</td></tr>
+        <tr><td><code>hfo --backup &lt;tag&gt;</code></td><td>Create a <code>.zip</code> backup of the model's folder under <code>&lt;config&gt;/hfo/backups/&lt;ts&gt;/</code></td></tr>
+        <tr><td><code>hfo --restore &lt;zip&gt;</code></td><td>Extract a backup, regenerate the Modelfile if needed, re-register with Ollama</td></tr>
+        <tr><td><code>hfo --delete &lt;tag&gt; [--deep]</code></td><td>Remove the Ollama tag. With <code>--deep</code> also delete the on-disk folder</td></tr>
+        <tr><td><code>hfo --launch &lt;integration&gt;</code></td><td>Run <code>ollama launch &lt;integration&gt;</code> (claude · codex · copilot · opencode · droid · cline · hermes · kimi · openclaw · pi · vscode)</td></tr>
+        <tr><td><code>hfo --tab &lt;name&gt;</code></td><td>Open the TUI on a specific tab (dashboard · models · install · tune · help · settings)</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section id="keyboard">
+  <div class="container">
+    <h2>Keyboard reference</h2>
+    <p class="lede">Global bindings work on every tab. Tab-specific keys appear in the footer as you navigate.</p>
+    <table class="table">
+      <thead><tr><th>Scope</th><th>Keys</th><th>Action</th></tr></thead>
+      <tbody>
+        <tr><td>Global</td><td><span class="kbd">1</span>–<span class="kbd">6</span></td><td>Jump to a tab</td></tr>
+        <tr><td>Global</td><td><span class="kbd">Tab</span> · <span class="kbd">Shift+Tab</span></td><td>Cycle tabs</td></tr>
+        <tr><td>Global</td><td><span class="kbd">,</span></td><td>Open Settings</td></tr>
+        <tr><td>Global</td><td><span class="kbd">?</span></td><td>Open Help</td></tr>
+        <tr><td>Global</td><td><span class="kbd">Ctrl+H</span></td><td>Open author homepage</td></tr>
+        <tr><td>Global</td><td><span class="kbd">q</span> · <span class="kbd">Ctrl+C</span></td><td>Quit (restores scrollback)</td></tr>
+        <tr><td>Dashboard</td><td><span class="kbd">Alt+↑</span> · <span class="kbd">Alt+↓</span></td><td>Focus / cycle panels</td></tr>
+        <tr><td>Dashboard</td><td><span class="kbd">Esc</span> · <span class="kbd">b</span></td><td>Return to the 4-panel grid</td></tr>
+        <tr><td>Dashboard</td><td><span class="kbd">Enter</span></td><td>Open the selected link in your browser</td></tr>
+        <tr><td>Models</td><td><span class="kbd">L</span> · <span class="kbd">G</span></td><td>Launch integration · Launch menu with no preset</td></tr>
+        <tr><td>Models</td><td><span class="kbd">I</span></td><td>Reinstall an orphan (regenerates Modelfile if missing)</td></tr>
+        <tr><td>Models</td><td><span class="kbd">B</span></td><td>Create a .zip backup of the model folder</td></tr>
+        <tr><td>Models</td><td><span class="kbd">d</span> · <span class="kbd">Alt+d</span></td><td>Remove tag · Remove tag AND delete files</td></tr>
+        <tr><td>Tune</td><td><span class="kbd">↑↓</span> · <span class="kbd">←→</span> · <span class="kbd">E</span> · <span class="kbd">D</span> · <span class="kbd">S</span> · <span class="kbd">A</span></td><td>Nav · Cycle · Edit · Default · Suggested · Apply</td></tr>
+        <tr><td>Settings</td><td><span class="kbd">Enter</span></td><td>Open dropdown (themes / 20 languages, searchable)</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section id="privacy">
+  <div class="container">
+    <h2>Privacy &amp; cost</h2>
+    <p class="lede">hfo makes exactly two kinds of external requests — both to Hugging Face's public, unauthenticated API:</p>
+    <pre><code>GET https://huggingface.co/api/models/&lt;repo&gt;/tree/main
+GET https://huggingface.co/&lt;repo&gt;/resolve/main/&lt;file&gt;</code></pre>
+    <p style="margin-top: 16px; color: var(--muted);">
+      Everything else — <code>nvidia-smi</code>, <code>systeminformation</code>, <code>ollama ps</code>, <code>ollama create</code>, <code>ollama launch</code> — runs locally.
+      No telemetry. No accounts. No external calls beyond those two endpoints and (optionally, on your explicit request) the Ollama install script.
+      Gated or private repos use a standard <code>HF_TOKEN</code> environment variable or <code>--token</code> flag.
+    </p>
+  </div>
+</section>
+
+<footer class="site">
+  <div class="container row">
+    <div>
+      <strong>hfo</strong> · MIT · © 2026 <a href="https://carrillo.app" target="_blank" rel="noreferrer">José Carrillo</a>
+    </div>
+    <div class="social">
+      <a href="https://github.com/carrilloapps/hfo" target="_blank" rel="noreferrer">GitHub</a>
+      <a href="https://www.npmjs.com/package/hfo-cli" target="_blank" rel="noreferrer">npm</a>
+      <a href="https://linkedin.com/in/carrilloapps" target="_blank" rel="noreferrer">LinkedIn</a>
+      <a href="https://x.com/carrilloapps" target="_blank" rel="noreferrer">X</a>
+      <a href="https://dev.to/carrilloapps" target="_blank" rel="noreferrer">dev.to</a>
+      <a href="mailto:m@carrillo.app">Contact</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
