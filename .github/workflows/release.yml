@@ -79,7 +79,7 @@ jobs:
             echo "::warning::pkg failed for ${{ matrix.target }} — ESM bundling is best-effort"
             exit 0
           }
-      - uses: softprops/action-gh-release@v2
+      - uses: softprops/action-gh-release@v3
         if: hashFiles('dist-bin/*') != ''
         with:
           files: dist-bin/*
