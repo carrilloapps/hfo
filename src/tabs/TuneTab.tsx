@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { Box, Text, useInput } from 'ink';
 import Spinner from 'ink-spinner';
 import TextInput from 'ink-text-input';
-import type { HardwareProfile } from '../hardware.js';
+import type { HardwareProfile } from '../core/hardware.js';
 import {
   buildEnvProfile,
   defaultEnvProfile,
@@ -13,8 +13,8 @@ import {
   type EnvKey,
   type EnvProfile,
   type PersistResult,
-} from '../ollama.js';
-import { icon } from '../icons.js';
+} from '../infra/ollama.js';
+import { icon } from '../ui/icons.js';
 
 interface Props {
   hw: HardwareProfile;

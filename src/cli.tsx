@@ -4,8 +4,8 @@ import { render } from 'ink';
 import meow from 'meow';
 import { resolve } from 'node:path';
 import Shell from './Shell.js';
-import { loadSettings } from './settings.js';
-import { runLaunch, findTarget, type LaunchId } from './launch.js';
+import { loadSettings } from './infra/settings.js';
+import { runLaunch, findTarget, type LaunchId } from './core/launch.js';
 import type { LaunchSelection } from './components/LaunchMenu.js';
 import {
   cmdView,

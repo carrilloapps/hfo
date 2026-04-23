@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { THEMES, THEME_LIST, getTheme } from '../src/theme.js';
+import { THEMES, THEME_LIST, getTheme } from '../src/ui/theme.js';
 
 describe('theme registry', () => {
   it('lists at least the 7 named themes', () => {

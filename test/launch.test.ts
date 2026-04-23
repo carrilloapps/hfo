@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { LAUNCH_TARGETS, findTarget, buildLaunchArgs } from '../src/launch.js';
+import { LAUNCH_TARGETS, findTarget, buildLaunchArgs } from '../src/core/launch.js';
 
 describe('LAUNCH_TARGETS', () => {
   it('includes at least the 11 official integrations', () => {

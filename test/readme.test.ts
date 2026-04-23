@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { parseCardParams } from '../src/readme.js';
+import { parseCardParams } from '../src/core/readme.js';
 
 describe('parseCardParams', () => {
   it('extracts temperature / top_p / top_k', () => {

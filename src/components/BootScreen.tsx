@@ -1,9 +1,9 @@
 import React from 'react';
 import { Box, Text } from 'ink';
 import Spinner from 'ink-spinner';
-import { APP } from '../about.js';
-import { icon } from '../icons.js';
-import type { Theme } from '../theme.js';
+import { APP } from '../infra/about.js';
+import { icon } from '../ui/icons.js';
+import type { Theme } from '../ui/theme.js';
 
 /**
  * ASCII rendition of the logo mark: a rounded square containing three

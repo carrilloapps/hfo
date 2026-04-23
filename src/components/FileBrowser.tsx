@@ -3,7 +3,7 @@ import { Box, Text, useInput } from 'ink';
 import TextInput from 'ink-text-input';
 import { readdir, mkdir, rm, stat } from 'node:fs/promises';
 import { join, parse, resolve } from 'node:path';
-import { icon } from '../icons.js';
+import { icon } from '../ui/icons.js';
 
 interface Props {
   initialPath: string;

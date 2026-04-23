@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Text } from 'ink';
 import Spinner from 'ink-spinner';
-import { detectHardware, type HardwareProfile } from '../hardware.js';
-import { checkOllama } from '../ollama.js';
-import { hfSearchUrl, hfSearchUrlForKeyword, scoreHardware, tierFor, type CapacityTier, type PowerScore } from '../capacity.js';
-import { formatBytes } from '../format.js';
-import { scoreColor } from '../scoring.js';
-import { icon } from '../icons.js';
+import { detectHardware, type HardwareProfile } from '../core/hardware.js';
+import { checkOllama } from '../infra/ollama.js';
+import { hfSearchUrl, hfSearchUrlForKeyword, scoreHardware, tierFor, type CapacityTier, type PowerScore } from '../core/capacity.js';
+import { formatBytes } from '../ui/format.js';
+import { scoreColor } from '../core/scoring.js';
+import { icon } from '../ui/icons.js';
 
 interface Props {
   onExit: () => void;

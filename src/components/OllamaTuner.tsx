@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Text, useInput } from 'ink';
 import Spinner from 'ink-spinner';
-import type { HardwareProfile } from '../hardware.js';
-import { buildEnvProfile, persistEnv, restartOllama, type PersistResult } from '../ollama.js';
-import { icon } from '../icons.js';
+import type { HardwareProfile } from '../core/hardware.js';
+import { buildEnvProfile, persistEnv, restartOllama, type PersistResult } from '../infra/ollama.js';
+import { icon } from '../ui/icons.js';
 
 interface Props {
   hw: HardwareProfile;

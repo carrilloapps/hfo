@@ -3,14 +3,14 @@ import { Box, Text, useApp } from 'ink';
 import Spinner from 'ink-spinner';
 import { basename, join } from 'node:path';
 import { stat } from 'node:fs/promises';
-import { fetchRepoInfo, parseRepoId, type HfRepoInfo } from './hf.js';
-import { detectHardware, type HardwareProfile } from './hardware.js';
-import { checkOllama, ollamaList, restartOllama, type InstallStatus } from './ollama.js';
-import { scoreRepo, type QuantScore, type RepoScore } from './scoring.js';
-import { loadCardParams, type CardInfo } from './readme.js';
-import { buildDefaultParams, buildPlans, type PlannedInstall, type ResolvedParams } from './plan.js';
-import { suggestTag } from './modelfile.js';
-import { icon } from './icons.js';
+import { fetchRepoInfo, parseRepoId, type HfRepoInfo } from './core/hf.js';
+import { detectHardware, type HardwareProfile } from './core/hardware.js';
+import { checkOllama, ollamaList, restartOllama, type InstallStatus } from './infra/ollama.js';
+import { scoreRepo, type QuantScore, type RepoScore } from './core/scoring.js';
+import { loadCardParams, type CardInfo } from './core/readme.js';
+import { buildDefaultParams, buildPlans, type PlannedInstall, type ResolvedParams } from './core/plan.js';
+import { suggestTag } from './core/modelfile.js';
+import { icon } from './ui/icons.js';
 import HardwareReport from './components/HardwareReport.js';
 import MultiQuantPicker from './components/MultiQuantPicker.js';
 import FileBrowser from './components/FileBrowser.js';
@@ -21,7 +21,7 @@ import OllamaTuner from './components/OllamaTuner.js';
 import PlanReviewer from './components/PlanReviewer.js';
 import ParamsEditor from './components/ParamsEditor.js';
 import QuickConfirm, { type QuickAction } from './components/QuickConfirm.js';
-import { getTheme } from './theme.js';
+import { getTheme } from './ui/theme.js';
 
 type Phase =
   | { kind: 'probing' }

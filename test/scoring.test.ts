@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { scoreQuant, scoreRepo, scoreColor } from '../src/scoring.js';
-import type { HardwareProfile } from '../src/hardware.js';
-import type { HfFile } from '../src/hf.js';
+import { scoreQuant, scoreRepo, scoreColor } from '../src/core/scoring.js';
+import type { HardwareProfile } from '../src/core/hardware.js';
+import type { HfFile } from '../src/core/hf.js';
 
 const hw: HardwareProfile = {
   gpuName: 'RTX 3050',

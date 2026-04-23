@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { scoreHardware, tierFor, hfSearchUrl, hfSearchUrlForKeyword } from '../src/capacity.js';
-import type { HardwareProfile } from '../src/hardware.js';
+import { scoreHardware, tierFor, hfSearchUrl, hfSearchUrlForKeyword } from '../src/core/capacity.js';
+import type { HardwareProfile } from '../src/core/hardware.js';
 
 function hw(vram: number, ram: number, cores = 8): HardwareProfile {
   return { gpuName: vram > 0 ? 'GPU' : null, vramMiB: vram * 1024, ramMiB: ram * 1024, cpuCores: cores, platform: 'linux' };

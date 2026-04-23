@@ -2,15 +2,15 @@ import React, { useEffect, useState } from 'react';
 import { Box, Text } from 'ink';
 import Spinner from 'ink-spinner';
 import { mkdir, rm } from 'node:fs/promises';
-import type { HardwareProfile } from '../hardware.js';
-import type { HfRepoInfo } from '../hf.js';
-import { downloadFile, fileDownloadUrl } from '../hf.js';
-import type { PlannedInstall, ResolvedParams } from '../plan.js';
-import { buildModelfile, writeModelfile } from '../modelfile.js';
-import { ollamaCreate } from '../ollama.js';
-import { formatBytes, formatEta, formatRate, progressBar } from '../format.js';
-import { icon } from '../icons.js';
-import { recordInstallation } from '../settings.js';
+import type { HardwareProfile } from '../core/hardware.js';
+import type { HfRepoInfo } from '../core/hf.js';
+import { downloadFile, fileDownloadUrl } from '../core/hf.js';
+import type { PlannedInstall, ResolvedParams } from '../core/plan.js';
+import { buildModelfile, writeModelfile } from '../core/modelfile.js';
+import { ollamaCreate } from '../infra/ollama.js';
+import { formatBytes, formatEta, formatRate, progressBar } from '../ui/format.js';
+import { icon } from '../ui/icons.js';
+import { recordInstallation } from '../infra/settings.js';
 
 export interface InstalledModel {
   tag: string;

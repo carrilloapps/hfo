@@ -3,22 +3,22 @@ import { Box, Text, useInput } from 'ink';
 import Spinner from 'ink-spinner';
 import { execa } from 'execa';
 import { rm } from 'node:fs/promises';
-import { sampleOllamaList, sampleOllamaPs, type RegisteredModel, type LoadedModel } from '../live.js';
-import { useInterval } from '../hooks.js';
-import { icon } from '../icons.js';
+import { sampleOllamaList, sampleOllamaPs, type RegisteredModel, type LoadedModel } from '../core/live.js';
+import { useInterval } from '../ui/hooks.js';
+import { icon } from '../ui/icons.js';
 import LaunchMenu, { type LaunchSelection } from '../components/LaunchMenu.js';
-import type { Theme } from '../theme.js';
-import { t } from '../i18n.js';
+import type { Theme } from '../ui/theme.js';
+import { t } from '../ui/i18n.js';
 import {
   findInstallation,
   forgetInstallation,
   loadSettings,
   type Installation,
-} from '../settings.js';
-import { detectHardware, type HardwareProfile } from '../hardware.js';
-import { inspectInstallDir, reinstallInstallation, type DirInspection } from '../reinstall.js';
-import { backupDirectory, resolveBackupRoot, type BackupProgress } from '../backup.js';
-import { formatBytes } from '../format.js';
+} from '../infra/settings.js';
+import { detectHardware, type HardwareProfile } from '../core/hardware.js';
+import { inspectInstallDir, reinstallInstallation, type DirInspection } from '../core/reinstall.js';
+import { backupDirectory, resolveBackupRoot, type BackupProgress } from '../core/backup.js';
+import { formatBytes } from '../ui/format.js';
 
 interface Props {
   theme: Theme;

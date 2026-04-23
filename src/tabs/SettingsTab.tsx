@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { Box, Text, useInput } from 'ink';
 import TextInput from 'ink-text-input';
-import { DEFAULT_SETTINGS, type Settings } from '../settings.js';
-import { THEME_LIST, getTheme, type ThemeName } from '../theme.js';
-import { LANGS, t, type Lang } from '../i18n.js';
-import { icon } from '../icons.js';
-import { settingsPath } from '../platform.js';
+import { DEFAULT_SETTINGS, type Settings } from '../infra/settings.js';
+import { THEME_LIST, getTheme, type ThemeName } from '../ui/theme.js';
+import { LANGS, t, type Lang } from '../ui/i18n.js';
+import { icon } from '../ui/icons.js';
+import { settingsPath } from '../infra/platform.js';
 import Dropdown, { type DropdownItem } from '../components/Dropdown.js';
 
 interface Props {

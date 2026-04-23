@@ -1,14 +1,14 @@
 import { readdir, stat } from 'node:fs/promises';
 import { basename, join } from 'node:path';
 import type { HardwareProfile } from './hardware.js';
-import type { Installation } from './settings.js';
+import type { Installation } from '../infra/settings.js';
 import { scoreQuant } from './scoring.js';
 import { buildDefaultParams } from './plan.js';
 import { buildModelfile, writeModelfile } from './modelfile.js';
-import { ollamaCreate } from './ollama.js';
+import { ollamaCreate } from '../infra/ollama.js';
 import { extractQuant, type HfFile } from './hf.js';
 import { loadCardParams } from './readme.js';
-import { recordInstallation } from './settings.js';
+import { recordInstallation } from '../infra/settings.js';
 
 export type DirInspection =
   | { kind: 'ready'; gguf: string; modelfile: string }

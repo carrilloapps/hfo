@@ -1,9 +1,9 @@
 import React from 'react';
 import { Box, Text } from 'ink';
-import type { HardwareProfile } from '../hardware.js';
-import { scoreColor } from '../scoring.js';
-import { formatBytes } from '../format.js';
-import { icon } from '../icons.js';
+import type { HardwareProfile } from '../core/hardware.js';
+import { scoreColor } from '../core/scoring.js';
+import { formatBytes } from '../ui/format.js';
+import { icon } from '../ui/icons.js';
 
 interface Props {
   hw: HardwareProfile;

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { APP, appSignature } from '../src/about.js';
+import { APP, appSignature } from '../src/infra/about.js';
 
 describe('APP metadata', () => {
   it('is populated from package.json', () => {

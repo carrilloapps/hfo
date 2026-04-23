@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { Box, Text, useInput } from 'ink';
 import Spinner from 'ink-spinner';
 import TextInput from 'ink-text-input';
-import { detectAvailableTargets, LAUNCH_TARGETS, type LaunchId } from '../launch.js';
-import { icon } from '../icons.js';
-import type { Theme } from '../theme.js';
+import { detectAvailableTargets, LAUNCH_TARGETS, type LaunchId } from '../core/launch.js';
+import { icon } from '../ui/icons.js';
+import type { Theme } from '../ui/theme.js';
 
 export interface LaunchSelection {
   id: LaunchId;

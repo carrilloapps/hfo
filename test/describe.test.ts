@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { describeQuant, detectModality } from '../src/describe.js';
+import { describeQuant, detectModality } from '../src/core/describe.js';
 
 describe('describeQuant', () => {
   it('flags float types', () => {

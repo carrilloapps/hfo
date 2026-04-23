@@ -2,10 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { Box, Text, useInput } from 'ink';
 import TextInput from 'ink-text-input';
 import App from '../App.js';
-import type { HardwareProfile } from '../hardware.js';
-import { icon } from '../icons.js';
+import type { HardwareProfile } from '../core/hardware.js';
+import { icon } from '../ui/icons.js';
 import LaunchMenu, { type LaunchSelection } from '../components/LaunchMenu.js';
-import type { Theme } from '../theme.js';
+import type { Theme } from '../ui/theme.js';
 
 interface Props {
   baseDir: string;

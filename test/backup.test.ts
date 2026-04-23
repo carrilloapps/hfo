@@ -2,7 +2,7 @@ import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { mkdir, writeFile, readFile, rm, stat } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { backupDirectory, resolveBackupRoot } from '../src/backup.js';
+import { backupDirectory, resolveBackupRoot } from '../src/core/backup.js';
 
 const SANDBOX = join(tmpdir(), 'hfo-backup-test');
 const SRC = join(SANDBOX, 'src');

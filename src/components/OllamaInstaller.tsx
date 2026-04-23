@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Text, useInput } from 'ink';
 import Spinner from 'ink-spinner';
-import type { InstallPlan } from '../ollama.js';
-import { checkOllama, planInstall, runInstall } from '../ollama.js';
-import { icon } from '../icons.js';
+import type { InstallPlan } from '../infra/ollama.js';
+import { checkOllama, planInstall, runInstall } from '../infra/ollama.js';
+import { icon } from '../ui/icons.js';
 
 interface Props {
   missing: 'no-binary' | 'no-server';

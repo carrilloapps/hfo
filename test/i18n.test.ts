@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { LANGS, setLang, getLang, t } from '../src/i18n.js';
+import { LANGS, setLang, getLang, t } from '../src/ui/i18n.js';
 
 describe('i18n', () => {
   it('ships at least 20 languages', () => {

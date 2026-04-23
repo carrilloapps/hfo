@@ -4,7 +4,7 @@ import type { HfRepoInfo } from './hf.js';
 import type { RecommendedParams } from './readme.js';
 import { basename, join } from 'node:path';
 import { stat } from 'node:fs/promises';
-import { ollamaList } from './ollama.js';
+import { ollamaList } from '../infra/ollama.js';
 import { suggestTag } from './modelfile.js';
 
 export interface ResolvedParams {

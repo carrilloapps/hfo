@@ -1,8 +1,8 @@
 import AdmZip from 'adm-zip';
 import { mkdir, readFile, stat } from 'node:fs/promises';
 import { basename, dirname, join, resolve } from 'node:path';
-import { ollamaCreate } from './ollama.js';
-import { recordInstallation } from './settings.js';
+import { ollamaCreate } from '../infra/ollama.js';
+import { recordInstallation } from '../infra/settings.js';
 import { inspectInstallDir, reinstallInstallation } from './reinstall.js';
 import type { HardwareProfile } from './hardware.js';
 

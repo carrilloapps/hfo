@@ -1,8 +1,8 @@
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname } from 'node:path';
 import { settingsPath } from './platform.js';
-import { LANGS, setLang, type Lang } from './i18n.js';
-import { THEME_LIST, type ThemeName } from './theme.js';
+import { LANGS, setLang, type Lang } from '../ui/i18n.js';
+import { THEME_LIST, type ThemeName } from '../ui/theme.js';
 
 export interface Installation {
   tag: string;

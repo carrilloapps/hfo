@@ -22,15 +22,23 @@ Prerequisites:
 ## Where things live
 
 ```
-src/                   → TypeScript source, strict-mode
-  cli.tsx · Shell.tsx · App.tsx · headless.ts   (entrypoints + state machines)
-  tabs/ · components/                           (UI)
-  *.ts                                          (pure domain logic — testable in isolation)
-test/                  → vitest suites mirroring src/*.ts
+src/                   → Strict-TypeScript source, grouped by layer
+  cli.tsx · Shell.tsx · App.tsx · headless.ts   entry points (argv, tab router, install FSM, CLI dispatch)
+  core/                                         pure domain logic — zero UI, zero OS side effects
+  infra/                                        cross-OS platform integration (Ollama CLI, config dir, settings, package.json)
+  ui/                                           UI-layer primitives (theme, i18n, icons, hooks, formatters)
+  tabs/ · components/                           React/ink UI
+test/                  → vitest suites covering src/core/, src/infra/, src/ui/
 scripts/               → Build-time helpers (generate-favicons.mjs, install-skills.mjs)
 docs/                  → Static site deployed to hfo.carrillo.app
 .github/               → Issue forms, PR template, CI/CD, CODEOWNERS, dependabot, funding, support
 ```
+
+New pure domain modules go under `src/core/`. Anything that needs the OS
+(shelling out, filesystem, env vars) goes under `src/infra/`. UI primitives
+shared across tabs/components go under `src/ui/`. Keeping these separate
+makes the core logic trivially unit-testable and keeps cross-OS risk
+contained.
 
 See [README.md — Architecture](./README.md#architecture) for the full tree.
 

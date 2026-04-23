@@ -1,11 +1,11 @@
 import React from 'react';
 import { Box, Text, useInput } from 'ink';
-import { icon } from '../icons.js';
-import type { Theme } from '../theme.js';
-import { t } from '../i18n.js';
-import { formatBytes } from '../format.js';
-import type { QuantScore } from '../scoring.js';
-import type { CardInfo } from '../readme.js';
+import { icon } from '../ui/icons.js';
+import type { Theme } from '../ui/theme.js';
+import { t } from '../ui/i18n.js';
+import { formatBytes } from '../ui/format.js';
+import type { QuantScore } from '../core/scoring.js';
+import type { CardInfo } from '../core/readme.js';
 
 export type QuickAction = 'install-now' | 'change-dir' | 'customize' | 'cancel';
 

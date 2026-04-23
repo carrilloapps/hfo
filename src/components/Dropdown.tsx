@@ -1,9 +1,9 @@
 import React, { useMemo, useState } from 'react';
 import { Box, Text, useInput } from 'ink';
 import TextInput from 'ink-text-input';
-import { icon } from '../icons.js';
-import { t } from '../i18n.js';
-import type { Theme } from '../theme.js';
+import { icon } from '../ui/icons.js';
+import { t } from '../ui/i18n.js';
+import type { Theme } from '../ui/theme.js';
 
 export interface DropdownItem<T extends string = string> {
   id: T;

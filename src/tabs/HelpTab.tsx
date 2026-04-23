@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, Text } from 'ink';
-import { icon } from '../icons.js';
+import { icon } from '../ui/icons.js';
 
 export default function HelpTab() {
   return (

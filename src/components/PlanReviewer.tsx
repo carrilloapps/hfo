@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { Box, Text, useInput } from 'ink';
 import TextInput from 'ink-text-input';
-import type { PlannedInstall } from '../plan.js';
-import { formatBytes } from '../format.js';
-import { icon } from '../icons.js';
+import type { PlannedInstall } from '../core/plan.js';
+import { formatBytes } from '../ui/format.js';
+import { icon } from '../ui/icons.js';
 
 interface Props {
   initialPlans: PlannedInstall[];

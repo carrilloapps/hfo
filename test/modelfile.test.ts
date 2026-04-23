@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { buildModelfile, suggestTag } from '../src/modelfile.js';
-import type { HardwareProfile } from '../src/hardware.js';
-import type { ResolvedParams } from '../src/plan.js';
+import { buildModelfile, suggestTag } from '../src/core/modelfile.js';
+import type { HardwareProfile } from '../src/core/hardware.js';
+import type { ResolvedParams } from '../src/core/plan.js';
 
 const hw: HardwareProfile = {
   gpuName: 'RTX 3050',

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Box, Text, useInput } from 'ink';
 import type { InstalledModel } from './Processor.js';
-import { icon } from '../icons.js';
+import { icon } from '../ui/icons.js';
 
 interface Props {
   installed: InstalledModel[];

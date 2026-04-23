@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { Box, Text, useInput } from 'ink';
-import type { QuantScore } from '../scoring.js';
-import { scoreColor } from '../scoring.js';
-import { formatBytes } from '../format.js';
-import { describeQuant } from '../describe.js';
-import { icon } from '../icons.js';
+import type { QuantScore } from '../core/scoring.js';
+import { scoreColor } from '../core/scoring.js';
+import { formatBytes } from '../ui/format.js';
+import { describeQuant } from '../core/describe.js';
+import { icon } from '../ui/icons.js';
 
 interface Props {
   items: QuantScore[];           // already sorted desc by score

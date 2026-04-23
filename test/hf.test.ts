@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { parseRepoId, extractQuant, fileDownloadUrl } from '../src/hf.js';
+import { parseRepoId, extractQuant, fileDownloadUrl } from '../src/core/hf.js';
 
 describe('parseRepoId', () => {
   it('parses a bare org/repo slug', () => {

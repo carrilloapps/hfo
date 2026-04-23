@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Text, useApp, useInput } from 'ink';
-import { useTerminalSize, useNow } from './hooks.js';
-import { checkOllama, type OllamaStatus } from './ollama.js';
-import { detectHardware, type HardwareProfile } from './hardware.js';
-import { loadSettings, saveSettings, type Settings } from './settings.js';
-import { getTheme } from './theme.js';
-import { setLang, t } from './i18n.js';
+import { useTerminalSize, useNow } from './ui/hooks.js';
+import { checkOllama, type OllamaStatus } from './infra/ollama.js';
+import { detectHardware, type HardwareProfile } from './core/hardware.js';
+import { loadSettings, saveSettings, type Settings } from './infra/settings.js';
+import { getTheme } from './ui/theme.js';
+import { setLang, t } from './ui/i18n.js';
 import DashboardTab from './tabs/DashboardTab.js';
 import ModelsTab from './tabs/ModelsTab.js';
 import InstallTab from './tabs/InstallTab.js';
@@ -13,11 +13,11 @@ import TuneTab from './tabs/TuneTab.js';
 import HelpTab from './tabs/HelpTab.js';
 import SettingsTab from './tabs/SettingsTab.js';
 import BootScreen from './components/BootScreen.js';
-import { formatBytes } from './format.js';
-import { icon } from './icons.js';
+import { formatBytes } from './ui/format.js';
+import { icon } from './ui/icons.js';
 import type { LaunchSelection } from './components/LaunchMenu.js';
-import { APP } from './about.js';
-import { openUrl } from './platform.js';
+import { APP } from './infra/about.js';
+import { openUrl } from './infra/platform.js';
 
 export type TabKey = 'dashboard' | 'models' | 'install' | 'tune' | 'help' | 'settings';
 

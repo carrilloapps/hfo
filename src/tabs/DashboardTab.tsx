@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Text, useInput } from 'ink';
-import type { HardwareProfile } from '../hardware.js';
-import type { OllamaStatus } from '../ollama.js';
-import { formatBytes, progressBar } from '../format.js';
-import { hfSearchUrl, hfSearchUrlForKeyword, scoreHardware, tierFor } from '../capacity.js';
-import { scoreColor } from '../scoring.js';
-import { useInterval } from '../hooks.js';
-import { sampleGpu, sampleOllamaPs, sampleRam, type LiveGpu, type LiveRam, type LoadedModel } from '../live.js';
-import { icon } from '../icons.js';
-import { openUrl } from '../platform.js';
-import type { Theme } from '../theme.js';
-import { t } from '../i18n.js';
+import type { HardwareProfile } from '../core/hardware.js';
+import type { OllamaStatus } from '../infra/ollama.js';
+import { formatBytes, progressBar } from '../ui/format.js';
+import { hfSearchUrl, hfSearchUrlForKeyword, scoreHardware, tierFor } from '../core/capacity.js';
+import { scoreColor } from '../core/scoring.js';
+import { useInterval } from '../ui/hooks.js';
+import { sampleGpu, sampleOllamaPs, sampleRam, type LiveGpu, type LiveRam, type LoadedModel } from '../core/live.js';
+import { icon } from '../ui/icons.js';
+import { openUrl } from '../infra/platform.js';
+import type { Theme } from '../ui/theme.js';
+import { t } from '../ui/i18n.js';
 
 type PanelKey = 'live' | 'capacity' | 'picks' | 'browse';
 const PANELS: PanelKey[] = ['live', 'capacity', 'picks', 'browse'];

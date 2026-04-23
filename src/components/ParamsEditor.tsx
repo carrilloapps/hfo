@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Box, Text, useInput } from 'ink';
 import TextInput from 'ink-text-input';
-import type { ResolvedParams } from '../plan.js';
+import type { ResolvedParams } from '../core/plan.js';
 
 interface Row {
   key: keyof ResolvedParams;

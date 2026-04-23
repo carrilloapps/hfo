@@ -1,14 +1,14 @@
-import { checkOllama } from './ollama.js';
-import { detectHardware } from './hardware.js';
-import { sampleGpu, sampleOllamaList, sampleOllamaPs, sampleRam } from './live.js';
-import { scoreHardware, tierFor, hfSearchUrl, hfSearchUrlForKeyword } from './capacity.js';
-import { findInstallation, forgetInstallation, loadSettings } from './settings.js';
-import { inspectInstallDir } from './reinstall.js';
-import { backupDirectory, resolveBackupRoot } from './backup.js';
-import { restoreBackup, readBackupManifest } from './restore.js';
-import { buildEnvProfile, persistEnv, restartOllama } from './ollama.js';
-import { formatBytes } from './format.js';
-import { APP } from './about.js';
+import { checkOllama } from './infra/ollama.js';
+import { detectHardware } from './core/hardware.js';
+import { sampleGpu, sampleOllamaList, sampleOllamaPs, sampleRam } from './core/live.js';
+import { scoreHardware, tierFor, hfSearchUrl, hfSearchUrlForKeyword } from './core/capacity.js';
+import { findInstallation, forgetInstallation, loadSettings } from './infra/settings.js';
+import { inspectInstallDir } from './core/reinstall.js';
+import { backupDirectory, resolveBackupRoot } from './core/backup.js';
+import { restoreBackup, readBackupManifest } from './core/restore.js';
+import { buildEnvProfile, persistEnv, restartOllama } from './infra/ollama.js';
+import { formatBytes } from './ui/format.js';
+import { APP } from './infra/about.js';
 import { execa } from 'execa';
 import { rm } from 'node:fs/promises';
 

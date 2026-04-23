@@ -418,27 +418,38 @@ hfo/
 ├─ scripts/
 │  ├─ generate-favicons.mjs     # SVG → PNG/ICO + og.png, invoked by the Pages workflow
 │  └─ install-skills.mjs        # `pnpm run skills:install`
-├─ src/                        # Strict-TypeScript source
-│  ├─ cli.tsx                   #   argv parsing · headless dispatch · alt-screen handoff
-│  ├─ Shell.tsx                 #   6-tab router
-│  ├─ App.tsx                   #   install-flow state machine
-│  ├─ headless.ts               #   non-interactive command implementations
-│  ├─ tabs/                     #   Dashboard · Models · Install · Tune · Help · Settings
-│  ├─ components/               #   Dropdown · QuickConfirm · BootScreen · PlanReviewer · ParamsEditor · FileBrowser · LaunchMenu · …
-│  ├─ hf.ts                     #   public HF API client + resumable downloader
-│  ├─ hardware.ts · live.ts     #   nvidia-smi + systeminformation probes · Dashboard samplers
-│  ├─ scoring.ts · capacity.ts  #   per-quant compatibility · hardware tier + picks
-│  ├─ readme.ts                 #   HF model-card parser
-│  ├─ plan.ts · modelfile.ts    #   install plans + conflict detection · Modelfile generator
-│  ├─ reinstall.ts              #   orphan detection + Modelfile regeneration
-│  ├─ backup.ts · restore.ts    #   level-9 zip writer + metadata · restore + re-register
-│  ├─ launch.ts                 #   ollama launch targets + runtime probing
-│  ├─ ollama.ts · platform.ts   #   CLI wrappers · openUrl + config dir (cross-OS)
-│  ├─ settings.ts               #   persisted preferences + installations index
-│  ├─ theme.ts · i18n.ts        #   7 themes · 20 language packs
-│  ├─ describe.ts · icons.ts    #   quant flavour + modality · figures-backed icons
-│  ├─ about.ts · hooks.ts       #   package.json loader · useTerminalSize / useInterval / useNow
-│  └─ format.ts                 #   byte / ETA / progress-bar formatters
+├─ src/                        # Strict-TypeScript source — grouped by layer
+│  ├─ cli.tsx                   # Entry points (stay at root — framework hooks use)
+│  ├─ Shell.tsx                 #   argv + headless dispatch · 6-tab router · install FSM
+│  ├─ App.tsx                   #   non-interactive command dispatch
+│  ├─ headless.ts
+│  ├─ core/                    # Pure domain logic — zero UI, zero OS side effects
+│  │  ├─ hf.ts                  #   public HF API client + resumable downloader
+│  │  ├─ hardware.ts            #   nvidia-smi + systeminformation probes
+│  │  ├─ live.ts                #   real-time samplers for the Dashboard
+│  │  ├─ scoring.ts             #   per-quant compatibility 0-100
+│  │  ├─ capacity.ts            #   rig tier + picks + HF search URLs
+│  │  ├─ readme.ts              #   HF model-card parser
+│  │  ├─ plan.ts                #   install plans + conflict detection
+│  │  ├─ modelfile.ts           #   Modelfile generator + tag slugifier
+│  │  ├─ reinstall.ts           #   orphan detection + Modelfile regeneration
+│  │  ├─ backup.ts              #   archiver-based zip writer + metadata sidecar
+│  │  ├─ restore.ts             #   adm-zip reader + reinstall handoff
+│  │  ├─ launch.ts              #   ollama launch targets + runtime probing
+│  │  └─ describe.ts            #   quant flavour + modality detection
+│  ├─ infra/                   # Cross-OS platform integration
+│  │  ├─ ollama.ts              #   Ollama CLI wrappers + env persistence (setx/launchctl/systemd)
+│  │  ├─ platform.ts            #   openUrl + config paths (Windows / macOS / Linux)
+│  │  ├─ settings.ts            #   persisted preferences + installations index
+│  │  └─ about.ts               #   package.json metadata loader
+│  ├─ ui/                      # UI-layer primitives consumed by tabs/ + components/
+│  │  ├─ theme.ts               #   7-theme registry with contrast pairs
+│  │  ├─ i18n.ts                #   20-language translation catalogs
+│  │  ├─ icons.ts               #   figures-backed icon set
+│  │  ├─ hooks.ts               #   useTerminalSize · useInterval · useNow
+│  │  └─ format.ts              #   byte / ETA / progress-bar formatters
+│  ├─ tabs/                    #   Dashboard · Models · Install · Tune · Help · Settings
+│  └─ components/              #   Dropdown · QuickConfirm · BootScreen · PlanReviewer · ParamsEditor · FileBrowser · LaunchMenu · …
 ├─ test/                       # 12 vitest suites · 71 tests · v8 coverage
 ├─ CHANGELOG.md · CODE_OF_CONDUCT.md · CONTRIBUTING.md · LICENSE · README.md · SECURITY.md
 ├─ eslint.config.js · tsconfig.json · vitest.config.ts

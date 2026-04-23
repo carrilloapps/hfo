@@ -2,7 +2,7 @@ import archiver from 'archiver';
 import { createWriteStream } from 'node:fs';
 import { mkdir, readdir, stat, writeFile } from 'node:fs/promises';
 import { basename, dirname, join } from 'node:path';
-import { configDir } from './platform.js';
+import { configDir } from '../infra/platform.js';
 
 export interface BackupResult {
   zipPath: string;
