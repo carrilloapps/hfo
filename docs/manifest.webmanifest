@@ -1,0 +1,15 @@
+{
+  "name": "hfo — Hugging Face · Ollama, in your terminal",
+  "short_name": "hfo",
+  "description": "Fullscreen terminal UI and headless CLI for local LLMs via Ollama, auto-tuned to your hardware.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "browser",
+  "background_color": "#0a0b0f",
+  "theme_color": "#0a0b0f",
+  "icons": [
+    { "src": "/android-chrome-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/android-chrome-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/assets/logo-mark.svg", "sizes": "any",       "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}

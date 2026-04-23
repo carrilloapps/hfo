@@ -25,9 +25,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Rasterise favicons + Open Graph PNG
+        run: |
+          npm i --no-save sharp@0.34.4 png-to-ico@3.0.0
+          node docs/generate-favicons.mjs
+
       - uses: actions/configure-pages@v5
+
       - uses: actions/upload-pages-artifact@v3
         with:
           path: ./docs
+
       - id: deployment
         uses: actions/deploy-pages@v4

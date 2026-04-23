@@ -30,6 +30,23 @@ pnpm-debug.log*
 .env.*
 !.env.example
 
+## Agent tooling / skills — user-local, not part of the public project
+.agents/
+.claude/
+skills-lock.json
+
 ## Local hfo data that users may generate inside the repo while testing
 backups/
 settings.local.json
+
+## Raster favicons + og-image rasterised by the Pages workflow on every deploy.
+## These are regenerated from docs/assets/*.svg in CI and shipped in the Pages
+## artifact, so we deliberately don't commit them.
+docs/favicon.ico
+docs/favicon-16.png
+docs/favicon-32.png
+docs/favicon-48.png
+docs/apple-touch-icon.png
+docs/android-chrome-192.png
+docs/android-chrome-512.png
+docs/assets/og-image.png

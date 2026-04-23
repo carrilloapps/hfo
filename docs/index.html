@@ -3,32 +3,50 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
 <title>hfo — Hugging Face · Ollama, in your terminal</title>
-<meta name="description" content="Fullscreen terminal UI and headless CLI to discover, install, tune, back up, restore and launch Hugging Face GGUF models through Ollama — auto-tuned to your hardware. Cross-OS. MIT. Free." />
+<meta name="description" content="Fullscreen terminal UI and headless CLI to discover, install, tune, back up, restore and launch Hugging Face GGUF models through Ollama — auto-tuned to your hardware. Cross-OS. Open source. Free." />
 <meta name="author" content="José Carrillo" />
+<meta name="keywords" content="ollama, hugging face, gguf, local llm, terminal, cli, tui, react ink, typescript, claude code, codex, copilot cli, opencode" />
 <meta name="theme-color" content="#0a0b0f" media="(prefers-color-scheme: dark)" />
 <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
 <meta name="color-scheme" content="dark light" />
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
+<meta name="googlebot" content="index,follow,max-image-preview:large" />
+<meta name="format-detection" content="telephone=no" />
+<meta name="referrer" content="strict-origin-when-cross-origin" />
+<meta name="generator" content="hfo-cli docs" />
 
-<!-- Canonical + alternates -->
 <link rel="canonical" href="https://hfo.carrillo.app/" />
 
-<!-- Favicons -->
-<link rel="icon" type="image/svg+xml" href="/assets/logo-mark.svg" />
-<link rel="apple-touch-icon" href="/assets/logo-mark.svg" />
+<!-- Favicons. ICO + PNG + SVG covers every platform:
+     - favicon.ico: legacy browsers, Windows / desktop apps that look for /favicon.ico
+     - PNG 16/32: modern browsers (preferred over ICO)
+     - SVG: scales crisp on HiDPI; Chrome, Firefox, Safari Tech Preview
+     - apple-touch-icon: iOS home screen, iPadOS
+     - android-chrome + manifest: Android Add-to-Home-Screen -->
+<link rel="icon" href="/favicon.ico" sizes="32x32" />
+<link rel="icon" href="/favicon-16.png" type="image/png" sizes="16x16" />
+<link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32" />
+<link rel="icon" href="/assets/logo-mark.svg" type="image/svg+xml" />
+<link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180" />
 <link rel="mask-icon" href="/assets/logo-mark.svg" color="#6cb6ff" />
+<link rel="manifest" href="/manifest.webmanifest" />
 
-<!-- Open Graph -->
+<!-- Open Graph. Image uses PNG (LinkedIn / Slack / Facebook don't render SVG og:images reliably);
+     the deploy pipeline rasterises og-image.svg into og-image.png at build time. -->
 <meta property="og:type" content="website" />
 <meta property="og:site_name" content="hfo" />
 <meta property="og:title" content="hfo — Hugging Face · Ollama, in your terminal" />
 <meta property="og:description" content="Fullscreen TUI + headless CLI for local LLMs via Ollama. Auto-tuned to your hardware. Free, MIT, cross-OS." />
 <meta property="og:url" content="https://hfo.carrillo.app/" />
-<meta property="og:image" content="https://hfo.carrillo.app/assets/og-image.svg" />
+<meta property="og:image" content="https://hfo.carrillo.app/assets/og-image.png" />
+<meta property="og:image:secure_url" content="https://hfo.carrillo.app/assets/og-image.png" />
+<meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
 <meta property="og:image:height" content="630" />
-<meta property="og:image:alt" content="hfo logo with tagline: Hugging Face · Ollama, in your terminal" />
+<meta property="og:image:alt" content="hfo — Hugging Face, file, and Ollama, three nodes connected. Fullscreen TUI and headless CLI. Install with npm i -g hfo-cli." />
 <meta property="og:locale" content="en_US" />
 
 <!-- Twitter / X card -->
@@ -37,42 +55,94 @@
 <meta name="twitter:creator" content="@carrilloapps" />
 <meta name="twitter:title" content="hfo — Hugging Face · Ollama, in your terminal" />
 <meta name="twitter:description" content="Fullscreen TUI + headless CLI for local LLMs via Ollama. Auto-tuned to your hardware. Free, MIT, cross-OS." />
-<meta name="twitter:image" content="https://hfo.carrillo.app/assets/og-image.svg" />
-
-<!-- Preconnect / font load -->
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+<meta name="twitter:image" content="https://hfo.carrillo.app/assets/og-image.png" />
+<meta name="twitter:image:alt" content="hfo — three connected nodes representing Hugging Face, Modelfile, and Ollama." />
 
 <!-- Structured data -->
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "SoftwareApplication",
-  "name": "hfo",
-  "alternateName": "hfo-cli",
-  "description": "Fullscreen terminal UI and headless CLI to discover, install, tune, back up, restore and launch Hugging Face GGUF models through Ollama.",
-  "url": "https://hfo.carrillo.app/",
-  "applicationCategory": "DeveloperApplication",
-  "operatingSystem": "Windows, macOS, Linux",
-  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
-  "license": "https://spdx.org/licenses/MIT.html",
-  "softwareVersion": "0.1.0",
-  "programmingLanguage": "TypeScript",
-  "codeRepository": "https://github.com/carrilloapps/hfo",
-  "downloadUrl": "https://www.npmjs.com/package/hfo-cli",
-  "author": {
-    "@type": "Person",
-    "name": "José Carrillo",
-    "url": "https://carrillo.app",
-    "sameAs": [
-      "https://github.com/carrilloapps",
-      "https://linkedin.com/in/carrilloapps",
-      "https://x.com/carrilloapps",
-      "https://dev.to/carrilloapps",
-      "https://medium.com/@carrilloapps"
-    ]
-  }
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": "https://hfo.carrillo.app/#website",
+      "url": "https://hfo.carrillo.app/",
+      "name": "hfo",
+      "description": "Fullscreen terminal UI and headless CLI to discover, install, tune, back up, restore and launch Hugging Face GGUF models through Ollama.",
+      "inLanguage": "en",
+      "publisher": { "@id": "https://carrillo.app/#person" }
+    },
+    {
+      "@type": "Person",
+      "@id": "https://carrillo.app/#person",
+      "name": "José Carrillo",
+      "url": "https://carrillo.app",
+      "email": "m@carrillo.app",
+      "jobTitle": "Senior Full-stack Developer",
+      "sameAs": [
+        "https://github.com/carrilloapps",
+        "https://linkedin.com/in/carrilloapps",
+        "https://x.com/carrilloapps",
+        "https://dev.to/carrilloapps",
+        "https://medium.com/@carrilloapps"
+      ]
+    },
+    {
+      "@type": "SoftwareApplication",
+      "@id": "https://hfo.carrillo.app/#software",
+      "name": "hfo",
+      "alternateName": "hfo-cli",
+      "description": "Fullscreen terminal UI and headless CLI to discover, install, tune, back up, restore and launch Hugging Face GGUF models through Ollama, auto-tuned to your hardware.",
+      "applicationCategory": "DeveloperApplication",
+      "applicationSubCategory": "CLI Tool",
+      "operatingSystem": "Windows, macOS, Linux",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+      "license": "https://spdx.org/licenses/MIT.html",
+      "softwareVersion": "0.1.0",
+      "programmingLanguage": "TypeScript",
+      "codeRepository": "https://github.com/carrilloapps/hfo",
+      "downloadUrl": "https://www.npmjs.com/package/hfo-cli",
+      "image": "https://hfo.carrillo.app/assets/og-image.png",
+      "url": "https://hfo.carrillo.app/",
+      "author": { "@id": "https://carrillo.app/#person" },
+      "maintainer": { "@id": "https://carrillo.app/#person" }
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Is hfo free?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Yes. hfo is MIT-licensed open source with no subscriptions, no accounts, and no telemetry. It only talks to the public Hugging Face API and your local Ollama daemon." }
+        },
+        {
+          "@type": "Question",
+          "name": "Which operating systems does hfo support?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Windows, macOS, and Linux. The npm package is cross-OS; standalone binaries for each platform are published on the GitHub Releases page when a version is tagged." }
+        },
+        {
+          "@type": "Question",
+          "name": "Do I need to install Ollama first?",
+          "acceptedAnswer": { "@type": "Answer", "text": "No. If Ollama isn't on your PATH, hfo will offer to install it using the platform-appropriate method — winget on Windows, Homebrew on macOS, or the official shell script on Linux. You always confirm before anything is installed." }
+        },
+        {
+          "@type": "Question",
+          "name": "How does hfo choose which GGUF to recommend?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Every quant in a Hugging Face repo is scored 0–100 against your detected VRAM and RAM headroom. The tool reads the model's README for recommended temperature, top_p, top_k, repeat_penalty, min_p and context size, then synthesises a tuned Modelfile. On the quick-confirm screen you can accept with Enter, change the install directory with O, or customise the Modelfile parameters with C." }
+        },
+        {
+          "@type": "Question",
+          "name": "Can I launch Claude Code or Codex with a local model?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Yes. Press L on any installed model and hfo will run ollama launch against the chosen integration — Claude Code, Cline, Codex, Copilot CLI, Droid, Hermes, Kimi, OpenCode, OpenClaw, Pi, or VS Code — with that model as the backend." }
+        },
+        {
+          "@type": "Question",
+          "name": "Where are my model files stored?",
+          "acceptedAnswer": { "@type": "Answer", "text": "By default under the directory you pick in the file browser (or the modelDir setting). Each model lives in <baseDir>/<repo-slug>/<quant>/, with the GGUF, a tuned Modelfile, and hfo records the tag→directory mapping so Alt+d (deep delete) and B (backup) know what to operate on." }
+        }
+      ]
+    }
+  ]
 }
 </script>
 
@@ -97,8 +167,8 @@
     --radius-md: 10px;
     --radius-lg: 14px;
     --radius-xl: 22px;
-    --sans: 'Inter', ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    --mono: 'JetBrains Mono', ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI Variable', 'Segoe UI', 'Inter', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    --mono: ui-monospace, 'JetBrains Mono', 'SF Mono', 'Cascadia Mono', Menlo, Consolas, monospace;
   }
   @media (prefers-color-scheme: light) {
     :root {
@@ -118,9 +188,12 @@
       --shadow: 0 6px 20px rgba(20,22,28,0.06), 0 2px 6px rgba(20,22,28,0.04);
     }
   }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
+  }
 
   *, *::before, *::after { box-sizing: border-box; }
-  html { scroll-behavior: smooth; scroll-padding-top: 72px; }
+  html { scroll-behavior: smooth; scroll-padding-top: 72px; -webkit-text-size-adjust: 100%; }
   body {
     margin: 0;
     font-family: var(--sans);
@@ -131,17 +204,12 @@
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
   }
-  :focus-visible {
-    outline: 2px solid var(--primary);
-    outline-offset: 3px;
-    border-radius: 4px;
-  }
+  :focus-visible { outline: 2px solid var(--primary); outline-offset: 3px; border-radius: 4px; }
   a { color: var(--primary); text-decoration: none; transition: color .15s ease; }
   a:hover { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
   code { font-family: var(--mono); font-size: 0.9em; background: var(--bg-alt); padding: 1px 6px; border-radius: 4px; border: 1px solid var(--border); }
   pre { font-family: var(--mono); background: var(--bg-alt); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 18px 20px; overflow-x: auto; font-size: 14px; margin: 0; line-height: 1.65; }
   pre code { background: none; border: 0; padding: 0; font-size: inherit; }
-  hr { border: 0; border-top: 1px solid var(--border); margin: 0; }
 
   .container { max-width: 1120px; margin: 0 auto; padding: 0 clamp(18px, 4vw, 36px); }
   .skip-link {
@@ -151,7 +219,6 @@
   }
   .skip-link:focus { top: 12px; }
 
-  /* Header */
   .site-header {
     position: sticky; top: 0; z-index: 10;
     background: color-mix(in oklab, var(--bg) 88%, transparent);
@@ -168,7 +235,6 @@
   .site-nav a:hover { color: var(--fg); background: var(--bg-alt); text-decoration: none; }
   .nav-icon-link { display: inline-flex; align-items: center; gap: 6px; }
 
-  /* Hero */
   main { display: block; }
   section { padding: clamp(56px, 9vw, 96px) 0; }
   section + section { border-top: 1px solid var(--border); }
@@ -177,23 +243,15 @@
     display: inline-flex; align-items: center; gap: 8px;
     padding: 6px 12px; border: 1px solid var(--border-strong);
     border-radius: 999px; font-size: 12.5px; font-weight: 600; letter-spacing: 0.2px;
-    color: var(--muted); background: var(--bg-alt);
-    margin: 0 0 22px;
+    color: var(--muted); background: var(--bg-alt); margin: 0 0 22px;
   }
   .hero-eyebrow svg { width: 14px; height: 14px; color: var(--success); }
-  .hero h1 {
-    font-size: clamp(40px, 7vw, 72px); line-height: 1.02;
-    margin: 0 0 20px; letter-spacing: -2.5px; font-weight: 800;
-  }
+  .hero h1 { font-size: clamp(40px, 7vw, 72px); line-height: 1.02; margin: 0 0 20px; letter-spacing: -2.5px; font-weight: 800; }
   .hero h1 .grad {
     background: linear-gradient(100deg, var(--primary), var(--accent));
-    -webkit-background-clip: text; background-clip: text; color: transparent;
-    padding-right: 2px;
+    -webkit-background-clip: text; background-clip: text; color: transparent; padding-right: 2px;
   }
-  .hero .sub {
-    font-size: clamp(17px, 2.2vw, 21px); color: var(--muted);
-    max-width: 680px; margin: 0 0 36px; line-height: 1.55;
-  }
+  .hero .sub { font-size: clamp(17px, 2.2vw, 21px); color: var(--muted); max-width: 680px; margin: 0 0 36px; line-height: 1.55; }
   .cta-group { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
   .btn {
     display: inline-flex; align-items: center; gap: 8px;
@@ -212,8 +270,7 @@
     display: inline-flex; align-items: center; gap: 10px;
     font-family: var(--mono); font-size: 14.5px; font-weight: 500;
     padding: 11px 16px; border: 1px solid var(--border-strong);
-    border-radius: var(--radius-md); background: var(--bg-alt); color: var(--fg);
-    cursor: pointer;
+    border-radius: var(--radius-md); background: var(--bg-alt); color: var(--fg); cursor: pointer;
   }
   .install-pill:hover { border-color: var(--primary); color: var(--primary); }
   .install-pill svg { width: 16px; height: 16px; color: var(--muted); }
@@ -221,14 +278,10 @@
   .badges { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 32px; }
   .badges img { height: 22px; }
 
-  /* Feature grid */
   h2 { font-size: clamp(26px, 3.5vw, 34px); letter-spacing: -1px; margin: 0 0 14px; font-weight: 800; }
   .section-lede { color: var(--muted); margin: 0 0 40px; max-width: 720px; font-size: 17px; }
 
-  .grid {
-    display: grid; gap: 16px;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  }
+  .grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
   .card {
     background: var(--bg-raised); border: 1px solid var(--border);
     border-radius: var(--radius-lg); padding: 24px;
@@ -245,7 +298,6 @@
   .card h3 { margin: 0 0 6px; font-size: 17px; font-weight: 700; color: var(--fg); letter-spacing: -0.2px; }
   .card p { margin: 0; color: var(--muted); font-size: 14.5px; line-height: 1.6; }
 
-  /* Install section */
   .tabs { display: flex; gap: 6px; margin: 0 0 14px; flex-wrap: wrap; }
   .tab-btn {
     padding: 8px 14px; background: var(--bg-alt); border: 1px solid var(--border);
@@ -256,13 +308,9 @@
   .tab-btn[aria-selected="true"] { background: var(--bg-raised); color: var(--fg); border-color: var(--primary); }
   .tab-btn:hover { color: var(--fg); }
 
-  /* Tables */
   .table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--bg-raised); }
   .table { width: 100%; border-collapse: collapse; font-size: 14.5px; min-width: 640px; }
-  .table th, .table td {
-    text-align: left; padding: 14px 16px; vertical-align: top;
-    border-bottom: 1px solid var(--border);
-  }
+  .table th, .table td { text-align: left; padding: 14px 16px; vertical-align: top; border-bottom: 1px solid var(--border); }
   .table thead th { color: var(--muted); font-weight: 600; font-size: 12.5px; text-transform: uppercase; letter-spacing: 0.6px; background: var(--bg-alt); }
   .table tbody tr:last-child td { border-bottom: 0; }
   .table tbody tr:hover { background: var(--bg-alt); }
@@ -272,20 +320,11 @@
     display: inline-flex; align-items: center; justify-content: center;
     min-width: 22px; height: 22px; padding: 0 6px;
     border: 1px solid var(--border-strong); background: var(--bg-alt);
-    border-radius: 4px; font-family: var(--mono); font-size: 12px; color: var(--fg);
-    margin: 0 2px;
+    border-radius: 4px; font-family: var(--mono); font-size: 12px; color: var(--fg); margin: 0 2px;
   }
 
-  /* Privacy box */
-  .privacy-box {
-    display: grid; gap: 16px;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    margin-bottom: 22px;
-  }
-  .privacy-box > div {
-    padding: 18px; border: 1px solid var(--border); border-radius: var(--radius-md);
-    background: var(--bg-raised);
-  }
+  .privacy-box { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); margin-bottom: 22px; }
+  .privacy-box > div { padding: 18px; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--bg-raised); }
   .privacy-box h4 { margin: 0 0 8px; font-size: 14px; font-weight: 700; color: var(--fg); display: flex; align-items: center; gap: 8px; }
   .privacy-box h4 svg { width: 16px; height: 16px; }
   .privacy-box p { margin: 0; color: var(--muted); font-size: 14px; }
@@ -293,7 +332,15 @@
   .privacy-box .warn svg { color: var(--warning); }
   .privacy-box .info svg { color: var(--primary); }
 
-  /* Author card */
+  details.faq { background: var(--bg-raised); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 14px 18px; margin: 0; transition: border-color .15s ease; }
+  details.faq + details.faq { margin-top: 8px; }
+  details.faq[open] { border-color: var(--border-strong); }
+  details.faq summary { font-weight: 600; cursor: pointer; list-style: none; color: var(--fg); display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  details.faq summary::-webkit-details-marker { display: none; }
+  details.faq summary::after { content: '+'; font-family: var(--mono); font-weight: 700; color: var(--muted); transition: transform .2s ease; }
+  details.faq[open] summary::after { transform: rotate(45deg); }
+  details.faq p { margin: 12px 0 0; color: var(--muted); font-size: 14.5px; }
+
   .author-card {
     display: grid; grid-template-columns: auto 1fr; gap: 28px; align-items: start;
     background: var(--bg-raised); border: 1px solid var(--border);
@@ -321,7 +368,6 @@
     .author-card { grid-template-columns: 1fr; text-align: left; }
   }
 
-  /* Footer */
   .site-footer { padding: 40px 0; color: var(--muted); font-size: 13.5px; border-top: 1px solid var(--border); }
   .site-footer .row { display: flex; flex-wrap: wrap; gap: 20px; align-items: center; justify-content: space-between; }
   .site-footer a { color: var(--muted); }
@@ -340,7 +386,6 @@
 <header class="site-header" role="banner">
   <div class="container row">
     <a class="brand" href="/" aria-label="hfo home">
-      <!-- Inline logo mark -->
       <svg viewBox="0 0 32 32" aria-hidden="true" focusable="false">
         <rect x="1" y="1" width="30" height="30" rx="7" fill="currentColor"/>
         <line x1="8" y1="16" x2="24" y2="16" stroke="var(--bg)" stroke-width="2" stroke-linecap="round"/>
@@ -356,6 +401,7 @@
       <a href="#cli">CLI</a>
       <a href="#keyboard">Keyboard</a>
       <a href="#privacy">Privacy</a>
+      <a href="#faq">FAQ</a>
       <a href="https://github.com/carrilloapps/hfo" target="_blank" rel="noreferrer noopener" class="nav-icon-link">
         <svg aria-hidden="true" focusable="false" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.4 5.4 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>
         GitHub
@@ -392,11 +438,11 @@
       </a>
     </div>
     <div class="badges" aria-hidden="true">
-      <img alt="" src="https://img.shields.io/npm/v/hfo-cli.svg?style=flat" />
-      <img alt="" src="https://img.shields.io/npm/l/hfo-cli.svg?style=flat" />
-      <img alt="" src="https://img.shields.io/node/v/hfo-cli.svg?style=flat" />
-      <img alt="" src="https://github.com/carrilloapps/hfo/actions/workflows/ci.yml/badge.svg" />
-      <img alt="" src="https://img.shields.io/badge/TypeScript-strict-3178c6?style=flat&logo=typescript&logoColor=white" />
+      <img alt="" loading="lazy" src="https://img.shields.io/npm/v/hfo-cli.svg?style=flat" />
+      <img alt="" loading="lazy" src="https://img.shields.io/npm/l/hfo-cli.svg?style=flat" />
+      <img alt="" loading="lazy" src="https://img.shields.io/node/v/hfo-cli.svg?style=flat" />
+      <img alt="" loading="lazy" src="https://github.com/carrilloapps/hfo/actions/workflows/ci.yml/badge.svg" />
+      <img alt="" loading="lazy" src="https://img.shields.io/badge/TypeScript-strict-3178c6?style=flat&logo=typescript&logoColor=white" />
     </div>
   </div>
 </section>
@@ -458,7 +504,7 @@
 <section id="install" aria-labelledby="install-title">
   <div class="container">
     <h2 id="install-title">Install</h2>
-    <p class="section-lede">Needs Node.js ≥ 20. Ollama is optional — <code>hfo</code> can install it for you via winget, brew, or the official script.</p>
+    <p class="section-lede">Needs Node.js ≥ 20. Ollama is optional — <code>hfo</code> can install it for you via winget, brew, or the official script. Standalone binaries are published to the GitHub Releases page on every tagged version.</p>
     <div class="tabs" role="tablist" aria-label="Install command">
       <button type="button" class="tab-btn" role="tab" aria-selected="true" id="tab-npm" aria-controls="panel-npm" onclick="switchTab('npm')">npm</button>
       <button type="button" class="tab-btn" role="tab" aria-selected="false" id="tab-pnpm" aria-controls="panel-pnpm" onclick="switchTab('pnpm')">pnpm</button>
@@ -468,7 +514,7 @@
     <div id="panel-npm"  role="tabpanel" aria-labelledby="tab-npm"><pre><code>npm i -g hfo-cli</code></pre></div>
     <div id="panel-pnpm" role="tabpanel" aria-labelledby="tab-pnpm" hidden><pre><code>pnpm add -g hfo-cli</code></pre></div>
     <div id="panel-yarn" role="tabpanel" aria-labelledby="tab-yarn" hidden><pre><code>yarn global add hfo-cli</code></pre></div>
-    <div id="panel-bin"  role="tabpanel" aria-labelledby="tab-bin"  hidden><pre><code># Pre-built executables per OS (no Node required)
+    <div id="panel-bin"  role="tabpanel" aria-labelledby="tab-bin"  hidden><pre><code># Pre-built executables per OS (no Node required) — published on every tagged release.
 # https://github.com/carrilloapps/hfo/releases
 
 # Linux x64
@@ -479,8 +525,7 @@ chmod +x hfo-linux-x64 &amp;&amp; sudo mv hfo-linux-x64 /usr/local/bin/hfo
 curl -LO https://github.com/carrilloapps/hfo/releases/latest/download/hfo-macos-arm64
 chmod +x hfo-macos-arm64 &amp;&amp; sudo mv hfo-macos-arm64 /usr/local/bin/hfo
 
-# Windows x64
-# Download hfo-win-x64.exe from the Releases page and put it on your PATH.</code></pre></div>
+# Windows x64 — download hfo-win-x64.exe from the Releases page and put it on your PATH.</code></pre></div>
 
     <h3 style="margin-top:32px; font-size:18px;">Then try it</h3>
     <pre><code># Explore — fullscreen dashboard
@@ -585,6 +630,39 @@ hfo --launch claude --model llama3.1:8b</code></pre>
   </div>
 </section>
 
+<section id="faq" aria-labelledby="faq-title">
+  <div class="container">
+    <h2 id="faq-title">Frequently asked</h2>
+    <p class="section-lede">Short answers to the questions people ask first.</p>
+    <div style="display: grid; gap: 8px;">
+      <details class="faq" open>
+        <summary>Is hfo free?</summary>
+        <p>Yes. hfo is MIT-licensed open source with no subscriptions, no accounts, and no telemetry. It only talks to the public Hugging Face API and your local Ollama daemon.</p>
+      </details>
+      <details class="faq">
+        <summary>Which operating systems does hfo support?</summary>
+        <p>Windows, macOS, and Linux. The npm package is cross-OS; standalone binaries for each platform are published on the GitHub Releases page when a version is tagged.</p>
+      </details>
+      <details class="faq">
+        <summary>Do I need to install Ollama first?</summary>
+        <p>No. If Ollama isn't on your PATH, hfo offers to install it using the platform-appropriate method — winget on Windows, Homebrew on macOS, or the official shell script on Linux. You always confirm before anything is installed.</p>
+      </details>
+      <details class="faq">
+        <summary>How does hfo choose which GGUF to recommend?</summary>
+        <p>Every quant in a Hugging Face repo is scored 0–100 against your detected VRAM and RAM headroom. The tool reads the model's README for recommended <code>temperature</code>, <code>top_p</code>, <code>top_k</code>, <code>repeat_penalty</code>, <code>min_p</code> and context size, then synthesises a tuned Modelfile. On the quick-confirm screen you accept with <span class="kbd">Enter</span>, change the install directory with <span class="kbd">O</span>, or customise the parameters with <span class="kbd">C</span>.</p>
+      </details>
+      <details class="faq">
+        <summary>Can I launch Claude Code or Codex with a local model?</summary>
+        <p>Yes. Press <span class="kbd">L</span> on any installed model and hfo will run <code>ollama launch</code> against the chosen integration — Claude Code, Cline, Codex, Copilot CLI, Droid, Hermes, Kimi, OpenCode, OpenClaw, Pi, or VS Code — with that model as the backend.</p>
+      </details>
+      <details class="faq">
+        <summary>Where are my model files stored?</summary>
+        <p>By default under the directory you pick in the file browser (or the <code>modelDir</code> setting). Each model lives in <code>&lt;baseDir&gt;/&lt;repo-slug&gt;/&lt;quant&gt;/</code>, with the GGUF, a tuned Modelfile, and hfo records the tag → directory mapping so <span class="kbd">Alt</span>+<span class="kbd">d</span> (deep delete) and <span class="kbd">B</span> (backup) know what to operate on.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
 <section id="author" aria-labelledby="author-title">
   <div class="container">
     <h2 id="author-title">Author</h2>
@@ -595,31 +673,31 @@ hfo --launch claude --model llama3.1:8b</code></pre>
         <h3>José Carrillo</h3>
         <p class="role">Senior Full-stack Developer · Tech Lead</p>
         <div class="socials">
-          <a href="https://carrillo.app" target="_blank" rel="noreferrer noopener">
+          <a href="https://carrillo.app" target="_blank" rel="noreferrer noopener me">
             <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
             carrillo.app
           </a>
-          <a href="mailto:m@carrillo.app">
+          <a href="mailto:m@carrillo.app" rel="me">
             <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
             m@carrillo.app
           </a>
-          <a href="https://github.com/carrilloapps" target="_blank" rel="noreferrer noopener">
+          <a href="https://github.com/carrilloapps" target="_blank" rel="noreferrer noopener me">
             <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.4 5.4 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>
             GitHub
           </a>
-          <a href="https://linkedin.com/in/carrilloapps" target="_blank" rel="noreferrer noopener">
+          <a href="https://linkedin.com/in/carrilloapps" target="_blank" rel="noreferrer noopener me">
             <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></svg>
             LinkedIn
           </a>
-          <a href="https://x.com/carrilloapps" target="_blank" rel="noreferrer noopener">
+          <a href="https://x.com/carrilloapps" target="_blank" rel="noreferrer noopener me">
             <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 4 12 14.01l-3-3L22 4z"/><path d="m12 14.01 3 6 7-16"/><path d="M2 11l10-7"/><path d="m2 11 4 4"/></svg>
             X
           </a>
-          <a href="https://dev.to/carrilloapps" target="_blank" rel="noreferrer noopener">
+          <a href="https://dev.to/carrilloapps" target="_blank" rel="noreferrer noopener me">
             <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
             Dev.to
           </a>
-          <a href="https://medium.com/@carrilloapps" target="_blank" rel="noreferrer noopener">
+          <a href="https://medium.com/@carrilloapps" target="_blank" rel="noreferrer noopener me">
             <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h16"/><path d="M4 4v16"/><path d="M8 4v16"/><path d="M12 4v16"/><path d="M16 4v16"/><path d="M20 4v16"/></svg>
             Medium
           </a>
@@ -634,7 +712,7 @@ hfo --launch claude --model llama3.1:8b</code></pre>
 <footer class="site-footer" role="contentinfo">
   <div class="container row">
     <div>
-      <strong>hfo</strong> · MIT · © 2026 <a href="https://carrillo.app" target="_blank" rel="noreferrer noopener">José Carrillo</a>
+      <strong>hfo</strong> · MIT · © 2026 <a href="https://carrillo.app" target="_blank" rel="noreferrer noopener me">José Carrillo</a>
     </div>
     <div class="footer-links">
       <a href="https://github.com/carrilloapps/hfo" target="_blank" rel="noreferrer noopener">GitHub</a>
@@ -643,6 +721,7 @@ hfo --launch claude --model llama3.1:8b</code></pre>
       <a href="https://github.com/carrilloapps/hfo/blob/main/SECURITY.md" target="_blank" rel="noreferrer noopener">Security</a>
       <a href="https://github.com/carrilloapps/hfo/blob/main/CONTRIBUTING.md" target="_blank" rel="noreferrer noopener">Contribute</a>
       <a href="https://github.com/carrilloapps/hfo/blob/main/LICENSE" target="_blank" rel="noreferrer noopener">License</a>
+      <a href="/sitemap.xml">Sitemap</a>
     </div>
   </div>
 </footer>
