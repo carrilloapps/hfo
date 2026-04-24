@@ -6,6 +6,37 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+- **`hfo --bench <tag>`**. A standardised 4-prompt benchmark (warmup · code ·
+  reasoning · translation) that runs against a local Ollama model and
+  reports tokens-per-second and time-to-first-token, both per-prompt and
+  aggregate. Uses Ollama's streaming `/api/generate` endpoint and the
+  server-reported `eval_count` / `eval_duration` for accurate tok/s.
+  `--out <file>` writes an `hfo-bench-v1` JSON submission that can be
+  contributed to the community leaderboard at
+  <https://hfo.carrillo.app/benchmarks/>.
+- **Coding-agent launch manifest + hints.** Every `hfo --launch <agent>`
+  now (1) writes a small JSON manifest to
+  `<configDir>/hfo/agent-launches/<agent>.json` recording which model was
+  bound to which agent and when, and (2) prints a per-agent hint block
+  listing the env vars / config keys the user needs to set for that agent
+  (Claude Code, Codex, Cline, OpenCode, Droid, VS Code, Copilot CLI) to
+  actually route through the local Ollama. hfo never mutates user-owned
+  config files — only records and educates.
+- **AI-search instrumentation**. `docs/llms.txt` (curated site map for
+  ChatGPT / Perplexity / Claude / Gemini) and `docs/llms-full.txt`
+  (flattened prose version of the full documentation).
+- **Five standalone documentation pages.** The homepage sections have been
+  split into real crawlable URLs with unique title / description / canonical
+  / JSON-LD BreadcrumbList:
+  `/install/` (with a `HowTo` schema), `/cli/`, `/keyboard/`, `/privacy/`,
+  `/faq/` (with `FAQPage` schema). Plus `/benchmarks/` for the new bench
+  leaderboard. Sitemap.xml now lists seven URLs instead of one.
+- **Shared sub-page stylesheet** at `docs/assets/page.css` so the new
+  pages stay visually consistent with the landing without duplicating 600
+  lines of hero CSS.
+
 ### Changed
 
 - **Portable default install directory.** `hfo` now downloads GGUFs into the
@@ -14,6 +45,17 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   `D:/Desarrollo/AI/LLMs` (Windows) or `~/AI/LLMs` (Unix) — has been removed.
   Running `hfo` in any folder now drops its models alongside the project,
   making the tool fully self-contained.
+- **Install-pill OS detection.** The landing's package-manager switcher
+  auto-adapts its `curl` tab to the visitor's OS — shows
+  `irm … | iex` with the label `powershell` on Windows, `curl … | sh` with
+  the label `curl` everywhere else. Uses `navigator.userAgentData.platform`
+  with a UA-string fallback.
+- **Robots.txt** now disallows `/install.sh` and `/install.ps1` so Google
+  doesn't index raw shell / PowerShell source as text content.
+- **Hero CTA layout**. Removed the `Get started` button (redundant with
+  the pm-tabs above it) and replaced it with `View on npm`. Removed the
+  six trust chips from the hero and moved their content to a quieter
+  data-dense stats strip at the top of the Features section.
 - **Landing hero redesign.** `docs/index.html` now uses a full-viewport
   (`100vh`) two-column hero with an ambient orb + grid backdrop, a CSS-only
   package-manager switcher (npm / pnpm / yarn / bun / curl), live trust

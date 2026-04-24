@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+
+<title>hfo benchmarks — local LLM tokens-per-second leaderboard (GGUF on Ollama)</title>
+<meta name="description" content="hfo ships a standard 4-prompt bench. Run `hfo --bench <tag>` to measure tok/s and TTFT on your rig, save a submission file, and contribute to a community leaderboard of GPU × quant × throughput tuples." />
+<meta name="theme-color" content="#0a0b0f" media="(prefers-color-scheme: dark)" />
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+<meta name="color-scheme" content="dark light" />
+<meta name="robots" content="index,follow,max-image-preview:large" />
+
+<link rel="canonical" href="https://hfo.carrillo.app/benchmarks/" />
+<link rel="icon" href="/favicon.ico" sizes="32x32" />
+<link rel="icon" href="/assets/logo-mark.svg" type="image/svg+xml" />
+<link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180" />
+<link rel="mask-icon" href="/assets/logo-mark.svg" color="#7C5BF3" />
+
+<meta property="og:type" content="article" />
+<meta property="og:site_name" content="hfo" />
+<meta property="og:title" content="hfo benchmarks — local LLM tok/s leaderboard" />
+<meta property="og:description" content="Run `hfo --bench` on your rig, contribute to a community leaderboard." />
+<meta property="og:url" content="https://hfo.carrillo.app/benchmarks/" />
+<meta property="og:image" content="https://hfo.carrillo.app/assets/og-image.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="hfo benchmarks" />
+<meta name="twitter:description" content="Local LLM tok/s leaderboard." />
+<meta name="twitter:image" content="https://hfo.carrillo.app/assets/og-image.png" />
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "hfo", "item": "https://hfo.carrillo.app/" },
+    { "@type": "ListItem", "position": 2, "name": "Benchmarks", "item": "https://hfo.carrillo.app/benchmarks/" }
+  ]
+}
+</script>
+
+<link rel="stylesheet" href="/assets/page.css" />
+</head>
+<body>
+
+<a class="skip-link" href="#main">Skip to main content</a>
+
+<header class="site-header" role="banner">
+  <div class="container row">
+    <a class="brand" href="/" aria-label="hfo home">
+      <svg viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+        <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3B6FE5"/><stop offset="0.55" stop-color="#5B6BE5"/><stop offset="1" stop-color="#7C5BF3"/></linearGradient></defs>
+        <rect x="1" y="1" width="30" height="30" rx="7" fill="url(#g)"/>
+        <line x1="8" y1="16" x2="24" y2="16" stroke="#0a0b0f" stroke-width="2" stroke-linecap="round"/>
+        <circle cx="8" cy="16" r="3" fill="#0a0b0f"/>
+        <circle cx="16" cy="16" r="3" fill="none" stroke="#0a0b0f" stroke-width="2"/>
+        <circle cx="24" cy="16" r="3" fill="#0a0b0f"/>
+      </svg>
+      <span>hfo</span>
+    </a>
+    <input type="checkbox" id="nav-open" class="nav-toggle-cb" aria-label="Toggle navigation menu" />
+    <label for="nav-open" class="nav-toggle" aria-hidden="true">
+      <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M3 12h18"/><path d="M3 18h18"/></svg>
+    </label>
+    <nav class="site-nav" aria-label="Primary">
+      <a href="/install/">Install</a>
+      <a href="/cli/">CLI</a>
+      <a href="/keyboard/">Keyboard</a>
+      <a href="/privacy/">Privacy</a>
+      <a href="/faq/">FAQ</a>
+      <a href="https://github.com/carrilloapps/hfo" target="_blank" rel="noreferrer noopener" class="nav-icon-link">
+        <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.4 5.4 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>
+        GitHub
+      </a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+  <div class="container">
+
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <ol>
+        <li><a href="/">hfo</a></li>
+        <li aria-current="page">Benchmarks</li>
+      </ol>
+    </nav>
+
+    <article class="page">
+      <header class="page-header">
+        <span class="page-eyebrow">Leaderboard</span>
+        <h1>Benchmarks</h1>
+        <p class="page-lede">Run <code>hfo --bench &lt;tag&gt;</code> to measure tokens-per-second and time-to-first-token on your rig against a standard 4-prompt suite. Save the result as a submission file and contribute it to the community leaderboard — a public catalogue of GPU × quant × throughput tuples nobody else is collecting.</p>
+      </header>
+
+      <h2>Run it</h2>
+      <div class="terminal">
+        <div class="terminal-bar">
+          <span class="terminal-dot red" aria-hidden="true"></span>
+          <span class="terminal-dot yellow" aria-hidden="true"></span>
+          <span class="terminal-dot green" aria-hidden="true"></span>
+          <span class="terminal-title">bash</span>
+          <button type="button" class="terminal-copy" data-copy="hfo --bench llama3.1:8b --out bench.json">copy</button>
+        </div>
+<pre><code><span class="tok-comment"># Quick run — prints per-prompt + aggregate tok/s and TTFT, nothing saved</span>
+<span class="tok-prompt">$</span> <span class="tok-cmd">hfo</span> <span class="tok-flag">--bench</span> llama3.1:8b
+
+<span class="tok-comment"># Full submission — writes a JSON file you can share</span>
+<span class="tok-prompt">$</span> <span class="tok-cmd">hfo</span> <span class="tok-flag">--bench</span> llama3.1:8b <span class="tok-flag">--out</span> <span class="tok-path">bench.json</span></code></pre>
+      </div>
+
+      <div class="callout callout-info">
+        <p><strong>Expected runtime</strong>: 15–60 seconds on consumer GPU, 1–3 minutes on CPU-only. The warmup prompt is excluded from the aggregate so cold-start latency doesn't skew the numbers.</p>
+      </div>
+
+      <h2>What the bench measures</h2>
+      <p>The suite is <strong>four fixed prompts</strong> sent through Ollama's streaming HTTP API at <code>/api/generate</code>, with <code>temperature: 0.2</code> to keep output length stable across runs:</p>
+
+      <div class="table-wrap">
+        <table class="table">
+          <thead><tr><th>Prompt</th><th>Token budget</th><th>Task</th></tr></thead>
+          <tbody>
+            <tr><td><code>warmup</code></td><td>16</td><td>Single word output — absorbs the first-load penalty, excluded from aggregate</td></tr>
+            <tr><td><code>code</code></td><td>128</td><td>Write a small Python function, no commentary</td></tr>
+            <tr><td><code>reasoning</code></td><td>192</td><td>One-paragraph explanation of backpropagation</td></tr>
+            <tr><td><code>translation</code></td><td>128</td><td>EN → FR and EN → ES of the pangram</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>For each prompt the runner records:</p>
+      <ul>
+        <li><strong>TTFT (ms)</strong> — time from HTTP request to the first streamed chunk.</li>
+        <li><strong>Total (ms)</strong> — end-to-end wall-clock for the full generation.</li>
+        <li><strong>Output tokens</strong> — taken from Ollama's <code>eval_count</code> field.</li>
+        <li><strong>Tok/s</strong> — preferred formula is <code>eval_count / (eval_duration / 1e9)</code> (server-reported). Falls back to wall-clock only when <code>eval_duration</code> is missing.</li>
+      </ul>
+
+      <h2>Sample output</h2>
+      <div class="terminal">
+        <div class="terminal-bar">
+          <span class="terminal-dot red" aria-hidden="true"></span>
+          <span class="terminal-dot yellow" aria-hidden="true"></span>
+          <span class="terminal-dot green" aria-hidden="true"></span>
+          <span class="terminal-title">bash</span>
+        </div>
+<pre><code>── Benchmarking qwen2.5-coder:7b-q5_k_m ────────────────────────────────────
+Model      qwen2.5-coder:7b-q5_k_m
+GPU        NVIDIA GeForce RTX 4090
+VRAM       24 GB
+RAM        64 GB
+Ollama     0.21.3
+
+── Per-prompt ──────────────────────────────────────────────────────────────
+  warmup           12 tok     124 ms TTFT     148 ms total     82.1 tok/s
+  code            128 tok     118 ms TTFT    1564 ms total     80.2 tok/s
+  reasoning       192 tok     122 ms TTFT    2378 ms total     79.8 tok/s
+  translation     128 tok     119 ms TTFT    1582 ms total     80.4 tok/s
+
+── Aggregate ───────────────────────────────────────────────────────────────
+  80.1 tok/s avg
+  120 ms TTFT avg
+  460 total output tokens in 5.7 s</code></pre>
+      </div>
+
+      <h2>Submission format</h2>
+      <p>When you pass <code>--out &lt;file&gt;</code>, hfo writes a JSON document that follows the <code>hfo-bench-v1</code> schema:</p>
+
+      <div class="terminal">
+        <div class="terminal-bar">
+          <span class="terminal-dot red" aria-hidden="true"></span>
+          <span class="terminal-dot yellow" aria-hidden="true"></span>
+          <span class="terminal-dot green" aria-hidden="true"></span>
+          <span class="terminal-title">bench.json</span>
+        </div>
+<pre><code>{
+  "tag": "qwen2.5-coder:7b-q5_k_m",
+  "ollamaVersion": "0.21.3",
+  "hfoVersion": "0.1.0",
+  "hardware": {
+    "gpuName": "NVIDIA GeForce RTX 4090",
+    "vramMiB": 24576,
+    "ramMiB": 65536,
+    "cpuCores": 16,
+    "platform": "win32"
+  },
+  "runs": [
+    {
+      "id": "warmup",
+      "prompt": "...",
+      "outputTokens": 12,
+      "ttftMs": 124,
+      "totalMs": 148,
+      "tokensPerSec": 82.1
+    },
+    { "id": "code",        "outputTokens": 128, "ttftMs": 118, "totalMs": 1564, "tokensPerSec": 80.2 },
+    { "id": "reasoning",   "outputTokens": 192, "ttftMs": 122, "totalMs": 2378, "tokensPerSec": 79.8 },
+    { "id": "translation", "outputTokens": 128, "ttftMs": 119, "totalMs": 1582, "tokensPerSec": 80.4 }
+  ],
+  "aggregate": {
+    "tokensPerSec": 80.1,
+    "ttftMs": 120,
+    "totalTokens": 460,
+    "totalMs": 5672
+  },
+  "submittedAt": "2026-04-23T20:14:32.114Z",
+  "schema": "hfo-bench-v1"
+}</code></pre>
+      </div>
+
+      <h2>Contribute a submission</h2>
+      <p>The leaderboard is PR-based — no server, no telemetry, no account required. To contribute:</p>
+      <ol>
+        <li>Run <code>hfo --bench &lt;tag&gt; --out my-run.json</code>.</li>
+        <li>Open a pull request against <a href="https://github.com/carrilloapps/hfo" target="_blank" rel="noreferrer noopener">the hfo repo</a> adding the file under <code>docs/benchmarks/submissions/</code> (path may be created by you if the directory doesn't exist yet).</li>
+        <li>Name the file <code>&lt;gpu-slug&gt;_&lt;tag-slug&gt;.json</code> — e.g. <code>rtx4090_qwen25coder-7b-q5km.json</code>.</li>
+      </ol>
+
+      <div class="callout callout-warn">
+        <p><strong>Personal information</strong>: the submission file only contains the fields shown above. No hostname, username, MAC address, or path is recorded. If you want to obfuscate the GPU string or OS, edit the JSON before opening the PR.</p>
+      </div>
+
+      <h2>Reproducibility notes</h2>
+      <ul>
+        <li><strong>Model state matters.</strong> Close any other Ollama-loaded model first (<code>ollama stop &lt;other&gt;</code>). With two 8-bit models loaded, KV cache pressure can cut tok/s by 15–30%.</li>
+        <li><strong>Thermals matter.</strong> Run once cold, once after a 2-minute sustained load. Report the sustained figure — it reflects real workloads better than the cold run.</li>
+        <li><strong>Temperature is fixed at 0.2</strong> to keep output length predictable across runs. Don't override it.</li>
+        <li><strong>Context window</strong> uses Ollama's default for the model. If you override it via Modelfile, note that in your PR description — tok/s drops with longer contexts.</li>
+      </ul>
+
+      <h2>What the benchmarks don't tell you</h2>
+      <ul>
+        <li><strong>Quality</strong>. Tok/s says nothing about whether the output is correct. Use a separate eval harness (MMLU, HumanEval, your own) for that.</li>
+        <li><strong>Long-context behaviour</strong>. This bench generates ≤ 192 tokens per prompt. Long generations degrade tok/s on most hardware — that's a different measurement.</li>
+        <li><strong>Multi-turn overhead</strong>. Each prompt is fresh. Conversational back-and-forth with large KV caches will be slower than what this bench reports.</li>
+      </ul>
+
+      <nav class="page-related" aria-label="Continue">
+        <a href="/cli/"><small>Reference</small><strong>CLI flags →</strong></a>
+        <a href="/install/"><small>Setup</small><strong>Install guide →</strong></a>
+        <a href="https://github.com/carrilloapps/hfo" target="_blank" rel="noreferrer noopener"><small>Contribute</small><strong>Submit a run →</strong></a>
+      </nav>
+    </article>
+  </div>
+</main>
+
+<footer class="site-footer" role="contentinfo">
+  <div class="container row">
+    <div>
+      <strong>hfo</strong> · MIT · © 2026 <a href="https://carrillo.app" target="_blank" rel="noreferrer noopener me">José Carrillo</a>
+    </div>
+    <div class="footer-links">
+      <a href="/">Home</a>
+      <a href="https://github.com/carrilloapps/hfo" target="_blank" rel="noreferrer noopener">GitHub</a>
+      <a href="https://www.npmjs.com/package/hfo-cli" target="_blank" rel="noreferrer noopener">npm</a>
+      <a href="/privacy/">Privacy</a>
+      <a href="/faq/">FAQ</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  document.addEventListener('click', (e) => {
+    const btn = e.target.closest('.terminal-copy');
+    if (!btn) return;
+    const text = btn.getAttribute('data-copy');
+    if (!text || !navigator.clipboard) return;
+    navigator.clipboard.writeText(text).then(() => {
+      const prev = btn.textContent;
+      btn.textContent = 'copied';
+      btn.style.color = 'var(--success)';
+      setTimeout(() => { btn.textContent = prev; btn.style.color = ''; }, 1200);
+    });
+  });
+</script>
+
+</body>
+</html>

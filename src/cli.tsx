@@ -14,6 +14,7 @@ import {
   cmdBackup,
   cmdRestore,
   cmdDelete,
+  cmdBench,
   cmdVersion,
 } from './headless.js';
 
@@ -32,6 +33,8 @@ const cli = meow(
     $ hfo --delete <tag>                   # remove the tag from Ollama
     $ hfo --delete <tag> --deep            # remove tag AND delete its folder on disk
     $ hfo --launch <integration>           # run ollama launch <integration> after optional TUI
+    $ hfo --bench <tag>                    # run the standard 4-prompt bench and print tok/s + TTFT
+    $ hfo --bench <tag> --out bench.json   # save a submission file for the community leaderboard
 
   Other flags
     --dir, -d        Base dir for the install file browser (default: settings.modelDir ?? cwd)
@@ -71,6 +74,8 @@ const cli = meow(
       restore: { type: 'string' },
       delete: { type: 'string' },
       deep: { type: 'boolean', default: false },
+      bench: { type: 'string' },
+      out: { type: 'string' },
     },
   },
 );
@@ -83,6 +88,7 @@ try {
   if (cli.flags.backup) { await cmdBackup(cli.flags.backup); process.exit(0); }
   if (cli.flags.restore) { await cmdRestore(cli.flags.restore); process.exit(0); }
   if (cli.flags.delete) { await cmdDelete(cli.flags.delete, { deep: cli.flags.deep }); process.exit(process.exitCode ?? 0); }
+  if (cli.flags.bench)  { await cmdBench(cli.flags.bench, { out: cli.flags.out }); process.exit(process.exitCode ?? 0); }
 } catch (err) {
   console.error(err instanceof Error ? err.message : err);
   process.exit(1);

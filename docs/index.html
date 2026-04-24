@@ -717,24 +717,6 @@
 
   .cta-secondary { margin-top: 2px; }
 
-  /* Trust row — compact metric chips. Live where we can (shields), static where facts don't change. */
-  .trust-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 32px; }
-  .trust-row .chip {
-    display: inline-flex; align-items: center; gap: 8px;
-    padding: 7px 12px; border: 1px solid var(--border);
-    border-radius: 999px; background: var(--bg-alt);
-    font-size: 12.5px; font-weight: 600; color: var(--fg-3);
-    text-decoration: none;
-    transition: color .15s ease, border-color .15s ease, background .15s ease, transform .15s ease;
-  }
-  .trust-row a.chip:hover {
-    color: var(--fg); border-color: var(--primary); background: var(--bg-raised);
-    text-decoration: none; transform: translateY(-1px);
-  }
-  .trust-row .chip svg { width: 13px; height: 13px; color: var(--muted); flex-shrink: 0; }
-  .trust-row .chip.chip-ok  svg { color: var(--success); }
-  .trust-row .chip .val { color: var(--fg); font-variant-numeric: tabular-nums; }
-
   /* Right column: the terminal lives in a `.hero-stack`. Two offset "ghost"
      frames behind the real terminal imply a stack of windows — depth cue
      without actual overlapping content. */
@@ -787,6 +769,66 @@
   /* Score-bar glyphs inside the hero terminal. */
   .tok-score     { color: var(--term-cmd); letter-spacing: 1px; }
   .tok-score-dim { color: var(--term-comment); letter-spacing: 1px; }
+
+  /* ==========================================================================
+     Stats strip — data-dense status band inside #features. Replaces the
+     hero's trust chips with a quieter, more informational presentation.
+     ========================================================================== */
+  .stats-strip {
+    display: flex; flex-wrap: wrap;
+    margin: 0 0 40px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: var(--bg-raised);
+    overflow: hidden;
+  }
+  .stats-strip .stat {
+    flex: 1 1 140px; min-width: 140px;
+    display: flex; flex-direction: column; gap: 4px;
+    padding: 16px 22px;
+    border-right: 1px solid var(--border);
+    text-decoration: none; color: inherit;
+    transition: background .15s ease, color .15s ease;
+  }
+  .stats-strip .stat:last-child { border-right: 0; }
+  .stats-strip a.stat:hover {
+    background: var(--bg-alt); text-decoration: none;
+  }
+  .stats-strip a.stat:hover .stat-val { color: var(--primary); }
+  .stats-strip .stat-label {
+    font-size: 11px; font-weight: 600;
+    letter-spacing: 0.8px; text-transform: uppercase;
+    color: var(--muted);
+  }
+  .stats-strip .stat-val {
+    font-size: 15px; font-weight: 700;
+    color: var(--fg);
+    font-family: var(--mono);
+    transition: color .15s ease;
+  }
+  .stats-strip .stat-val.stat-ok { color: var(--success); }
+
+  /* Tablet: 3-4 per row using flex-wrap. Each stat gets a bottom border so
+     wrapped rows remain visually separated. */
+  @media (max-width: 960px) {
+    .stats-strip .stat {
+      flex-basis: 33.333%;
+      border-bottom: 1px solid var(--border);
+    }
+    .stats-strip .stat:nth-last-child(-n+3) { border-bottom: 0; }
+    .stats-strip .stat:nth-child(3n) { border-right: 0; }
+  }
+  @media (max-width: 640px) {
+    .stats-strip .stat {
+      flex-basis: 50%;
+      padding: 14px 16px;
+    }
+    .stats-strip .stat:nth-child(3n)    { border-right: 1px solid var(--border); }
+    .stats-strip .stat:nth-child(2n)    { border-right: 0; }
+    .stats-strip .stat:nth-last-child(-n+3) { border-bottom: 1px solid var(--border); }
+    .stats-strip .stat:nth-last-child(-n+2) { border-bottom: 0; }
+    .stats-strip .stat-val { font-size: 13.5px; }
+  }
 
   /* ==========================================================================
      HERO responsive — 100% viewport width (scoped to .hero only). Three
@@ -904,10 +946,6 @@
       padding: 11px 14px; font-size: 14px; white-space: nowrap;
     }
 
-    .trust-row { gap: 6px; margin-top: 22px; }
-    .trust-row .chip { padding: 6px 10px; font-size: 11.5px; gap: 6px; }
-    .trust-row .chip svg { width: 12px; height: 12px; }
-
     .hero-stack .frame-ghost.g1 { transform: translate(8px,  10px) rotate(.8deg);  opacity: .5; }
     .hero-stack .frame-ghost.g2 { transform: translate(16px, 20px) rotate(1.6deg); opacity: .28; }
     .hero-stack .hero-terminal {
@@ -962,11 +1000,11 @@
     </label>
     <nav class="site-nav" aria-label="Primary">
       <a href="#features">Features</a>
-      <a href="#install">Install</a>
-      <a href="#cli">CLI</a>
-      <a href="#keyboard">Keyboard</a>
-      <a href="#privacy">Privacy</a>
-      <a href="#faq">FAQ</a>
+      <a href="/install/">Install</a>
+      <a href="/cli/">CLI</a>
+      <a href="/keyboard/">Keyboard</a>
+      <a href="/privacy/">Privacy</a>
+      <a href="/faq/">FAQ</a>
       <a href="https://github.com/carrilloapps/hfo" target="_blank" rel="noreferrer noopener" class="nav-icon-link">
         <svg aria-hidden="true" focusable="false" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.4 5.4 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>
         GitHub
@@ -1023,8 +1061,16 @@
             <label for="pm-yarn">yarn</label>
             <input type="radio" name="pm" id="pm-bun"  data-cmd="bun add -g hfo-cli" />
             <label for="pm-bun">bun</label>
-            <input type="radio" name="pm" id="pm-curl" data-cmd="curl -fsSL https://hfo.carrillo.app/install.sh | sh" />
-            <label for="pm-curl">curl</label>
+            <!-- "script" tab auto-adapts to the visitor's OS: the runtime picks
+                 `curl … | sh` for macOS/Linux and `irm … | iex` for Windows,
+                 swapping the label (curl ↔ powershell) and the command at the
+                 same time. The data-cmd attribute is seeded with the Unix
+                 variant so non-JS visitors still see a working command. -->
+            <input type="radio" name="pm" id="pm-script"
+                   data-cmd="curl -fsSL https://hfo.carrillo.app/install.sh | sh"
+                   data-cmd-unix="curl -fsSL https://hfo.carrillo.app/install.sh | sh"
+                   data-cmd-win="irm https://hfo.carrillo.app/install.ps1 | iex" />
+            <label for="pm-script" id="pm-script-label" data-label-unix="curl" data-label-win="powershell">curl</label>
           </div>
           <button type="button" class="install-pill" id="hero-install-pill" aria-label="Copy install command">
             <code id="hero-install-cmd">npm i -g hfo-cli</code>
@@ -1034,44 +1080,14 @@
         </div>
 
         <div class="cta-group cta-secondary">
-          <a class="btn btn-primary" href="#install">
-            <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-            Get started
+          <a class="btn btn-primary" href="https://www.npmjs.com/package/hfo-cli" target="_blank" rel="noreferrer noopener">
+            <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 17V7h4a2.5 2.5 0 0 1 0 5H9"/><path d="M14 17h3"/></svg>
+            View on npm
           </a>
           <a class="btn btn-ghost" href="https://github.com/carrilloapps/hfo" target="_blank" rel="noreferrer noopener">
             <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.4 5.4 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>
             Star on GitHub
           </a>
-        </div>
-
-        <!-- Trust row: current state of the project at a glance. Static strings
-             where facts don't change (license, platforms), links where the badge
-             is the destination (npm, CI, stargazers). -->
-        <div class="trust-row" aria-label="Status and compatibility">
-          <a class="chip" href="https://www.npmjs.com/package/hfo-cli" target="_blank" rel="noreferrer noopener">
-            <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 17V7h4a2.5 2.5 0 0 1 0 5H9"/><path d="M14 17h3"/></svg>
-            <span>npm</span><span class="val">v0.1.0</span>
-          </a>
-          <a class="chip chip-ok" href="https://github.com/carrilloapps/hfo/actions/workflows/ci.yml" target="_blank" rel="noreferrer noopener">
-            <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-            <span>CI</span><span class="val">passing</span>
-          </a>
-          <span class="chip chip-ok" title="All 76 vitest cases pass">
-            <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
-            <span>Tests</span><span class="val">76&nbsp;/&nbsp;76</span>
-          </span>
-          <a class="chip" href="https://github.com/carrilloapps/hfo/stargazers" target="_blank" rel="noreferrer noopener">
-            <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-            <span>Star on GitHub</span>
-          </a>
-          <span class="chip" title="Node.js 20 or newer">
-            <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 22 7 22 17 12 22 2 17 2 7 12 2"/><line x1="12" y1="22" x2="12" y2="12"/><line x1="22" y1="7" x2="12" y2="12"/><line x1="2"  y1="7" x2="12" y2="12"/></svg>
-            <span>Node</span><span class="val">≥ 20</span>
-          </span>
-          <span class="chip" title="Runs on Windows, macOS and Linux">
-            <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="14" rx="2"/><line x1="8" y1="22" x2="16" y2="22"/><line x1="12" y1="18" x2="12" y2="22"/></svg>
-            <span class="val">Windows · macOS · Linux</span>
-          </span>
         </div>
       </div>
 
@@ -1111,6 +1127,41 @@
   <div class="container">
     <h2 id="features-title">What it does</h2>
     <p class="section-lede">Everything that normally takes a dozen shell commands and a hand-written Modelfile — folded into one tool that understands your rig.</p>
+
+    <!-- Project state at a glance — compact, data-dense strip. Replaces the
+         chip row that used to sit in the hero. Live where it makes sense
+         (npm, CI, stars), static where the fact doesn't change. -->
+    <div class="stats-strip" aria-label="Project status and compatibility">
+      <a class="stat" href="https://www.npmjs.com/package/hfo-cli" target="_blank" rel="noreferrer noopener">
+        <span class="stat-label">Version</span>
+        <span class="stat-val">v0.1.0</span>
+      </a>
+      <a class="stat" href="https://github.com/carrilloapps/hfo/actions/workflows/ci.yml" target="_blank" rel="noreferrer noopener">
+        <span class="stat-label">CI</span>
+        <span class="stat-val stat-ok">passing</span>
+      </a>
+      <span class="stat">
+        <span class="stat-label">Tests</span>
+        <span class="stat-val">76&nbsp;/&nbsp;76</span>
+      </span>
+      <a class="stat" href="https://github.com/carrilloapps/hfo/stargazers" target="_blank" rel="noreferrer noopener">
+        <span class="stat-label">GitHub</span>
+        <span class="stat-val">★ Star</span>
+      </a>
+      <span class="stat">
+        <span class="stat-label">Node</span>
+        <span class="stat-val">≥ 20</span>
+      </span>
+      <span class="stat">
+        <span class="stat-label">License</span>
+        <span class="stat-val">MIT</span>
+      </span>
+      <span class="stat">
+        <span class="stat-label">Platforms</span>
+        <span class="stat-val">Win · macOS · Linux</span>
+      </span>
+    </div>
+
     <div class="grid">
       <article class="card">
         <span class="card-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg></span>
@@ -1525,10 +1576,33 @@
 
   // Hero install pill: the pm-tabs radios set the active command; clicking
   // the pill copies that command and flashes a success state via CSS class.
+  // The "script" tab auto-adapts to the visitor's OS — PowerShell on
+  // Windows, curl/bash everywhere else — by swapping both its data-cmd
+  // and its visible label on page load.
   (function wireHeroInstall() {
     const cmdEl  = document.getElementById('hero-install-cmd');
     const pill   = document.getElementById('hero-install-pill');
     if (!cmdEl || !pill) return;
+
+    // Prefer the modern User-Agent Client Hints API; fall back to UA sniffing
+    // only for the Windows check. Everything else (macOS, Linux, BSD, CrOS,
+    // Android, iOS) gets the POSIX curl variant — they all have `sh`.
+    const isWindows = (() => {
+      const uaD = navigator.userAgentData;
+      if (uaD && typeof uaD.platform === 'string') {
+        return /windows/i.test(uaD.platform);
+      }
+      return /Windows NT|Win32|Win64|WOW64/i.test(navigator.userAgent || navigator.platform || '');
+    })();
+
+    const scriptInput = document.getElementById('pm-script');
+    const scriptLabel = document.getElementById('pm-script-label');
+    if (scriptInput && scriptLabel) {
+      const cmdKey   = isWindows ? 'cmdWin'   : 'cmdUnix';
+      const labelKey = isWindows ? 'labelWin' : 'labelUnix';
+      if (scriptInput.dataset[cmdKey])   scriptInput.dataset.cmd   = scriptInput.dataset[cmdKey];
+      if (scriptLabel.dataset[labelKey]) scriptLabel.textContent   = scriptLabel.dataset[labelKey];
+    }
 
     const pmInputs = document.querySelectorAll('input[name="pm"]');
     const current  = () => {

@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+
+<title>Install hfo — Hugging Face GGUFs to Ollama on Windows, macOS, Linux</title>
+<meta name="description" content="Install hfo in one command. npm, pnpm, yarn, bun, curl and PowerShell one-liners, standalone binaries, and troubleshooting for Windows, macOS and Linux." />
+<meta name="author" content="José Carrillo" />
+<meta name="theme-color" content="#0a0b0f" media="(prefers-color-scheme: dark)" />
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+<meta name="color-scheme" content="dark light" />
+<meta name="robots" content="index,follow,max-image-preview:large" />
+<meta name="referrer" content="strict-origin-when-cross-origin" />
+
+<link rel="canonical" href="https://hfo.carrillo.app/install/" />
+
+<link rel="icon" href="/favicon.ico" sizes="32x32" />
+<link rel="icon" href="/assets/logo-mark.svg" type="image/svg+xml" />
+<link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180" />
+<link rel="mask-icon" href="/assets/logo-mark.svg" color="#7C5BF3" />
+<link rel="manifest" href="/manifest.webmanifest" />
+
+<meta property="og:type" content="article" />
+<meta property="og:site_name" content="hfo" />
+<meta property="og:title" content="Install hfo — Hugging Face GGUFs to Ollama" />
+<meta property="og:description" content="One-liner install for every OS, package managers for every toolchain. Windows, macOS, Linux." />
+<meta property="og:url" content="https://hfo.carrillo.app/install/" />
+<meta property="og:image" content="https://hfo.carrillo.app/assets/og-image.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:site" content="@carrilloapps" />
+<meta name="twitter:title" content="Install hfo — Hugging Face GGUFs to Ollama" />
+<meta name="twitter:description" content="One-liner install for every OS, package managers for every toolchain." />
+<meta name="twitter:image" content="https://hfo.carrillo.app/assets/og-image.png" />
+
+<!-- BreadcrumbList + HowTo structured data so Google surfaces a steps-rich result. -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "hfo",     "item": "https://hfo.carrillo.app/" },
+        { "@type": "ListItem", "position": 2, "name": "Install", "item": "https://hfo.carrillo.app/install/" }
+      ]
+    },
+    {
+      "@type": "HowTo",
+      "name": "Install hfo on Windows, macOS, or Linux",
+      "description": "Install the hfo CLI (hfo-cli on npm) in one command on any major OS.",
+      "totalTime": "PT2M",
+      "supply": [{ "@type": "HowToSupply", "name": "Node.js 20 or newer (for npm / pnpm / yarn / bun installs)" }],
+      "tool":   [{ "@type": "HowToTool",   "name": "Terminal or PowerShell" }],
+      "step": [
+        { "@type": "HowToStep", "position": 1, "name": "Pick an installer",  "text": "Choose the one-liner script for your OS, a package manager you already have, or download a standalone binary from GitHub Releases." },
+        { "@type": "HowToStep", "position": 2, "name": "Run the command",    "text": "Paste it into your terminal. The script detects your OS and architecture, pulls the latest binary, and drops it on your PATH." },
+        { "@type": "HowToStep", "position": 3, "name": "Verify the install", "text": "Run `hfo --version` to confirm. Launch the TUI with `hfo` or explore with `hfo --view`." }
+      ]
+    }
+  ]
+}
+</script>
+
+<link rel="stylesheet" href="/assets/page.css" />
+</head>
+<body>
+
+<a class="skip-link" href="#main">Skip to main content</a>
+
+<header class="site-header" role="banner">
+  <div class="container row">
+    <a class="brand" href="/" aria-label="hfo home">
+      <svg viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+        <defs>
+          <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0"    stop-color="#3B6FE5"/>
+            <stop offset="0.55" stop-color="#5B6BE5"/>
+            <stop offset="1"    stop-color="#7C5BF3"/>
+          </linearGradient>
+        </defs>
+        <rect x="1" y="1" width="30" height="30" rx="7" fill="url(#g)"/>
+        <line x1="8" y1="16" x2="24" y2="16" stroke="#0a0b0f" stroke-width="2" stroke-linecap="round"/>
+        <circle cx="8"  cy="16" r="3" fill="#0a0b0f"/>
+        <circle cx="16" cy="16" r="3" fill="none" stroke="#0a0b0f" stroke-width="2"/>
+        <circle cx="24" cy="16" r="3" fill="#0a0b0f"/>
+      </svg>
+      <span>hfo</span>
+    </a>
+    <input type="checkbox" id="nav-open" class="nav-toggle-cb" aria-label="Toggle navigation menu" />
+    <label for="nav-open" class="nav-toggle" aria-hidden="true">
+      <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M3 12h18"/><path d="M3 18h18"/></svg>
+    </label>
+    <nav class="site-nav" aria-label="Primary">
+      <a href="/install/" aria-current="page">Install</a>
+      <a href="/cli/">CLI</a>
+      <a href="/keyboard/">Keyboard</a>
+      <a href="/privacy/">Privacy</a>
+      <a href="/faq/">FAQ</a>
+      <a href="https://github.com/carrilloapps/hfo" target="_blank" rel="noreferrer noopener" class="nav-icon-link">
+        <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.4 5.4 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>
+        GitHub
+      </a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+  <div class="container">
+
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <ol>
+        <li><a href="/">hfo</a></li>
+        <li aria-current="page">Install</li>
+      </ol>
+    </nav>
+
+    <article class="page">
+      <header class="page-header">
+        <span class="page-eyebrow">Getting started</span>
+        <h1>Install hfo</h1>
+        <p class="page-lede">Pick a one-line install script, a package manager you already have, or download a standalone binary straight from GitHub Releases. Everything below assumes a fresh machine — no prior Ollama, Node, or Hugging Face setup required.</p>
+      </header>
+
+      <h2>One-liner scripts (no Node required)</h2>
+      <p>Both scripts always pull the <strong>latest GitHub Release</strong> binary for your platform. No <code>sudo</code>, no admin prompt. Override with <code>HFO_VERSION=v0.2.0</code> (or <code>$env:HFO_VERSION</code>) to pin a specific tag, or <code>HFO_INSTALL_DIR=/some/dir</code> to relocate.</p>
+
+      <div class="terminal">
+        <div class="terminal-bar">
+          <span class="terminal-dot red" aria-hidden="true"></span>
+          <span class="terminal-dot yellow" aria-hidden="true"></span>
+          <span class="terminal-dot green" aria-hidden="true"></span>
+          <span class="terminal-title">macOS · Linux</span>
+          <button type="button" class="terminal-copy" data-copy="curl -fsSL https://hfo.carrillo.app/install.sh | sh" aria-label="Copy install command">copy</button>
+        </div>
+<pre><code><span class="tok-comment"># Detects OS + arch, installs to /usr/local/bin or ~/.local/bin</span>
+<span class="tok-prompt">$</span> <span class="tok-cmd">curl</span> <span class="tok-flag">-fsSL</span> <span class="tok-url">https://hfo.carrillo.app/install.sh</span> <span class="tok-op">|</span> <span class="tok-cmd">sh</span></code></pre>
+      </div>
+
+      <div class="terminal">
+        <div class="terminal-bar">
+          <span class="terminal-dot red" aria-hidden="true"></span>
+          <span class="terminal-dot yellow" aria-hidden="true"></span>
+          <span class="terminal-dot green" aria-hidden="true"></span>
+          <span class="terminal-title">Windows · PowerShell</span>
+          <button type="button" class="terminal-copy" data-copy="irm https://hfo.carrillo.app/install.ps1 | iex" aria-label="Copy PowerShell install command">copy</button>
+        </div>
+<pre><code><span class="tok-comment"># Installs to %LOCALAPPDATA%\Programs\hfo and adds it to user PATH. No admin needed.</span>
+<span class="tok-prompt">PS&gt;</span> <span class="tok-cmd">irm</span> <span class="tok-url">https://hfo.carrillo.app/install.ps1</span> <span class="tok-op">|</span> <span class="tok-cmd">iex</span></code></pre>
+      </div>
+
+      <div class="callout callout-info">
+        <p><strong>Binaries are built only when a <code>v*.*.*</code> tag is pushed</strong>, never on regular commits. CI runs typecheck + lint + test + build on every commit, but release artifacts are reserved for tagged versions.</p>
+      </div>
+
+      <h2>Package managers</h2>
+      <p>All four publish the same <code>hfo-cli</code> package. Node.js <strong>≥ 20</strong> required.</p>
+
+      <div class="terminal">
+        <div class="terminal-bar">
+          <span class="terminal-dot red" aria-hidden="true"></span>
+          <span class="terminal-dot yellow" aria-hidden="true"></span>
+          <span class="terminal-dot green" aria-hidden="true"></span>
+          <span class="terminal-title">pick any</span>
+        </div>
+<pre><code><span class="tok-prompt">$</span> <span class="tok-cmd">npm</span>  <span class="tok-cmd">i</span>   <span class="tok-flag">-g</span> hfo-cli
+<span class="tok-prompt">$</span> <span class="tok-cmd">pnpm</span> add <span class="tok-flag">-g</span> hfo-cli
+<span class="tok-prompt">$</span> <span class="tok-cmd">yarn</span> global add hfo-cli
+<span class="tok-prompt">$</span> <span class="tok-cmd">bun</span>  add <span class="tok-flag">-g</span> hfo-cli</code></pre>
+      </div>
+
+      <h2>Standalone binaries</h2>
+      <p>Each tagged release publishes self-contained executables — no Node runtime required. Download and drop on your PATH.</p>
+
+      <div class="table-wrap">
+        <table class="table">
+          <thead><tr><th scope="col">Asset</th><th scope="col">OS · Arch</th></tr></thead>
+          <tbody>
+            <tr><td><code>hfo-linux-x64</code></td><td>Linux x64 (glibc)</td></tr>
+            <tr><td><code>hfo-linux-arm64</code></td><td>Linux arm64 (Raspberry Pi 4/5, Graviton, etc.)</td></tr>
+            <tr><td><code>hfo-macos-x64</code></td><td>macOS x64 (Intel)</td></tr>
+            <tr><td><code>hfo-macos-arm64</code></td><td>macOS arm64 (Apple Silicon M1+)</td></tr>
+            <tr><td><code>hfo-win-x64.exe</code></td><td>Windows x64</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="terminal">
+        <div class="terminal-bar">
+          <span class="terminal-dot red" aria-hidden="true"></span>
+          <span class="terminal-dot yellow" aria-hidden="true"></span>
+          <span class="terminal-dot green" aria-hidden="true"></span>
+          <span class="terminal-title">manual · Linux / macOS</span>
+        </div>
+<pre><code><span class="tok-prompt">$</span> <span class="tok-cmd">curl</span> <span class="tok-flag">-LO</span> <span class="tok-url">https://github.com/carrilloapps/hfo/releases/latest/download/hfo-linux-x64</span>
+<span class="tok-prompt">$</span> <span class="tok-cmd">chmod</span> +x hfo-linux-x64
+<span class="tok-prompt">$</span> <span class="tok-cmd">sudo</span> <span class="tok-cmd">mv</span> hfo-linux-x64 <span class="tok-path">/usr/local/bin/hfo</span>
+<span class="tok-prompt">$</span> <span class="tok-cmd">hfo</span> <span class="tok-flag">--version</span></code></pre>
+      </div>
+
+      <h2>Verify the install</h2>
+      <div class="terminal">
+        <div class="terminal-bar">
+          <span class="terminal-dot red" aria-hidden="true"></span>
+          <span class="terminal-dot yellow" aria-hidden="true"></span>
+          <span class="terminal-dot green" aria-hidden="true"></span>
+          <span class="terminal-title">bash</span>
+        </div>
+<pre><code><span class="tok-prompt">$</span> <span class="tok-cmd">hfo</span> <span class="tok-flag">--version</span>
+hfo v0.1.0 · MIT · José Carrillo
+
+<span class="tok-comment"># Print hardware profile and recommended picks</span>
+<span class="tok-prompt">$</span> <span class="tok-cmd">hfo</span> <span class="tok-flag">--view</span>
+
+<span class="tok-comment"># Launch the fullscreen TUI</span>
+<span class="tok-prompt">$</span> <span class="tok-cmd">hfo</span></code></pre>
+      </div>
+
+      <h2>Troubleshooting</h2>
+
+      <h3>Command not found after install</h3>
+      <p>If <code>hfo: command not found</code> appears immediately after the install script, the install directory isn't on your <code>PATH</code> yet.</p>
+      <ul>
+        <li><strong>macOS / Linux</strong>: open a new terminal (the script edits <code>~/.profile</code> or <code>~/.zprofile</code>), or run <code>source ~/.profile</code>.</li>
+        <li><strong>Windows</strong>: close and reopen PowerShell. The PATH change is per-user and takes a new session.</li>
+        <li><strong>Global npm</strong>: check <code>npm prefix -g</code> — that directory's <code>bin</code> subfolder must be on <code>PATH</code>.</li>
+      </ul>
+
+      <h3>Ollama not found</h3>
+      <p>hfo doesn't require Ollama to already be installed. On first run, if it's missing, you'll see an installer overlay offering the platform-appropriate method (<code>winget install Ollama.Ollama</code>, <code>brew install ollama</code>, or the official <code>curl | sh</code>). Confirm with Enter, or install manually and re-run hfo.</p>
+
+      <h3>Node version mismatch</h3>
+      <p>All four package managers require <strong>Node.js 20 or newer</strong>. Check with <code>node -v</code>. Upgrade via <a href="https://github.com/nvm-sh/nvm" target="_blank" rel="noreferrer noopener">nvm</a> (Unix), <a href="https://github.com/Schniz/fnm" target="_blank" rel="noreferrer noopener">fnm</a>, or <a href="https://www.npmjs.com/package/n" target="_blank" rel="noreferrer noopener"><code>n</code></a>. The standalone binaries have no Node dependency.</p>
+
+      <h3>Corporate proxy / mirror</h3>
+      <p>If <code>npm</code> can't reach the registry, set your proxy first:</p>
+<pre><code>npm config set proxy       http://your-proxy:8080
+npm config set https-proxy http://your-proxy:8080
+npm config set registry    https://your-registry.example.com/</code></pre>
+      <p>Or use the standalone binary — it only contacts GitHub Releases (one HTTPS request) and then Hugging Face at runtime.</p>
+
+      <h3>SELinux / AppArmor blocking nvidia-smi</h3>
+      <p>Hardware scoring calls <code>nvidia-smi</code> to read VRAM. If the binary runs confined, the call silently fails and GPU scoring returns zero. Either run hfo unconfined or pre-populate <code>settings.modelDir</code> and skip the scoring step by passing <code>--dir</code>.</p>
+
+      <h2>Uninstall</h2>
+      <div class="terminal">
+        <div class="terminal-bar">
+          <span class="terminal-dot red" aria-hidden="true"></span>
+          <span class="terminal-dot yellow" aria-hidden="true"></span>
+          <span class="terminal-dot green" aria-hidden="true"></span>
+          <span class="terminal-title">bash</span>
+        </div>
+<pre><code><span class="tok-comment"># via npm / pnpm / yarn / bun</span>
+<span class="tok-prompt">$</span> <span class="tok-cmd">npm</span>  uninstall <span class="tok-flag">-g</span> hfo-cli
+
+<span class="tok-comment"># standalone binary on Linux / macOS</span>
+<span class="tok-prompt">$</span> <span class="tok-cmd">sudo</span> <span class="tok-cmd">rm</span> <span class="tok-path">/usr/local/bin/hfo</span>
+
+<span class="tok-comment"># Windows (PowerShell)</span>
+<span class="tok-prompt">PS&gt;</span> <span class="tok-cmd">Remove-Item</span> <span class="tok-path">"$env:LOCALAPPDATA\Programs\hfo"</span> <span class="tok-flag">-Recurse</span> <span class="tok-flag">-Force</span></code></pre>
+      </div>
+      <p>Settings file (<code>settings.json</code>) and model downloads are untouched. Remove them manually if desired:</p>
+      <ul>
+        <li>Windows — <code>%APPDATA%\hfo\</code></li>
+        <li>macOS — <code>~/Library/Application Support/hfo/</code></li>
+        <li>Linux — <code>~/.config/hfo/</code></li>
+      </ul>
+
+      <nav class="page-related" aria-label="Next steps">
+        <a href="/cli/"><small>Next</small><strong>CLI reference →</strong></a>
+        <a href="/keyboard/"><small>Reference</small><strong>Keyboard shortcuts →</strong></a>
+        <a href="/faq/"><small>Help</small><strong>FAQ →</strong></a>
+      </nav>
+    </article>
+  </div>
+</main>
+
+<footer class="site-footer" role="contentinfo">
+  <div class="container row">
+    <div>
+      <strong>hfo</strong> · MIT · © 2026 <a href="https://carrillo.app" target="_blank" rel="noreferrer noopener me">José Carrillo</a>
+    </div>
+    <div class="footer-links">
+      <a href="/">Home</a>
+      <a href="https://github.com/carrilloapps/hfo" target="_blank" rel="noreferrer noopener">GitHub</a>
+      <a href="https://www.npmjs.com/package/hfo-cli" target="_blank" rel="noreferrer noopener">npm</a>
+      <a href="/privacy/">Privacy</a>
+      <a href="/faq/">FAQ</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  document.addEventListener('click', (e) => {
+    const btn = e.target.closest('.terminal-copy');
+    if (!btn) return;
+    const text = btn.getAttribute('data-copy');
+    if (!text || !navigator.clipboard) return;
+    navigator.clipboard.writeText(text).then(() => {
+      const prev = btn.textContent;
+      btn.textContent = 'copied';
+      btn.style.color = 'var(--success)';
+      setTimeout(() => { btn.textContent = prev; btn.style.color = ''; }, 1200);
+    });
+  });
+</script>
+
+</body>
+</html>

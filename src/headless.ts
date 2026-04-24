@@ -11,7 +11,8 @@ import { formatBytes } from './ui/format.js';
 import { APP } from './infra/about.js';
 import { setLang, t } from './ui/i18n.js';
 import { execa } from 'execa';
-import { rm } from 'node:fs/promises';
+import { rm, writeFile } from 'node:fs/promises';
+import { runBench } from './core/bench.js';
 
 function hr(label: string): void {
   const pad = '─'.repeat(Math.max(1, 70 - label.length - 4));
@@ -209,4 +210,67 @@ export async function cmdDelete(tag: string, opts: { deep?: boolean }): Promise<
 export function cmdVersion(): void {
   console.log(`${APP.binary} v${APP.version}`);
   console.log(`${APP.license} · ${APP.author.name} · ${APP.author.url ?? APP.homepage}`);
+}
+
+/**
+ * `hfo --bench <tag>` — runs the standard 4-prompt suite against a local
+ * Ollama model, reports tok/s and TTFT, and optionally writes a JSON
+ * submission file that can be contributed to a community leaderboard.
+ *
+ * Requires Ollama's HTTP API (defaults to http://localhost:11434). The
+ * benchmark does not modify any state on the Ollama side — it only calls
+ * /api/generate with streaming to measure latency + throughput.
+ */
+export async function cmdBench(tag: string, opts: { out?: string } = {}): Promise<void> {
+  await applyLanguage();
+
+  const [hw, ollama] = await Promise.all([detectHardware(), checkOllama()]);
+  if (ollama.status !== 'ok') {
+    console.error(`[x] Ollama is not reachable (${ollama.status}). Start the daemon and retry.`);
+    process.exitCode = 1;
+    return;
+  }
+
+  hr(`Benchmarking ${tag}`);
+  console.log(`Model      ${tag}`);
+  console.log(`GPU        ${hw.gpuName ?? '(no discrete GPU)'}`);
+  if (hw.vramMiB > 0) console.log(`VRAM       ${formatBytes(hw.vramMiB * 1024 * 1024)}`);
+  console.log(`RAM        ${formatBytes(hw.ramMiB * 1024 * 1024)}`);
+  console.log(`Ollama     ${ollama.version ?? 'unknown'}`);
+  console.log('');
+
+  let report;
+  try {
+    report = await runBench(tag, {
+      ollamaVersion: ollama.version ?? null,
+      hfoVersion: APP.version,
+      hardware: hw,
+    });
+  } catch (err) {
+    console.error(`[x] Bench failed: ${err instanceof Error ? err.message : err}`);
+    process.exitCode = 1;
+    return;
+  }
+
+  hr('Per-prompt');
+  for (const r of report.runs) {
+    console.log(
+      `  ${r.id.padEnd(12)}  ${r.outputTokens.toString().padStart(5)} tok  ` +
+      `${r.ttftMs.toFixed(0).padStart(6)} ms TTFT  ` +
+      `${r.totalMs.toFixed(0).padStart(7)} ms total  ` +
+      `${r.tokensPerSec.toFixed(1).padStart(6)} tok/s`,
+    );
+  }
+
+  hr('Aggregate');
+  console.log(`  ${report.aggregate.tokensPerSec.toFixed(1)} tok/s avg`);
+  console.log(`  ${report.aggregate.ttftMs.toFixed(0)} ms TTFT avg`);
+  console.log(`  ${report.aggregate.totalTokens} total output tokens in ${(report.aggregate.totalMs / 1000).toFixed(1)} s`);
+
+  if (opts.out) {
+    await writeFile(opts.out, JSON.stringify(report, null, 2) + '\n', 'utf8');
+    hr('Saved');
+    console.log(`  Submission JSON written to ${opts.out}`);
+    console.log(`  Contribute it to the leaderboard: https://hfo.carrillo.app/benchmarks/`);
+  }
 }
