@@ -1,0 +1,280 @@
+# hfo — Hugging Face · Ollama, in your terminal
+
+Fullscreen terminal UI and headless CLI that turns any Hugging Face GGUF
+repository into a running, hardware-tuned Ollama model — in one Enter
+keystroke. Cross-OS (Windows, macOS, Linux). Strict TypeScript. MIT
+licensed. No telemetry, no accounts, no subscriptions. Version 0.1.0.
+
+Website: https://hfo.carrillo.app/
+Repository: https://github.com/carrilloapps/hfo
+npm: https://www.npmjs.com/package/hfo-cli
+
+## What hfo does
+
+Running open-weight large language models locally via Ollama is powerful
+but punishingly repetitive. You browse Hugging Face, pick a repo, eyeball
+the quant table, guess which quant fits your VRAM, read the model card for
+temperature / top_p hints, download the `.gguf`, hand-write a Modelfile,
+`ollama create` it, tune env vars (OLLAMA_FLASH_ATTENTION,
+OLLAMA_KV_CACHE_TYPE, …) differently on every OS, back it up, restore it,
+manage a dozen tags, and hand it off to Claude Code or Codex.
+
+hfo collapses that into a single session. It reads your rig, scores every
+quant in the repo against your VRAM and RAM, parses the model card for
+recommended sampling parameters, and — on the happy path — installs a
+ready-to-run model with one Enter keystroke. Every TUI capability has a
+non-interactive flag so you can script the same pipeline from CI, cron, or
+an editor plugin.
+
+## Install
+
+**One-liner scripts (no Node required)**
+
+macOS / Linux — detects OS and architecture, installs to /usr/local/bin or
+~/.local/bin:
+```
+curl -fsSL https://hfo.carrillo.app/install.sh | sh
+```
+
+Windows PowerShell — installs to %LOCALAPPDATA%\Programs\hfo and adds it
+to user PATH. No admin prompt required:
+```
+irm https://hfo.carrillo.app/install.ps1 | iex
+```
+
+Both scripts always pull the latest GitHub Release binary for your
+platform. Override with HFO_VERSION=v0.2.0 (or $env:HFO_VERSION) to pin a
+specific tag, or HFO_INSTALL_DIR=/some/dir to relocate. Binaries are built
+and published only when a v*.*.* tag is pushed, never on regular commits.
+
+**Package managers**
+
+Pick the one you already have. All four ship the same hfo-cli package from
+the npm registry:
+```
+npm  i   -g hfo-cli
+pnpm add -g hfo-cli
+yarn global add hfo-cli
+bun  add -g hfo-cli
+```
+
+Requires Node.js 20 or newer. Ollama is optional — hfo will install it for
+you via winget, brew, or the official shell script if it isn't already on
+your PATH.
+
+**Standalone binaries**
+
+Each tagged release on GitHub publishes self-contained executables:
+- hfo-linux-x64
+- hfo-linux-arm64
+- hfo-macos-x64 (Intel)
+- hfo-macos-arm64 (Apple Silicon)
+- hfo-win-x64.exe
+
+Download from the Releases page, make it executable, and put it on your
+PATH. No Node runtime required.
+
+## Quick start
+
+```
+# Explore — fullscreen dashboard: hardware, capacity, picks, live metrics
+hfo
+
+# Install a specific repo (opens the Install tab pre-filled)
+hfo bartowski/Llama-3.2-3B-Instruct-GGUF
+
+# Print hardware profile, capacity score, tier, picks, HF search URLs
+hfo --view
+
+# Install headlessly (quick-confirm screen auto-accepts on Enter)
+hfo bartowski/Qwen2.5-Coder-7B-Instruct-GGUF --code
+
+# Launch a coding agent wired to a local model
+hfo --launch claude --model llama3.1:8b
+
+# Back up a model folder
+hfo --backup qwen2-5-coder-7b:q4-k-m
+
+# Restore later
+hfo --restore ~/.config/hfo/backups/2026-04-23_11-48-25/qwen2-5-coder-7b_q4-k-m.zip
+```
+
+Models download to the current working directory by default. Override with
+`--dir` / `-d` or persist a default via the Settings tab (`modelDir`).
+
+## CLI reference
+
+Every TUI capability ships a headless flag that prints plain text and
+exits non-zero on failure.
+
+- `hfo`: open the fullscreen TUI (Dashboard tab)
+- `hfo <hf-url-or-repo>`: open the TUI pre-filled on the Install tab
+- `hfo --help` / `-h`: print the full flag reference
+- `hfo --version`: print version, license, author
+- `hfo --view`: print hardware, capacity score, tier, picks, HF search URLs
+- `hfo --list`: list installed models plus orphan GGUFs on disk
+- `hfo --tune`: persist the ~90% capacity Ollama env profile, restart daemon
+- `hfo --backup <tag>`: create a .zip backup of the model folder
+- `hfo --restore <zip>`: extract a backup and re-register with Ollama
+- `hfo --delete <tag>`: remove the tag from Ollama (shallow)
+- `hfo --delete <tag> --deep`: remove tag AND delete files on disk
+- `hfo --launch <integration>`: run `ollama launch` with the given model
+- `hfo --tab <name>`: open the TUI on dashboard | models | install | tune | help | settings
+
+Flags:
+- `--dir` / `-d`: base directory for install file browser (default: settings.modelDir → cwd)
+- `--token` / `-t`: Hugging Face token for gated/private repos (or HF_TOKEN env)
+- `--code` / `-c`: mark the install as code-specialized (adjusts SYSTEM prompt)
+- `--ctx`: force context size (default: auto — 8192 if fits in VRAM, else 4096)
+- `--model`: model tag to pass to --launch
+- `--deep`: deep-delete alongside --delete
+- `--no-fullscreen`: disable the alt-screen buffer
+
+## Keyboard reference
+
+Global:
+- 1–6: jump to a tab
+- Tab / Shift+Tab: cycle tabs
+- , : open Settings
+- ?: open Help
+- Ctrl+H: open the author's homepage
+- q / Ctrl+C: quit (restores scrollback)
+
+Dashboard:
+- Alt+Up / Alt+Down: focus / cycle panels
+- Esc / b: return to the 4-panel grid
+- Enter: open selected link in browser
+- r: force refresh
+
+Models:
+- Up / Down: navigate rows
+- L: launch integration with selected model
+- G: launch menu without preset
+- I: reinstall an orphan (regenerates Modelfile if missing)
+- B: create a .zip backup
+- d: remove tag only
+- Alt+d: remove tag AND delete files
+- r: refresh
+
+Install (quick-confirm):
+- Enter: install now with recommended defaults
+- O: change target directory
+- C: customize Modelfile parameters
+- Esc: back to the quant picker
+
+Tune:
+- Up/Down: navigate rows
+- Left/Right: cycle enum values
+- E: edit freely
+- D: default
+- S: suggested
+- R: reset to suggested
+- X: reset to defaults
+- A: apply
+
+Settings:
+- Enter: open dropdown (themes or 20 languages, searchable)
+
+## Privacy, security, cost
+
+hfo makes exactly two kinds of external requests, both to Hugging Face's
+public, unauthenticated API:
+- GET https://huggingface.co/api/models/<repo>/tree/main
+- GET https://huggingface.co/<repo>/resolve/main/<file>
+
+Everything else — nvidia-smi, systeminformation, ollama ps, ollama create,
+ollama launch — runs locally. No telemetry. No accounts. Gated or private
+repos use a standard HF_TOKEN environment variable or the --token flag.
+
+The Ollama install helpers (winget install, brew install, the official
+shell script) run only when the user explicitly opts in from the TUI's
+Ollama installer overlay.
+
+All costs are zero: no subscriptions, no API keys, no rate-limited tiers.
+
+## Features at a glance
+
+- Fullscreen TUI with six tabs: Dashboard, Models, Install, Tune, Help, Settings
+- Hardware scoring: every GGUF graded 0–100 against usable VRAM + RAM
+- HF model-card parameter parser: overlays recommended temp/top_p/top_k/ctx
+- Quick-confirm install: Enter to install, O to change dir, C to customize
+- Orphan reinstall: tags removed from Ollama but GGUFs still on disk get recovered
+- Zip backup + restore with level-9 compression and metadata sidecar
+- Deep delete: d removes tag only, Alt+d also wipes the tracked directory
+- Launch integrations: Claude Code, Cline, Codex, Copilot CLI, Droid, Hermes, Kimi, OpenCode, OpenClaw, Pi, VS Code
+- ~90% capacity tuner for OLLAMA_FLASH_ATTENTION, OLLAMA_KV_CACHE_TYPE, OLLAMA_KEEP_ALIVE, OLLAMA_NUM_PARALLEL, OLLAMA_MAX_LOADED_MODELS, OLLAMA_MAX_QUEUE
+- 7 themes (Dark, Light, Dracula, Solarized Dark/Light, Nord, Monokai)
+- 20 languages (English, Spanish, Chinese, Hindi, Arabic, Portuguese, Bengali, Russian, Japanese, German, French, Korean, Italian, Turkish, Vietnamese, Indonesian, Polish, Dutch, Thai, Ukrainian)
+
+## Configuration
+
+Settings file location:
+- Windows: %APPDATA%\hfo\settings.json
+- macOS: ~/Library/Application Support/hfo/settings.json
+- Linux: $XDG_CONFIG_HOME/hfo/settings.json (defaults to ~/.config/hfo/)
+
+Schema:
+```ts
+interface Settings {
+  theme: 'dark' | 'light' | 'dracula' | 'solarized-dark' | 'solarized-light' | 'nord' | 'monokai';
+  language: 'en' | 'es' | 'zh' | 'hi' | 'ar' | 'pt' | 'bn' | 'ru' | 'ja' | 'de'
+          | 'fr' | 'ko' | 'it' | 'tr' | 'vi' | 'id' | 'pl' | 'nl' | 'th' | 'uk';
+  refreshIntervalMs: number;       // Dashboard polling cadence
+  defaultSort: 'trending' | 'downloads' | 'likes7d' | 'modified';
+  defaultCodeMode: boolean;
+  modelDir: string | null;         // null = current working directory at launch
+  useAltScreen: boolean;
+  installations: Installation[];   // { tag, dir, repoId, quant, installedAt }
+}
+```
+
+Backups live under <configDir>/hfo/backups/<timestamp>/<slug>.zip with a
+sidecar .metadata.json containing tag, repo, quant, byte counts, and
+compression ratio.
+
+## FAQ
+
+**Is hfo free?** Yes. MIT-licensed open source with no subscriptions, no
+accounts, and no telemetry. It only talks to the public Hugging Face API
+and your local Ollama daemon.
+
+**Which operating systems does hfo support?** Windows, macOS, and Linux.
+The npm package is cross-OS; standalone binaries for each platform are
+published on the GitHub Releases page when a version is tagged.
+
+**Do I need to install Ollama first?** No. If Ollama isn't on your PATH,
+hfo will offer to install it using the platform-appropriate method —
+winget on Windows, Homebrew on macOS, or the official shell script on
+Linux. You always confirm before anything is installed.
+
+**How does hfo choose which GGUF to recommend?** Every quant in a Hugging
+Face repo is scored 0–100 against your detected VRAM and RAM headroom.
+The tool reads the model's README for recommended temperature, top_p,
+top_k, repeat_penalty, min_p and context size, then synthesises a tuned
+Modelfile. On the quick-confirm screen you can accept with Enter, change
+the install directory with O, or customise the Modelfile parameters with C.
+
+**Can I launch Claude Code or Codex with a local model?** Yes. Press L on
+any installed model and hfo will run ollama launch against the chosen
+integration — Claude Code, Cline, Codex, Copilot CLI, Droid, Hermes, Kimi,
+OpenCode, OpenClaw, Pi, or VS Code — with that model as the backend.
+
+**Where are my model files stored?** By default under the directory you
+launched hfo from (process.cwd()). Each model lives in
+<baseDir>/<repo-slug>/<quant>/, with the GGUF, a tuned Modelfile, and hfo
+records the tag→directory mapping so Alt+d (deep delete) and B (backup)
+know what to operate on. Set a persistent default in the Settings tab
+(modelDir).
+
+## Author
+
+José Carrillo — Senior Full-stack Developer (Tech Lead)
+- Website: https://carrillo.app
+- Email: m@carrillo.app
+- GitHub: @carrilloapps
+- LinkedIn: in/carrilloapps
+
+## License
+
+MIT © 2026 José Carrillo. See
+https://github.com/carrilloapps/hfo/blob/main/LICENSE

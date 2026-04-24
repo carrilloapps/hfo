@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+
+<title>hfo FAQ — Hugging Face GGUFs, Ollama, local LLM questions answered</title>
+<meta name="description" content="Most-asked questions about hfo: pricing, OS support, Ollama auto-install, picking a quant, coding-agent handoff, model storage, backup format, and more." />
+<meta name="theme-color" content="#0a0b0f" media="(prefers-color-scheme: dark)" />
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+<meta name="color-scheme" content="dark light" />
+<meta name="robots" content="index,follow,max-image-preview:large" />
+
+<link rel="canonical" href="https://hfo.carrillo.app/faq/" />
+<link rel="icon" href="/favicon.ico" sizes="32x32" />
+<link rel="icon" href="/assets/logo-mark.svg" type="image/svg+xml" />
+<link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180" />
+<link rel="mask-icon" href="/assets/logo-mark.svg" color="#7C5BF3" />
+
+<meta property="og:type" content="article" />
+<meta property="og:site_name" content="hfo" />
+<meta property="og:title" content="hfo FAQ" />
+<meta property="og:description" content="Answers to the most-asked questions about hfo." />
+<meta property="og:url" content="https://hfo.carrillo.app/faq/" />
+<meta property="og:image" content="https://hfo.carrillo.app/assets/og-image.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="hfo FAQ" />
+<meta name="twitter:description" content="Answers to the most-asked questions." />
+<meta name="twitter:image" content="https://hfo.carrillo.app/assets/og-image.png" />
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "hfo", "item": "https://hfo.carrillo.app/" },
+        { "@type": "ListItem", "position": 2, "name": "FAQ", "item": "https://hfo.carrillo.app/faq/" }
+      ]
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        { "@type": "Question", "name": "Is hfo free?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. MIT-licensed open source with no subscriptions, no accounts, and no telemetry. It only talks to the public Hugging Face API and your local Ollama daemon." } },
+        { "@type": "Question", "name": "Which operating systems does hfo support?", "acceptedAnswer": { "@type": "Answer", "text": "Windows, macOS, and Linux. The npm package is cross-OS; standalone binaries for each platform are published on the GitHub Releases page when a version is tagged." } },
+        { "@type": "Question", "name": "Do I need to install Ollama first?", "acceptedAnswer": { "@type": "Answer", "text": "No. If Ollama isn't on your PATH, hfo will offer to install it using winget on Windows, Homebrew on macOS, or the official shell script on Linux. You always confirm before anything is installed." } },
+        { "@type": "Question", "name": "How does hfo choose which GGUF to recommend?", "acceptedAnswer": { "@type": "Answer", "text": "Every quant in a Hugging Face repo is scored 0–100 against your detected VRAM and RAM headroom. The tool reads the model's README for recommended temperature, top_p, top_k, repeat_penalty, min_p and context size, then synthesises a tuned Modelfile." } },
+        { "@type": "Question", "name": "Can I launch Claude Code or Codex with a local model?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. Press L on any installed model and hfo will run ollama launch against the chosen integration — Claude Code, Cline, Codex, Copilot CLI, Droid, Hermes, Kimi, OpenCode, OpenClaw, Pi, or VS Code — with that model as the backend." } },
+        { "@type": "Question", "name": "Where are my model files stored?", "acceptedAnswer": { "@type": "Answer", "text": "By default under the directory you launched hfo from (process.cwd()). Each model lives in <baseDir>/<repo-slug>/<quant>/, with the GGUF and a tuned Modelfile. hfo records the tag-to-directory mapping so Alt+d (deep delete) and B (backup) know what to operate on." } },
+        { "@type": "Question", "name": "What's a GGUF?", "acceptedAnswer": { "@type": "Answer", "text": "GGUF is the file format llama.cpp and Ollama use to package a quantised LLM. Typical quants (Q4_K_M, Q5_K_M, Q6_K, Q8_0, F16) trade quality for size — Q5/Q6 is a good sweet spot for most hardware." } },
+        { "@type": "Question", "name": "Why not just use `ollama pull`?", "acceptedAnswer": { "@type": "Answer", "text": "Ollama's library is curated; if the model you want is on Hugging Face only, you're on your own for picking the right quant, downloading the GGUF, writing a Modelfile, and running `ollama create`. hfo collapses that sequence into one Enter keystroke with hardware-aware recommendations." } },
+        { "@type": "Question", "name": "Does hfo send any telemetry?", "acceptedAnswer": { "@type": "Answer", "text": "No. Zero network calls except the two Hugging Face endpoints (tree listing and file download). No analytics, no error reporting, no phoning home." } },
+        { "@type": "Question", "name": "Can I use gated or private HF repos?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. Provide a token via HF_TOKEN environment variable or the --token / -t flag. hfo never persists the token to its settings file." } },
+        { "@type": "Question", "name": "What does the Tune tab actually change?", "acceptedAnswer": { "@type": "Answer", "text": "It reads your current Ollama environment variables (OLLAMA_FLASH_ATTENTION, OLLAMA_KV_CACHE_TYPE, OLLAMA_KEEP_ALIVE, OLLAMA_NUM_PARALLEL, OLLAMA_MAX_LOADED_MODELS, OLLAMA_MAX_QUEUE) and shows them side-by-side with defaults and hfo's ~90%-capacity suggestions. Apply persists via setx on Windows, launchctl + ~/.zprofile on macOS, or ~/.profile + systemd override on Linux." } },
+        { "@type": "Question", "name": "How big can a backup be?", "acceptedAnswer": { "@type": "Answer", "text": "The archiver is streaming so backups scale to multi-GB without blowing memory. Level-9 compression typically shrinks GGUFs by 5-15%. Each backup is a standalone .zip with a metadata.json sidecar containing tag, repo, quant, byte counts, and compression ratio." } },
+        { "@type": "Question", "name": "Does hfo work offline after the initial install?", "acceptedAnswer": { "@type": "Answer", "text": "Yes, everything except the Install tab (which needs HF) works offline. Dashboard, Models, Tune, Help, Settings — fully local. You can also use --launch and --list without a network." } },
+        { "@type": "Question", "name": "What Node version is required?", "acceptedAnswer": { "@type": "Answer", "text": "Node.js 20 or newer for the npm / pnpm / yarn / bun installs. The standalone binaries have no Node dependency at all." } }
+      ]
+    }
+  ]
+}
+</script>
+
+<link rel="stylesheet" href="/assets/page.css" />
+<script src="/assets/nav.js" defer></script>
+</head>
+<body>
+
+<a class="skip-link" href="#main">Skip to main content</a>
+
+<header class="site-header" role="banner">
+  <div class="container row">
+    <a class="brand" href="/" aria-label="hfo home">
+      <svg viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+        <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3B6FE5"/><stop offset="0.55" stop-color="#5B6BE5"/><stop offset="1" stop-color="#7C5BF3"/></linearGradient></defs>
+        <rect x="1" y="1" width="30" height="30" rx="7" fill="url(#g)"/>
+        <line x1="8" y1="16" x2="24" y2="16" stroke="#0a0b0f" stroke-width="2" stroke-linecap="round"/>
+        <circle cx="8" cy="16" r="3" fill="#0a0b0f"/>
+        <circle cx="16" cy="16" r="3" fill="none" stroke="#0a0b0f" stroke-width="2"/>
+        <circle cx="24" cy="16" r="3" fill="#0a0b0f"/>
+      </svg>
+      <span>hfo</span>
+    </a>
+    <button type="button" class="nav-toggle" id="nav-toggle" aria-label="Open navigation" aria-expanded="false" aria-controls="site-nav">
+      <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M3 12h18"/><path d="M3 18h18"/></svg>
+    </button>
+    <nav class="site-nav" id="site-nav" aria-label="Primary">
+      <a href="/install/">Install</a>
+      <a href="/cli/">CLI</a>
+      <a href="/keyboard/">Keyboard</a>
+      <a href="/privacy/">Privacy</a>
+      <a href="/faq/" aria-current="page">FAQ</a>
+      <a href="https://github.com/carrilloapps/hfo" target="_blank" rel="noreferrer noopener" class="nav-icon-link">
+        <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.4 5.4 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>
+        GitHub
+      </a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+  <div class="container">
+
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <ol>
+        <li><a href="/">hfo</a></li>
+        <li aria-current="page">FAQ</li>
+      </ol>
+    </nav>
+
+    <article class="page">
+      <header class="page-header">
+        <span class="page-eyebrow">Questions</span>
+        <h1>Frequently asked questions</h1>
+        <p class="page-lede">Honest answers to what people actually ask before trying hfo. If your question isn't here, open a <a href="https://github.com/carrilloapps/hfo/discussions" target="_blank" rel="noreferrer noopener">discussion</a> or <a href="https://github.com/carrilloapps/hfo/issues/new/choose" target="_blank" rel="noreferrer noopener">file an issue</a>.</p>
+      </header>
+
+      <h2>Getting started</h2>
+
+      <details class="qa" id="q-free"><summary>Is hfo free?</summary>
+        <p>Yes. MIT-licensed open source with no subscriptions, no accounts, and no telemetry. It only talks to the public Hugging Face API and your local Ollama daemon.</p>
+      </details>
+
+      <details class="qa" id="q-os"><summary>Which operating systems does hfo support?</summary>
+        <p>Windows, macOS, and Linux. The npm package is cross-OS; standalone binaries for each platform are published on the <a href="https://github.com/carrilloapps/hfo/releases" target="_blank" rel="noreferrer noopener">GitHub Releases</a> page when a version is tagged.</p>
+      </details>
+
+      <details class="qa" id="q-ollama"><summary>Do I need to install Ollama first?</summary>
+        <p>No. If Ollama isn't on your <code>PATH</code>, hfo will offer to install it using <code>winget</code> on Windows, Homebrew on macOS, or the official shell script on Linux. You always confirm before anything is installed.</p>
+      </details>
+
+      <details class="qa" id="q-node"><summary>What Node.js version is required?</summary>
+        <p>Node.js <strong>20 or newer</strong> for the npm / pnpm / yarn / bun installs. The standalone binaries have no Node dependency at all.</p>
+      </details>
+
+      <h2>How it works</h2>
+
+      <details class="qa" id="q-picks"><summary>How does hfo choose which GGUF to recommend?</summary>
+        <p>Every quant in a Hugging Face repo is scored 0–100 against your detected VRAM and RAM headroom. The tool reads the model's README for recommended <code>temperature</code>, <code>top_p</code>, <code>top_k</code>, <code>repeat_penalty</code>, <code>min_p</code> and context size, then synthesises a tuned Modelfile. On the quick-confirm screen you can accept with <kbd class="kbd">Enter</kbd>, change the install directory with <kbd class="kbd">O</kbd>, or customise the Modelfile parameters with <kbd class="kbd">C</kbd>.</p>
+      </details>
+
+      <details class="qa" id="q-gguf"><summary>What's a GGUF?</summary>
+        <p>GGUF is the file format <a href="https://github.com/ggerganov/llama.cpp" target="_blank" rel="noreferrer noopener">llama.cpp</a> and Ollama use to package a quantised LLM. Typical quants (<code>Q4_K_M</code>, <code>Q5_K_M</code>, <code>Q6_K</code>, <code>Q8_0</code>, <code>F16</code>) trade quality for size. Q5/Q6 is a good sweet spot for most hardware.</p>
+      </details>
+
+      <details class="qa" id="q-vs-ollama-pull"><summary>Why not just use <code>ollama pull</code>?</summary>
+        <p>Ollama's library is curated; if the model you want is on Hugging Face only, you're on your own for picking the right quant, downloading the GGUF, writing a Modelfile, and running <code>ollama create</code>. hfo collapses that sequence into one <kbd class="kbd">Enter</kbd> keystroke with hardware-aware recommendations.</p>
+      </details>
+
+      <details class="qa" id="q-agents"><summary>Can I launch Claude Code or Codex with a local model?</summary>
+        <p>Yes. Press <kbd class="kbd">L</kbd> on any installed model and hfo will run <code>ollama launch</code> against the chosen integration — Claude Code, Cline, Codex, Copilot CLI, Droid, Hermes, Kimi, OpenCode, OpenClaw, Pi, or VS Code — with that model as the backend.</p>
+      </details>
+
+      <h2>Files &amp; storage</h2>
+
+      <details class="qa" id="q-files"><summary>Where are my model files stored?</summary>
+        <p>By default under the directory you launched hfo from (<code>process.cwd()</code>). Each model lives in <code>&lt;baseDir&gt;/&lt;repo-slug&gt;/&lt;quant&gt;/</code>, with the GGUF and a tuned Modelfile. hfo records the tag-to-directory mapping so <kbd class="kbd">Alt</kbd>+<kbd class="kbd">d</kbd> (deep delete) and <kbd class="kbd">B</kbd> (backup) know what to operate on. Set a persistent default in the Settings tab via <code>modelDir</code>.</p>
+      </details>
+
+      <details class="qa" id="q-backup"><summary>How big can a backup be?</summary>
+        <p>The archiver is streaming so backups scale to multi-GB without blowing memory. Level-9 compression typically shrinks GGUFs by 5–15%. Each backup is a standalone <code>.zip</code> with a <code>metadata.json</code> sidecar containing tag, repo, quant, byte counts, and compression ratio.</p>
+      </details>
+
+      <details class="qa" id="q-tune"><summary>What does the Tune tab actually change?</summary>
+        <p>It reads your current Ollama environment variables (<code>OLLAMA_FLASH_ATTENTION</code>, <code>OLLAMA_KV_CACHE_TYPE</code>, <code>OLLAMA_KEEP_ALIVE</code>, <code>OLLAMA_NUM_PARALLEL</code>, <code>OLLAMA_MAX_LOADED_MODELS</code>, <code>OLLAMA_MAX_QUEUE</code>) and shows them side-by-side with defaults and hfo's ~90%-capacity suggestions. Apply persists via <code>setx</code> on Windows, <code>launchctl</code> + <code>~/.zprofile</code> on macOS, or <code>~/.profile</code> + systemd override on Linux.</p>
+      </details>
+
+      <h2>Privacy &amp; operations</h2>
+
+      <details class="qa" id="q-telemetry"><summary>Does hfo send any telemetry?</summary>
+        <p>No. Zero network calls except the two Hugging Face endpoints (tree listing and file download). No analytics, no error reporting, no phoning home. See the <a href="/privacy/">privacy page</a> for the full data-flow breakdown.</p>
+      </details>
+
+      <details class="qa" id="q-gated"><summary>Can I use gated or private HF repos?</summary>
+        <p>Yes. Provide a token via the <code>HF_TOKEN</code> environment variable or the <code>--token</code> / <code>-t</code> flag. hfo never persists the token to its settings file.</p>
+      </details>
+
+      <details class="qa" id="q-offline"><summary>Does hfo work offline after the initial install?</summary>
+        <p>Yes. Everything except the Install tab (which needs Hugging Face) works offline: Dashboard, Models, Tune, Help, Settings — all fully local. You can also use <code>--launch</code> and <code>--list</code> without a network.</p>
+      </details>
+
+      <nav class="page-related" aria-label="Continue">
+        <a href="/install/"><small>Setup</small><strong>Install guide →</strong></a>
+        <a href="/privacy/"><small>Operational</small><strong>Privacy &amp; security →</strong></a>
+        <a href="https://github.com/carrilloapps/hfo/discussions" target="_blank" rel="noreferrer noopener"><small>Community</small><strong>Ask a question →</strong></a>
+      </nav>
+    </article>
+  </div>
+</main>
+
+<footer class="site-footer" role="contentinfo">
+  <div class="container row">
+    <div>
+      <strong>hfo</strong> · MIT · © 2026 <a href="https://carrillo.app" target="_blank" rel="noreferrer noopener me">José Carrillo</a>
+    </div>
+    <div class="footer-links">
+      <a href="/">Home</a>
+      <a href="https://github.com/carrilloapps/hfo" target="_blank" rel="noreferrer noopener">GitHub</a>
+      <a href="https://www.npmjs.com/package/hfo-cli" target="_blank" rel="noreferrer noopener">npm</a>
+      <a href="/privacy/">Privacy</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

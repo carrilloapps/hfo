@@ -34,7 +34,7 @@ export function buildModelfile(opts: ModelfileOpts): string {
     : '';
 
   const header = `# ═══════════════════════════════════════════════════════════════════
-# runllama-generated Modelfile — safe to edit, then:
+# hfo-generated Modelfile — safe to edit, then:
 #     ollama create <tag> -f Modelfile
 # ═══════════════════════════════════════════════════════════════════
 # Source repo : ${opts.repoId}

@@ -33,7 +33,7 @@ export function parseRepoId(input: string): string {
 }
 
 export async function fetchRepoInfo(repoId: string, token?: string): Promise<HfRepoInfo> {
-  const headers: Record<string, string> = { 'User-Agent': 'runllama/0.1' };
+  const headers: Record<string, string> = { 'User-Agent': 'hfo/0.1' };
   if (token) headers.Authorization = `Bearer ${token}`;
 
   const treeUrl = `https://huggingface.co/api/models/${repoId}/tree/main?recursive=true`;
@@ -79,7 +79,7 @@ export async function downloadFile(
     startByte = existing.size;
   } catch {}
 
-  const headers: Record<string, string> = { 'User-Agent': 'runllama/0.1' };
+  const headers: Record<string, string> = { 'User-Agent': 'hfo/0.1' };
   if (token) headers.Authorization = `Bearer ${token}`;
   if (startByte > 0) headers.Range = `bytes=${startByte}-`;
 

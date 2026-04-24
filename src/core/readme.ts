@@ -14,7 +14,7 @@ export interface CardInfo {
 }
 
 export async function fetchReadme(repoId: string, token?: string): Promise<string | null> {
-  const headers: Record<string, string> = { 'User-Agent': 'runllama/0.2' };
+  const headers: Record<string, string> = { 'User-Agent': 'hfo/0.2' };
   if (token) headers.Authorization = `Bearer ${token}`;
   try {
     const res = await fetch(`https://huggingface.co/${repoId}/raw/main/README.md`, { headers });

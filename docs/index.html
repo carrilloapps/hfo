@@ -19,6 +19,7 @@
 <meta name="generator" content="hfo-cli docs" />
 
 <link rel="canonical" href="https://hfo.carrillo.app/" />
+<script src="/assets/terminal.js" defer></script>
 <link rel="author" href="/humans.txt" />
 <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
 
@@ -245,34 +246,39 @@
   .brand:hover { text-decoration: none; color: var(--primary); }
   .brand svg { width: 28px; height: 28px; color: var(--primary); }
 
-  /* Navigation — desktop: inline links. Mobile (<=820px): hamburger <details>
-     dropdown, no JS needed. The <summary> is the toggle; the <nav> is the panel. */
-  .nav-wrap { margin-left: auto; position: relative; }
+  /* Navigation — desktop: inline links always visible. Mobile (<=820px):
+     a real <button> toggles the dropdown via a small script in the
+     footer. No hidden form controls in the DOM. */
   .nav-toggle {
     display: none;
-    list-style: none; cursor: pointer;
-    padding: 8px; border-radius: var(--radius-sm);
+    cursor: pointer; padding: 8px; border-radius: var(--radius-sm);
     color: var(--fg); background: transparent;
     border: 1px solid var(--border);
     align-items: center; justify-content: center;
     transition: border-color .15s ease, background .15s ease, color .15s ease;
+    margin-left: auto;
   }
-  .nav-toggle::-webkit-details-marker { display: none; }
-  .nav-toggle::marker { content: ''; }
   .nav-toggle svg { width: 22px; height: 22px; display: block; }
   .nav-toggle:hover { border-color: var(--border-strong); background: var(--bg-alt); }
-  .nav-wrap[open] .nav-toggle { border-color: var(--border-strong); background: var(--bg-alt); color: var(--primary); }
-  .site-nav { display: flex; gap: 4px; align-items: center; }
+  .nav-toggle[aria-expanded="true"] {
+    border-color: var(--border-strong);
+    background: var(--bg-alt);
+    color: var(--primary);
+  }
+  .site-nav { margin-left: auto; display: flex; gap: 4px; align-items: center; }
   .site-nav a { color: var(--muted); padding: 8px 12px; border-radius: var(--radius-sm); font-size: 14.5px; font-weight: 500; }
   .site-nav a:hover { color: var(--fg); background: var(--bg-alt); text-decoration: none; }
   .nav-icon-link { display: inline-flex; align-items: center; gap: 6px; }
 
   @media (max-width: 820px) {
     .nav-toggle { display: inline-flex; }
-    .nav-wrap > .site-nav {
-      position: absolute; right: 0; top: calc(100% + 10px);
+    .site-nav {
+      display: none;
+      position: absolute;
+      right: clamp(18px, 4vw, 36px); top: calc(100% - 8px);
       flex-direction: column; align-items: stretch; gap: 2px;
       min-width: 220px;
+      margin-left: 0;
       background: var(--bg-raised);
       border: 1px solid var(--border);
       border-radius: var(--radius-md);
@@ -280,13 +286,15 @@
       box-shadow: var(--shadow);
       z-index: 20;
     }
-    .nav-wrap:not([open]) > .site-nav { display: none; }
+    .site-nav.is-open { display: flex; }
     .site-nav a { padding: 10px 12px; font-size: 15px; }
     .nav-icon-link { justify-content: flex-start; }
   }
 
   main { display: block; }
   section { padding: clamp(56px, 9vw, 96px) 0; position: relative; }
+  /* Hero gets more vertical breathing room than a generic section. */
+  section.hero { padding: clamp(72px, 12vw, 128px) 0 clamp(80px, 14vw, 144px); }
   /* Alternating surfaces create scroll rhythm: each section change is
      a quiet lightness shift, not a hard rule. The color change IS the
      separator — no border-top needed. */
@@ -296,16 +304,16 @@
     display: inline-flex; align-items: center; gap: 8px;
     padding: 6px 12px; border: 1px solid var(--border-strong);
     border-radius: 999px; font-size: 12.5px; font-weight: 600; letter-spacing: 0.2px;
-    color: var(--muted); background: var(--bg-alt); margin: 0 0 22px;
+    color: var(--muted); background: var(--bg-alt); margin: 0 0 32px;
   }
   .hero-eyebrow svg { width: 14px; height: 14px; color: var(--success); }
-  .hero h1 { font-size: clamp(40px, 7vw, 72px); line-height: 1.02; margin: 0 0 20px; letter-spacing: -0.035em; font-weight: 800; }
+  .hero h1 { font-size: clamp(40px, 7vw, 72px); line-height: 1.05; margin: 0 0 28px; letter-spacing: -0.035em; font-weight: 800; }
   .hero h1 .grad {
     background: linear-gradient(100deg, var(--primary), var(--accent));
     -webkit-background-clip: text; background-clip: text; color: transparent; padding-right: 2px;
   }
-  .hero .sub { font-size: clamp(17px, 2.2vw, 21px); color: var(--muted); max-width: 680px; margin: 0 0 36px; line-height: 1.55; }
-  .cta-group { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+  .hero .sub { font-size: clamp(17px, 2.2vw, 20px); color: var(--fg-3); max-width: 600px; margin: 0 0 44px; line-height: 1.6; }
+  .cta-group { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; }
   .btn {
     display: inline-flex; align-items: center; gap: 8px;
     padding: 11px 18px; border-radius: var(--radius-md);
@@ -330,11 +338,16 @@
   .install-pill svg { width: 16px; height: 16px; color: var(--muted); flex-shrink: 0; }
   .install-pill code { min-width: 0; word-break: break-word; background: transparent; border: 0; padding: 0; }
 
-  .badges { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 32px; }
+  .badges { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 44px; opacity: 0.72; }
   .badges img { height: 22px; }
 
   h2 { font-size: clamp(26px, 3.5vw, 34px); letter-spacing: -1px; margin: 0 0 14px; font-weight: 800; }
   .section-lede { color: var(--muted); margin: 0 0 40px; max-width: 720px; font-size: 17px; }
+  .section-lede--medium { margin-bottom: 22px; }
+  .section-lede--tight  { margin-bottom: 16px; }
+  .note-small { color: var(--muted); font-size: 14.5px; margin: 0; }
+  .faq-list { display: grid; gap: 8px; }
+  .install-pill-label { color: var(--muted); margin-left: 6px; }
 
   .grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr)); }
   .card {
@@ -387,22 +400,31 @@
   }
   .terminal + .terminal { margin-top: 12px; }
   .terminal-bar {
+    position: relative;
     display: flex; align-items: center; gap: 8px;
     padding: 10px 14px;
     background: var(--term-bg-alt);
     border-bottom: 1px solid var(--term-border);
     font-family: var(--mono); font-size: 12px;
+    min-height: 32px;
   }
   .terminal-dot {
     width: 12px; height: 12px; border-radius: 50%; display: inline-block;
+    flex-shrink: 0;
   }
   .terminal-dot.red    { background: #ff5f57; }
   .terminal-dot.yellow { background: #febc2e; }
   .terminal-dot.green  { background: #28c840; }
+  /* Title is absolutely centered in the bar so it stays centered whether
+     or not a copy button exists — the old `margin-left: auto; margin-right: auto`
+     + padding-right hack miscentered terminals without a copy button. */
   .terminal-title {
-    margin-left: auto; margin-right: auto;
+    position: absolute;
+    left: 50%; transform: translateX(-50%);
     color: var(--term-muted);
-    padding-right: 40px; /* balance the dots on the left */
+    max-width: calc(100% - 160px);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    pointer-events: none;
   }
   .terminal-copy {
     margin-left: auto;
@@ -432,7 +454,16 @@
     display: grid; gap: 14px;
     grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
     margin: 0 0 26px;
+    align-items: stretch;
   }
+  /* Terminals inside the one-liner grid can have different content heights.
+     Flex-column keeps the <pre> filling the remaining space so the two
+     cards line up visually even when one has more lines than the other. */
+  .one-liner-grid .terminal { display: flex; flex-direction: column; }
+  .one-liner-grid .terminal > pre { flex: 1 1 auto; }
+  /* `.terminal + .terminal { margin-top: 12px }` doubles grid gap when
+     the grid wraps to a single column on mobile. Reset it inside the grid. */
+  .one-liner-grid .terminal + .terminal { margin-top: 0; }
 
   .table-wrap {
     overflow-x: auto;
@@ -495,10 +526,11 @@
      so the hero shows what that looks like instead of a screenshot.
      Reuses .terminal's CSS variables; overrides are shadow + caret. */
   .hero-terminal {
-    margin-top: 36px;
+    margin-top: 56px;
     max-width: 760px;
-    box-shadow: 0 24px 48px -12px rgba(0,0,0,0.45), 0 2px 8px rgba(0,0,0,0.25);
+    box-shadow: 0 24px 56px -16px rgba(0,0,0,0.5), 0 2px 8px rgba(0,0,0,0.25);
   }
+  .hero-terminal pre { font-size: 14px; line-height: 1.85; padding: 22px 24px; }
   .hero-caret {
     display: inline-block;
     width: 0.55em; height: 1.05em;
@@ -552,6 +584,384 @@
   .site-footer a:hover { color: var(--fg); }
   .footer-links { display: flex; flex-wrap: wrap; gap: 18px; }
 
+  /* ==========================================================================
+     HERO v2 — two-column layout, ambient orb + grid background, package-manager
+     switcher (CSS-only radios), trust chips, terminal stack with depth frames.
+     Scoped to `.hero` so the rest of the page is untouched.
+     ========================================================================== */
+  section.hero { position: relative; overflow: hidden; }
+
+  /* Ambient backdrop: two soft orbs + a grid masked to fade at the edges. */
+  .hero-bg { position: absolute; inset: 0; pointer-events: none; z-index: 0; }
+  .hero-bg .grid {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(to right, var(--border) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--border) 1px, transparent 1px);
+    background-size: 48px 48px;
+    opacity: 0.28;
+    -webkit-mask-image: radial-gradient(ellipse 70% 65% at 50% 40%, #000 35%, transparent 85%);
+            mask-image: radial-gradient(ellipse 70% 65% at 50% 40%, #000 35%, transparent 85%);
+  }
+  .hero-bg .orb {
+    position: absolute; border-radius: 50%;
+    filter: blur(80px); opacity: 0.5;
+  }
+  .hero-bg .orb-a {
+    width: 560px; height: 560px; left: -140px; top: -80px;
+    background: radial-gradient(circle, var(--primary) 0%, transparent 65%);
+  }
+  .hero-bg .orb-b {
+    width: 640px; height: 640px; right: -200px; bottom: -160px;
+    background: radial-gradient(circle, var(--accent) 0%, transparent 65%);
+  }
+  @media (prefers-color-scheme: light) {
+    .hero-bg .orb { opacity: 0.32; }
+    .hero-bg .grid { opacity: 0.55; }
+  }
+  .hero .container { position: relative; z-index: 1; }
+
+  /* Head stanza: eyebrow + H1 + subtitle. Sits above the two-column grid
+     so the headline can scale to hero size without being constrained by
+     either column's width. */
+  .hero-head { width: 100%; margin-bottom: clamp(40px, 5vw, 72px); }
+  .hero-head .sub { max-width: 720px; }
+
+  /* Two-column grid — now [actions | terminal]. Collapses to a single
+     column on tablet/mobile. `align-items: start` keeps the terminal's
+     top flush with the install block instead of centering vertically. */
+  .hero-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+    gap: clamp(40px, 6vw, 80px);
+    align-items: start;
+  }
+  @media (max-width: 960px) { .hero-grid { grid-template-columns: 1fr; gap: 56px; } }
+
+  /* Release pill (eyebrow upgraded to a link with pulsing live dot). */
+  a.hero-eyebrow { color: var(--muted); text-decoration: none; transition: border-color .15s ease, color .15s ease, transform .15s ease; }
+  a.hero-eyebrow:hover { color: var(--fg-3); border-color: var(--primary); text-decoration: none; transform: translateY(-1px); }
+  .hero-eyebrow strong { color: var(--fg); font-weight: 700; letter-spacing: 0; }
+  .hero-eyebrow .pulse-dot {
+    position: relative; width: 8px; height: 8px; border-radius: 50%;
+    background: var(--success); flex-shrink: 0;
+  }
+  .hero-eyebrow .pulse-dot::after {
+    content: ''; position: absolute; inset: -4px; border-radius: 50%;
+    background: var(--success); opacity: 0.45;
+    animation: hero-live-pulse 2.2s ease-out infinite;
+  }
+  @keyframes hero-live-pulse {
+    0%   { transform: scale(.55); opacity: .55; }
+    80%  { transform: scale(1.9);  opacity: 0; }
+    100% { transform: scale(1.9);  opacity: 0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .hero-eyebrow .pulse-dot::after { animation: none; opacity: 0; }
+  }
+
+  /* Headline — now spans the full container width so it can scale to hero
+     size. Faint middle dot between "Hugging Face" and "Ollama" preserves
+     the product name without loud visual weight in the middle. */
+  .hero h1 { font-size: clamp(40px, 7.2vw, 96px); line-height: 1.02; margin: 0 0 24px; letter-spacing: -0.04em; font-weight: 800; }
+  .hero h1 .sep { color: var(--fg-3); font-weight: 300; padding: 0 .08em; opacity: .55; }
+  .hero .sub { font-size: clamp(16.5px, 1.5vw, 18.5px); line-height: 1.6; color: var(--fg-3); max-width: 540px; margin: 0 0 30px; }
+  .hero .sub kbd.inline {
+    display: inline-flex; align-items: center; justify-content: center;
+    padding: 0 7px; height: 22px;
+    border: 1px solid var(--border-strong); background: var(--bg-raised);
+    border-radius: 4px; font-family: var(--mono); font-size: 12.5px; color: var(--fg);
+    vertical-align: 2px;
+  }
+
+  /* Package-manager switcher: CSS-only radios driving which copy command shows. */
+  .hero-install { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; margin: 0 0 18px; max-width: 100%; border: 0; padding: 0; }
+  .pm-tabs { display: inline-flex; gap: 3px; padding: 4px; background: var(--bg-alt); border: 1px solid var(--border); border-radius: var(--radius-sm); }
+  .pm-tabs input { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+  .pm-tabs label {
+    cursor: pointer; padding: 6px 11px;
+    border-radius: 4px; font-family: var(--mono);
+    font-size: 12.5px; font-weight: 600; color: var(--muted);
+    transition: color .12s ease, background .12s ease;
+    -webkit-user-select: none; user-select: none;
+  }
+  .pm-tabs label:hover { color: var(--fg-2); }
+  .pm-tabs input:checked + label {
+    background: var(--bg-raised); color: var(--primary);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.12);
+  }
+  .pm-tabs input:focus-visible + label { outline: 2px solid var(--primary); outline-offset: 2px; }
+
+  /* Install pill tuned for the new context: prompt rendered as ::before so the
+     caret stays perfectly aligned regardless of which command is active. */
+  #hero-install-pill { padding: 12px 16px; gap: 10px; }
+  #hero-install-pill::before { content: '$'; color: var(--primary); font-weight: 700; font-family: var(--mono); }
+  #hero-install-pill .icon-copy, #hero-install-pill .icon-check { width: 16px; height: 16px; margin-left: 6px; flex-shrink: 0; }
+  #hero-install-pill .icon-check { display: none; color: var(--success); }
+  #hero-install-pill.is-copied { border-color: var(--success); color: var(--success); }
+  #hero-install-pill.is-copied .icon-copy { display: none; }
+  #hero-install-pill.is-copied .icon-check { display: inline; }
+  #hero-install-cmd { flex: 1 1 auto; min-width: 0; }
+
+  .cta-secondary { margin-top: 2px; }
+
+  /* Right column: the terminal lives in a `.hero-stack`. Two offset "ghost"
+     frames behind the real terminal imply a stack of windows — depth cue
+     without actual overlapping content. */
+  .hero-stack { position: relative; width: 100%; }
+  .hero-stack .frame-ghost {
+    position: absolute; inset: 0;
+    border: 1px solid var(--border); background: var(--bg-alt);
+    border-radius: var(--radius-md); pointer-events: none;
+  }
+  .hero-stack .frame-ghost.g1 { transform: translate(18px, 22px) rotate(1.2deg); opacity: 0.7; }
+  .hero-stack .frame-ghost.g2 { transform: translate(36px, 44px) rotate(2.4deg); opacity: 0.4;  }
+  @media (max-width: 960px) {
+    .hero-stack .frame-ghost.g1 { transform: translate(12px, 14px) rotate(1deg);   }
+    .hero-stack .frame-ghost.g2 { transform: translate(22px, 28px) rotate(1.8deg); }
+  }
+  .hero-stack .hero-terminal {
+    position: relative; margin-top: 0; max-width: 100%;
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.04),
+      0 24px 70px -18px rgba(0,0,0,0.65),
+      0 4px 14px rgba(0,0,0,0.3),
+      0 0 0 1px color-mix(in oklab, var(--primary) 10%, transparent);
+  }
+  .hero-stack .hero-terminal pre { font-size: 13px; line-height: 1.85; padding: 20px 22px; }
+  @media (max-width: 420px) {
+    .hero-stack .hero-terminal pre { font-size: 11.5px; padding: 12px 14px; line-height: 1.65; }
+  }
+
+  /* "LIVE" pill inside the terminal header — says this is a real snapshot. */
+  .terminal-live {
+    margin-left: auto;
+    display: inline-flex; align-items: center; gap: 6px;
+    font-family: var(--mono); font-size: 10.5px; font-weight: 700;
+    letter-spacing: 0.9px; text-transform: uppercase;
+    color: var(--success);
+    padding: 3px 8px;
+    border: 1px solid color-mix(in oklab, var(--success) 45%, var(--border));
+    border-radius: 999px;
+    background: color-mix(in oklab, var(--success) 10%, transparent);
+  }
+  .terminal-live .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--success);
+    box-shadow: 0 0 8px var(--success);
+    animation: live-blink 1.4s ease-in-out infinite;
+  }
+  @keyframes live-blink { 0%,100% { opacity: 1; } 50% { opacity: .35; } }
+  @media (prefers-reduced-motion: reduce) { .terminal-live .dot { animation: none; } }
+
+  /* Score-bar glyphs inside the hero terminal. */
+  .tok-score     { color: var(--term-cmd); letter-spacing: 1px; }
+  .tok-score-dim { color: var(--term-comment); letter-spacing: 1px; }
+
+  /* ==========================================================================
+     Stats strip — data-dense status band inside #features. Replaces the
+     hero's trust chips with a quieter, more informational presentation.
+     ========================================================================== */
+  .stats-strip {
+    display: flex; flex-wrap: wrap;
+    margin: 0 0 40px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: var(--bg-raised);
+    overflow: hidden;
+  }
+  .stats-strip .stat {
+    flex: 1 1 140px; min-width: 140px;
+    display: flex; flex-direction: column; gap: 4px;
+    padding: 16px 22px;
+    border-right: 1px solid var(--border);
+    text-decoration: none; color: inherit;
+    transition: background .15s ease, color .15s ease;
+  }
+  .stats-strip .stat:last-child { border-right: 0; }
+  .stats-strip a.stat:hover {
+    background: var(--bg-alt); text-decoration: none;
+  }
+  .stats-strip a.stat:hover .stat-val { color: var(--primary); }
+  .stats-strip .stat-label {
+    font-size: 11px; font-weight: 600;
+    letter-spacing: 0.8px; text-transform: uppercase;
+    color: var(--muted);
+  }
+  .stats-strip .stat-val {
+    font-size: 15px; font-weight: 700;
+    color: var(--fg);
+    font-family: var(--mono);
+    transition: color .15s ease;
+  }
+  .stats-strip .stat-val.stat-ok { color: var(--success); }
+
+  /* Platforms stat — inline OS icons instead of truncated text. */
+  .stats-strip .stat-platforms { display: inline-flex; align-items: center; gap: 10px; color: var(--fg); }
+  .stats-strip .stat-platforms svg { width: 18px; height: 18px; display: block; transition: color .15s ease; }
+  .stats-strip .stat-platforms svg:hover { color: var(--primary); }
+
+  /* Tablet: 3-4 per row using flex-wrap. Each stat gets a bottom border so
+     wrapped rows remain visually separated. */
+  @media (max-width: 960px) {
+    .stats-strip .stat {
+      flex-basis: 33.333%;
+      border-bottom: 1px solid var(--border);
+    }
+    .stats-strip .stat:nth-last-child(-n+3) { border-bottom: 0; }
+    .stats-strip .stat:nth-child(3n) { border-right: 0; }
+  }
+  @media (max-width: 640px) {
+    .stats-strip .stat {
+      flex-basis: 50%;
+      padding: 14px 16px;
+    }
+    .stats-strip .stat:nth-child(3n)    { border-right: 1px solid var(--border); }
+    .stats-strip .stat:nth-child(2n)    { border-right: 0; }
+    .stats-strip .stat:nth-last-child(-n+3) { border-bottom: 1px solid var(--border); }
+    .stats-strip .stat:nth-last-child(-n+2) { border-bottom: 0; }
+    .stats-strip .stat-val { font-size: 13.5px; }
+  }
+
+  /* ==========================================================================
+     HERO responsive — 100% viewport width (scoped to .hero only). Three
+     breakpoints: desktop ≥ 1025px, tablet 641–1024px, mobile ≤ 640px. Other
+     sections keep the global 1120px container cap.
+     ========================================================================== */
+
+  /* The hero escapes the global 1120px container cap and spans the full
+     viewport width with fluid side padding. */
+  section.hero .container {
+    max-width: none;
+    padding-left: clamp(20px, 4vw, 72px);
+    padding-right: clamp(20px, 4vw, 72px);
+  }
+
+  /* -- Desktop (≥ 1025px) --------------------------------------------------
+     The hero fills the full viewport height so it reads as "the hero and
+     nothing else" on first paint. Head stanza spans the full container
+     width; the grid below it holds [actions | terminal] at 50/50. */
+  @media (min-width: 1025px) {
+    section.hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: clamp(96px, 9vw, 128px) 0 clamp(64px, 7vw, 96px);
+    }
+    .hero-head        { max-width: 1200px; }
+    .hero-head .sub   { max-width: 720px; font-size: clamp(17px, 1.3vw, 20px); }
+    .hero-grid {
+      grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+      gap: clamp(48px, 5vw, 96px);
+      align-items: start;
+      width: 100%;
+    }
+    .hero-col         { min-width: 0; }
+    .hero-install     { width: 100%; max-width: 480px; }
+    #hero-install-pill { width: 100%; }
+    .hero-stack       { width: 100%; max-width: 720px; margin-left: auto; }
+  }
+
+  /* Ultra-wide (≥ 1600px) — cap head stanza for readability, let the
+     terminal stack grow. */
+  @media (min-width: 1600px) {
+    .hero-head { max-width: 1280px; }
+    .hero-head .sub { max-width: 780px; }
+    .hero-stack { max-width: 820px; }
+  }
+
+  /* -- Tablet (641–1024px) -------------------------------------------------
+     Single centered column, moderate typography, terminal under the copy.
+     Content caps at 720px so nothing stretches past a comfortable measure. */
+  @media (min-width: 641px) and (max-width: 1024px) {
+    section.hero { padding: clamp(64px, 9vw, 112px) 0 clamp(72px, 10vw, 128px); }
+    .hero-grid {
+      grid-template-columns: 1fr;
+      gap: 56px;
+      justify-items: center;
+    }
+    .hero-col { max-width: 720px; width: 100%; }
+    .hero h1  { font-size: clamp(40px, 5.6vw, 56px); }
+    .hero .sub { max-width: 600px; }
+    .hero-install { align-items: stretch; }
+    .pm-tabs, #hero-install-pill { align-self: flex-start; }
+    .hero-stack { max-width: 720px; margin: 0 auto; }
+  }
+
+  /* -- Mobile (≤ 640px) ----------------------------------------------------
+     Edge-aware spacing, compressed typography, pm-tabs can scroll
+     horizontally if they overflow, install pill spans full width, CTAs
+     split 50/50, chips shrink. Ambient orbs soften so they don't bleed. */
+  @media (max-width: 640px) {
+    section.hero { padding: 56px 0 64px; }
+    section.hero .container { padding-left: 18px; padding-right: 18px; }
+
+    .hero-bg .orb-a { width: 380px; height: 380px; left: -140px; top: -60px;  opacity: .35; }
+    .hero-bg .orb-b { width: 420px; height: 420px; right: -160px; bottom: -120px; opacity: .3;  }
+    .hero-bg .grid  { background-size: 32px 32px; opacity: .2; }
+
+    .hero-grid { grid-template-columns: 1fr; gap: 40px; }
+    .hero-col  { max-width: 100%; }
+
+    a.hero-eyebrow { padding: 5px 10px; font-size: 11.5px; margin-bottom: 22px; gap: 6px; }
+    .hero h1 {
+      font-size: clamp(30px, 9vw, 40px);
+      line-height: 1.08;
+      letter-spacing: -0.032em;
+      margin: 0 0 16px;
+    }
+    .hero h1 .sep { padding: 0 .08em; }
+    .hero .sub { font-size: 15px; line-height: 1.55; margin: 0 0 24px; }
+    .hero .sub kbd.inline { height: 20px; font-size: 11.5px; padding: 0 6px; }
+
+    .hero-install { width: 100%; gap: 8px; }
+    .pm-tabs {
+      display: flex; width: 100%;
+      overflow-x: auto; overflow-y: hidden;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .pm-tabs::-webkit-scrollbar { display: none; }
+    .pm-tabs label { padding: 6px 10px; font-size: 12px; white-space: nowrap; flex-shrink: 0; }
+
+    #hero-install-pill {
+      width: 100%; justify-content: flex-start;
+      padding: 11px 14px; font-size: 13px;
+    }
+    #hero-install-cmd { font-size: 13px; word-break: break-all; }
+
+    .cta-group.cta-secondary {
+      display: flex; flex-wrap: nowrap; width: 100%; gap: 8px; margin-top: 6px;
+    }
+    .cta-secondary .btn {
+      flex: 1 1 0; min-width: 0; justify-content: center;
+      padding: 11px 14px; font-size: 14px; white-space: nowrap;
+    }
+
+    .hero-stack .frame-ghost.g1 { transform: translate(8px,  10px) rotate(.8deg);  opacity: .5; }
+    .hero-stack .frame-ghost.g2 { transform: translate(16px, 20px) rotate(1.6deg); opacity: .28; }
+    .hero-stack .hero-terminal {
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.04),
+        0 12px 28px -12px rgba(0,0,0,0.6),
+        0 2px 6px rgba(0,0,0,0.22),
+        0 0 0 1px color-mix(in oklab, var(--primary) 10%, transparent);
+    }
+    .hero-stack .hero-terminal pre { font-size: 11.5px; padding: 14px 14px; line-height: 1.7; }
+    .terminal-bar  { padding: 8px 12px; min-height: 28px; }
+    .terminal-title { font-size: 10.5px; }
+    .terminal-live  { font-size: 9.5px;  letter-spacing: .6px; padding: 2px 6px; }
+    .terminal-dot   { width: 10px; height: 10px; }
+  }
+
+  /* -- Extra-narrow (≤ 380px) phones — keep the scoring table from wrapping. */
+  @media (max-width: 380px) {
+    .hero-stack .hero-terminal pre { font-size: 10.5px; padding: 12px 12px; line-height: 1.6; }
+    .cta-secondary .btn { font-size: 13px; padding: 10px 10px; }
+    .cta-secondary .btn svg { width: 16px; height: 16px; }
+  }
+
 </style>
 </head>
 <body>
@@ -577,79 +987,130 @@
       </svg>
       <span>hfo</span>
     </a>
-    <details class="nav-wrap">
-      <summary class="nav-toggle" aria-label="Toggle navigation">
-        <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M3 12h18"/><path d="M3 18h18"/></svg>
-      </summary>
-      <nav class="site-nav" aria-label="Primary">
-        <a href="#features">Features</a>
-        <a href="#install">Install</a>
-        <a href="#cli">CLI</a>
-        <a href="#keyboard">Keyboard</a>
-        <a href="#privacy">Privacy</a>
-        <a href="#faq">FAQ</a>
-        <a href="https://github.com/carrilloapps/hfo" target="_blank" rel="noreferrer noopener" class="nav-icon-link">
-          <svg aria-hidden="true" focusable="false" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.4 5.4 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>
-          GitHub
-        </a>
-      </nav>
-    </details>
+    <button type="button" class="nav-toggle" id="nav-toggle" aria-label="Open navigation" aria-expanded="false" aria-controls="site-nav">
+      <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M3 12h18"/><path d="M3 18h18"/></svg>
+    </button>
+    <nav class="site-nav" id="site-nav" aria-label="Primary">
+      <a href="#features">Features</a>
+      <a href="/install/">Install</a>
+      <a href="/cli/">CLI</a>
+      <a href="/keyboard/">Keyboard</a>
+      <a href="/privacy/">Privacy</a>
+      <a href="/faq/">FAQ</a>
+      <a href="https://github.com/carrilloapps/hfo" target="_blank" rel="noreferrer noopener" class="nav-icon-link">
+        <svg aria-hidden="true" focusable="false" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.4 5.4 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>
+        GitHub
+      </a>
+    </nav>
   </div>
 </header>
 
 <main id="main">
 
-<section class="hero">
+<section class="hero" aria-labelledby="hero-title">
+  <!-- Ambient backdrop: grid + two soft orbs. Purely decorative. -->
+  <div class="hero-bg" aria-hidden="true">
+    <div class="grid"></div>
+    <div class="orb orb-a"></div>
+    <div class="orb orb-b"></div>
+  </div>
+
   <div class="container">
-    <span class="hero-eyebrow">
-      <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
-      v0.1.0 · MIT · cross-OS · no telemetry
-    </span>
-    <h1>Hugging Face · Ollama,<br /><span class="grad">in your terminal.</span></h1>
-    <p class="sub">
-      A fullscreen terminal UI and headless CLI that turns any Hugging Face GGUF repository into a running, hardware-tuned Ollama model — then lets you back it up, restore it, or hand it off to Claude Code, Codex, Copilot CLI, OpenCode, Droid, and seven more integrations without leaving your shell.
-    </p>
-    <div class="cta-group">
-      <button type="button" class="install-pill" onclick="navigator.clipboard?.writeText('npm i -g hfo-cli'); this.querySelector('span').textContent='copied'; setTimeout(()=>this.querySelector('span').textContent='copy', 1500);" aria-label="Copy install command">
-        <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v4M9 21H5a2 2 0 0 1-2-2v-4M21 3l-7 7M3 21l7-7"/></svg>
-        <code>$ npm i -g hfo-cli</code>
-        <span style="color:var(--muted); margin-left: 6px;">copy</span>
-      </button>
-      <a class="btn btn-primary" href="https://github.com/carrilloapps/hfo" target="_blank" rel="noreferrer noopener">
-        <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.4 5.4 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>
-        Source on GitHub
+
+    <!-- Head stanza: eyebrow + H1 + subtitle. Spans the full container so
+         the headline can scale to hero size without wrapping mid-phrase.
+         Kept left-aligned on desktop to preserve reading flow with the
+         action column below; centers on mobile. -->
+    <div class="hero-head">
+      <a class="hero-eyebrow" href="https://github.com/carrilloapps/hfo/releases" target="_blank" rel="noreferrer noopener">
+        <span class="pulse-dot" aria-hidden="true"></span>
+        <strong>Stable</strong>&nbsp;·&nbsp;v0.1.0&nbsp;·&nbsp;what&rsquo;s new →
       </a>
-      <a class="btn btn-ghost" href="https://www.npmjs.com/package/hfo-cli" target="_blank" rel="noreferrer noopener">
-        <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 10v12"/><path d="M15 5.88 14 12h7l-1 6.12A2 2 0 0 1 18.02 20H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h6l3 .88z"/></svg>
-        View on npm
-      </a>
-    </div>
-    <div class="badges" aria-hidden="true">
-      <img alt="" loading="lazy" src="https://img.shields.io/npm/v/hfo-cli.svg?style=flat" />
-      <img alt="" loading="lazy" src="https://img.shields.io/npm/l/hfo-cli.svg?style=flat" />
-      <img alt="" loading="lazy" src="https://img.shields.io/node/v/hfo-cli.svg?style=flat" />
-      <img alt="" loading="lazy" src="https://github.com/carrilloapps/hfo/actions/workflows/ci.yml/badge.svg" />
-      <img alt="" loading="lazy" src="https://img.shields.io/badge/TypeScript-strict-3178c6?style=flat&logo=typescript&logoColor=white" />
+
+      <h1 id="hero-title">
+        Hugging&nbsp;Face <span class="sep" aria-hidden="true">·</span> Ollama,<br/>
+        <span class="grad">in your terminal.</span>
+      </h1>
+
+      <p class="sub">
+        Score every GGUF against your VRAM, install with one <kbd class="inline">Enter</kbd>, then hand any model off to Claude&nbsp;Code, Codex, Copilot&nbsp;CLI and more — without leaving the shell.
+      </p>
     </div>
 
-    <!-- Signature: a snapshot of what actually happens in the shell. The product
-         lives here, so the hero shows the shell, not a marketing screenshot. -->
-    <div class="terminal hero-terminal" role="img" aria-label="Example hfo session: probing hardware, scoring quants, waiting for the install confirmation.">
-      <div class="terminal-bar">
-        <span class="terminal-dot red" aria-hidden="true"></span>
-        <span class="terminal-dot yellow" aria-hidden="true"></span>
-        <span class="terminal-dot green" aria-hidden="true"></span>
-        <span class="terminal-title">~ hfo</span>
+    <div class="hero-grid">
+
+      <!-- Left: install switcher, CTAs, trust chips. -->
+      <div class="hero-col">
+        <!-- Package-manager switcher — CSS-only radios swap the active panel,
+             JS syncs the install-pill command and copies it to the clipboard. -->
+        <div class="hero-install" role="group" aria-label="Install command">
+          <div class="pm-tabs" role="radiogroup" aria-label="Package manager">
+            <input type="radio" name="pm" id="pm-npm"  data-cmd="npm i -g hfo-cli" checked />
+            <label for="pm-npm">npm</label>
+            <input type="radio" name="pm" id="pm-pnpm" data-cmd="pnpm add -g hfo-cli" />
+            <label for="pm-pnpm">pnpm</label>
+            <input type="radio" name="pm" id="pm-yarn" data-cmd="yarn global add hfo-cli" />
+            <label for="pm-yarn">yarn</label>
+            <input type="radio" name="pm" id="pm-bun"  data-cmd="bun add -g hfo-cli" />
+            <label for="pm-bun">bun</label>
+            <!-- "script" tab auto-adapts to the visitor's OS: the runtime picks
+                 `curl … | sh` for macOS/Linux and `irm … | iex` for Windows,
+                 swapping the label (curl ↔ powershell) and the command at the
+                 same time. The data-cmd attribute is seeded with the Unix
+                 variant so non-JS visitors still see a working command. -->
+            <input type="radio" name="pm" id="pm-script"
+                   data-cmd="curl -fsSL https://hfo.carrillo.app/install.sh | sh"
+                   data-cmd-unix="curl -fsSL https://hfo.carrillo.app/install.sh | sh"
+                   data-cmd-win="irm https://hfo.carrillo.app/install.ps1 | iex" />
+            <label for="pm-script" id="pm-script-label" data-label-unix="curl" data-label-win="powershell">curl</label>
+          </div>
+          <button type="button" class="install-pill" id="hero-install-pill" aria-label="Copy install command">
+            <code id="hero-install-cmd">npm i -g hfo-cli</code>
+            <svg class="icon-copy"  aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            <svg class="icon-check" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </button>
+        </div>
+
+        <div class="cta-group cta-secondary">
+          <a class="btn btn-primary" href="https://www.npmjs.com/package/hfo-cli" target="_blank" rel="noreferrer noopener">
+            <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 17V7h4a2.5 2.5 0 0 1 0 5H9"/><path d="M14 17h3"/></svg>
+            View on npm
+          </a>
+          <a class="btn btn-ghost" href="https://github.com/carrilloapps/hfo" target="_blank" rel="noreferrer noopener">
+            <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.4 5.4 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>
+            Star on GitHub
+          </a>
+        </div>
       </div>
+
+      <!-- Right: signature terminal in a three-frame stack for depth. Product
+           lives in the shell, so the hero shows the shell — not a screenshot. -->
+      <div class="hero-col">
+        <div class="hero-stack">
+          <span class="frame-ghost g2" aria-hidden="true"></span>
+          <span class="frame-ghost g1" aria-hidden="true"></span>
+          <div class="terminal hero-terminal" role="img" aria-label="Example hfo session: probes the rig, scores the repo's quants, shows the quick-confirm prompt with recommended defaults.">
+            <div class="terminal-bar">
+              <span class="terminal-dot red" aria-hidden="true"></span>
+              <span class="terminal-dot yellow" aria-hidden="true"></span>
+              <span class="terminal-dot green" aria-hidden="true"></span>
+              <span class="terminal-title">~ hfo · install</span>
+              <span class="terminal-live" aria-label="live example"><span class="dot" aria-hidden="true"></span>live</span>
+            </div>
 <pre aria-hidden="true"><code><span class="tok-prompt">$</span> <span class="tok-cmd">hfo</span> bartowski/Qwen2.5-Coder-7B-Instruct-GGUF
-<span class="tok-comment">→ probing hardware… RTX 4090 · 24 GiB VRAM · 64 GiB RAM</span>
-<span class="tok-comment">→ scoring 8 quants…</span>  <span class="tok-flag">Q6_K 97/100</span>  <span class="tok-flag">Q5_K_M 94/100</span>  <span class="tok-flag">Q4_K_M 88/100</span>
-<span class="tok-comment">→ reading model card…</span>  temperature=<span class="tok-str">0.2</span>  top_p=<span class="tok-str">0.9</span>  ctx=<span class="tok-str">8192</span>
+<span class="tok-comment">→ RTX 4090 · 24 GiB VRAM · 64 GiB RAM · Windows 11</span>
+<span class="tok-comment">→ reading HF card · scoring 8 quants…</span>
 
-<span class="tok-prompt">?</span> Install <span class="tok-str">Q6_K</span> to <span class="tok-path">~/AI/LLMs/qwen2-5-coder/q6-k</span>
-  <span class="tok-comment">[Enter] install now  ·  [O] change dir  ·  [C] customize</span>
+   <span class="tok-flag">Q6_K</span>    <span class="tok-str">6.25 GB</span>  <span class="tok-score">██████████</span>  <span class="tok-var">97</span>  <span class="tok-comment">Full GPU</span>
+   <span class="tok-flag">Q5_K_M</span>  <span class="tok-str">5.33 GB</span>  <span class="tok-score">█████████</span><span class="tok-score-dim">░</span>  <span class="tok-var">94</span>  <span class="tok-comment">Full GPU</span>
+   <span class="tok-flag">Q4_K_M</span>  <span class="tok-str">4.68 GB</span>  <span class="tok-score">█████████</span><span class="tok-score-dim">░</span>  <span class="tok-var">90</span>  <span class="tok-comment">Full GPU</span>
 
-<span class="tok-prompt">$</span> <span class="hero-caret" aria-hidden="true"></span></code></pre>
+<span class="tok-prompt">?</span> Install <span class="tok-str">Q6_K</span> → <span class="tok-path">~/AI/LLMs/qwen2-5-coder/q6-k</span>
+  <span class="tok-comment">[Enter]</span> install now   <span class="tok-comment">[O]</span> change dir   <span class="tok-comment">[C]</span> customize <span class="hero-caret" aria-hidden="true"></span></code></pre>
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
 </section>
@@ -658,6 +1119,45 @@
   <div class="container">
     <h2 id="features-title">What it does</h2>
     <p class="section-lede">Everything that normally takes a dozen shell commands and a hand-written Modelfile — folded into one tool that understands your rig.</p>
+
+    <!-- Project state at a glance — compact, data-dense strip. Replaces the
+         chip row that used to sit in the hero. Live where it makes sense
+         (npm, CI, stars), static where the fact doesn't change. -->
+    <div class="stats-strip" aria-label="Project status and compatibility">
+      <a class="stat" href="https://www.npmjs.com/package/hfo-cli" target="_blank" rel="noreferrer noopener">
+        <span class="stat-label">Version</span>
+        <span class="stat-val">v0.1.0</span>
+      </a>
+      <a class="stat" href="https://github.com/carrilloapps/hfo/actions/workflows/ci.yml" target="_blank" rel="noreferrer noopener">
+        <span class="stat-label">CI</span>
+        <span class="stat-val stat-ok">passing</span>
+      </a>
+      <span class="stat">
+        <span class="stat-label">Tests</span>
+        <span class="stat-val">76&nbsp;/&nbsp;76</span>
+      </span>
+      <a class="stat" href="https://github.com/carrilloapps/hfo/stargazers" target="_blank" rel="noreferrer noopener">
+        <span class="stat-label">GitHub</span>
+        <span class="stat-val">★ Star</span>
+      </a>
+      <span class="stat">
+        <span class="stat-label">Node</span>
+        <span class="stat-val">≥ 20</span>
+      </span>
+      <span class="stat">
+        <span class="stat-label">License</span>
+        <span class="stat-val">MIT</span>
+      </span>
+      <span class="stat">
+        <span class="stat-label">Platforms</span>
+        <span class="stat-val stat-platforms" aria-label="Windows, macOS, Linux">
+          <svg role="img" aria-label="Windows" viewBox="0 0 24 24" fill="currentColor"><path d="M0 3.449L9.75 2.1v9.451H0m10.949-9.602L24 0v11.4H10.949M0 12.6h9.75v9.451L0 20.699M10.949 12.6H24V24l-12.9-1.801"/></svg>
+          <svg role="img" aria-label="macOS" viewBox="0 0 24 24" fill="currentColor"><path d="M17.05 20.28c-.98.95-2.05.94-3.08.47-1.09-.47-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.47C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
+          <svg role="img" aria-label="Linux" viewBox="0 0 24 24" fill="currentColor"><path d="M12.504 0c-.155 0-.315.008-.480.021-4.226.333-3.105 4.807-3.17 6.298-.076 1.092-.3 1.953-1.05 3.02-.885 1.051-2.127 2.75-2.716 4.521-.278.832-.41 1.684-.287 2.489a.424.424 0 00-.11.135c-.26.268-.45.6-.663.839-.199.199-.485.267-.797.4-.313.136-.658.269-.864.68-.09.189-.136.394-.132.602 0 .199.027.4.055.536.058.399.116.728.04.97-.249.68-.28 1.145-.106 1.474.174.334.535.47.94.601.81.2 1.91.135 2.774.6.926.466 1.866.67 2.616.47.526-.116.97-.464 1.208-.946.587-.003 1.23-.269 2.26-.334.699-.058 1.574.267 2.577.2.025.134.063.198.114.333l.003.003c.391.778 1.113 1.132 1.884 1.071.771-.06 1.592-.536 2.257-1.306.631-.765 1.683-1.084 2.378-1.503.348-.199.629-.469.649-.853.023-.4-.2-.811-.714-1.376v-.097l-.003-.003c-.17-.2-.25-.535-.338-.926-.085-.401-.182-.786-.492-1.046h-.003c-.059-.054-.123-.067-.188-.135a.357.357 0 00-.19-.064c.431-1.278.264-2.55-.173-3.694-.533-1.41-1.465-2.638-2.175-3.483-.796-1.005-1.576-1.957-1.56-3.368.026-2.152.236-6.133-3.544-6.139zm.225 1.834c.715 0 1.495.394 1.922 1.205.41.785.41 1.7 0 2.48-.358.68-1.08 1.072-1.828 1.072-.715 0-1.461-.392-1.828-1.072-.385-.713-.418-1.561 0-2.48.42-.811 1.12-1.205 1.834-1.205z"/></svg>
+        </span>
+      </span>
+    </div>
+
     <div class="grid">
       <article class="card">
         <span class="card-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg></span>
@@ -717,35 +1217,21 @@
     <h3 class="section-eyebrow">One-liner install</h3>
     <div class="one-liner-grid">
 
-      <div class="terminal">
-        <div class="terminal-bar">
-          <span class="terminal-dot red" aria-hidden="true"></span>
-          <span class="terminal-dot yellow" aria-hidden="true"></span>
-          <span class="terminal-dot green" aria-hidden="true"></span>
-          <span class="terminal-title">macOS · Linux</span>
-          <button type="button" class="terminal-copy" data-copy="curl -fsSL https://hfo.carrillo.app/install.sh | sh" aria-label="Copy macOS / Linux install command">copy</button>
-        </div>
-<pre><code><span class="tok-comment"># Detects OS + arch, downloads the latest binary,</span>
+      <hfo-terminal title="macOS · Linux" copy="curl -fsSL https://hfo.carrillo.app/install.sh | sh">
+<span class="tok-comment"># Detects OS + arch, downloads the latest binary,</span>
 <span class="tok-comment"># drops it on your PATH (no sudo needed on ~/.local/bin).</span>
-<span class="tok-prompt">$</span> <span class="tok-cmd">curl</span> <span class="tok-flag">-fsSL</span> <span class="tok-url">https://hfo.carrillo.app/install.sh</span> <span class="tok-op">|</span> <span class="tok-cmd">sh</span></code></pre>
-      </div>
+<span class="tok-prompt">$</span> <span class="tok-cmd">curl</span> <span class="tok-flag">-fsSL</span> <span class="tok-url">https://hfo.carrillo.app/install.sh</span> <span class="tok-op">|</span> <span class="tok-cmd">sh</span>
+</hfo-terminal>
 
-      <div class="terminal">
-        <div class="terminal-bar">
-          <span class="terminal-dot red" aria-hidden="true"></span>
-          <span class="terminal-dot yellow" aria-hidden="true"></span>
-          <span class="terminal-dot green" aria-hidden="true"></span>
-          <span class="terminal-title">Windows · PowerShell</span>
-          <button type="button" class="terminal-copy" data-copy="irm https://hfo.carrillo.app/install.ps1 | iex" aria-label="Copy Windows PowerShell install command">copy</button>
-        </div>
-<pre><code><span class="tok-comment"># Installs to %LOCALAPPDATA%\Programs\hfo and adds it to user PATH.</span>
+      <hfo-terminal title="Windows · PowerShell" copy="irm https://hfo.carrillo.app/install.ps1 | iex">
+<span class="tok-comment"># Installs to %LOCALAPPDATA%\Programs\hfo and adds it to user PATH.</span>
 <span class="tok-comment"># No admin prompt required.</span>
-<span class="tok-prompt">PS&gt;</span> <span class="tok-cmd">irm</span> <span class="tok-url">https://hfo.carrillo.app/install.ps1</span> <span class="tok-op">|</span> <span class="tok-cmd">iex</span></code></pre>
-      </div>
+<span class="tok-prompt">PS&gt;</span> <span class="tok-cmd">irm</span> <span class="tok-url">https://hfo.carrillo.app/install.ps1</span> <span class="tok-op">|</span> <span class="tok-cmd">iex</span>
+</hfo-terminal>
 
     </div>
 
-    <p class="section-lede" style="margin: 0 0 22px;">Prefer a package manager? All three publish the same <code>hfo-cli</code> package — use whichever you already have.</p>
+    <p class="section-lede section-lede--medium">Prefer a package manager? All three publish the same <code>hfo-cli</code> package — use whichever you already have.</p>
 
     <div class="tabs" role="tablist" aria-label="Package manager">
       <button type="button" class="tab-btn" role="tab" aria-selected="true"  id="tab-npm"  aria-controls="panel-npm"  onclick="switchTab('npm')">npm</button>
@@ -755,85 +1241,45 @@
     </div>
 
     <div id="panel-npm" role="tabpanel" aria-labelledby="tab-npm">
-      <div class="terminal">
-        <div class="terminal-bar">
-          <span class="terminal-dot red" aria-hidden="true"></span>
-          <span class="terminal-dot yellow" aria-hidden="true"></span>
-          <span class="terminal-dot green" aria-hidden="true"></span>
-          <span class="terminal-title">npm</span>
-          <button type="button" class="terminal-copy" data-copy="npm i -g hfo-cli">copy</button>
-        </div>
-<pre><code><span class="tok-prompt">$</span> <span class="tok-cmd">npm</span> <span class="tok-cmd">i</span> <span class="tok-flag">-g</span> hfo-cli</code></pre>
-      </div>
+      <hfo-terminal title="npm" copy="npm i -g hfo-cli">
+<span class="tok-prompt">$</span> <span class="tok-cmd">npm</span> <span class="tok-cmd">i</span> <span class="tok-flag">-g</span> hfo-cli
+</hfo-terminal>
     </div>
 
     <div id="panel-pnpm" role="tabpanel" aria-labelledby="tab-pnpm" hidden>
-      <div class="terminal">
-        <div class="terminal-bar">
-          <span class="terminal-dot red" aria-hidden="true"></span>
-          <span class="terminal-dot yellow" aria-hidden="true"></span>
-          <span class="terminal-dot green" aria-hidden="true"></span>
-          <span class="terminal-title">pnpm</span>
-          <button type="button" class="terminal-copy" data-copy="pnpm add -g hfo-cli">copy</button>
-        </div>
-<pre><code><span class="tok-prompt">$</span> <span class="tok-cmd">pnpm</span> add <span class="tok-flag">-g</span> hfo-cli</code></pre>
-      </div>
+      <hfo-terminal title="pnpm" copy="pnpm add -g hfo-cli">
+<span class="tok-prompt">$</span> <span class="tok-cmd">pnpm</span> add <span class="tok-flag">-g</span> hfo-cli
+</hfo-terminal>
     </div>
 
     <div id="panel-yarn" role="tabpanel" aria-labelledby="tab-yarn" hidden>
-      <div class="terminal">
-        <div class="terminal-bar">
-          <span class="terminal-dot red" aria-hidden="true"></span>
-          <span class="terminal-dot yellow" aria-hidden="true"></span>
-          <span class="terminal-dot green" aria-hidden="true"></span>
-          <span class="terminal-title">yarn</span>
-          <button type="button" class="terminal-copy" data-copy="yarn global add hfo-cli">copy</button>
-        </div>
-<pre><code><span class="tok-prompt">$</span> <span class="tok-cmd">yarn</span> global add hfo-cli</code></pre>
-      </div>
+      <hfo-terminal title="yarn" copy="yarn global add hfo-cli">
+<span class="tok-prompt">$</span> <span class="tok-cmd">yarn</span> global add hfo-cli
+</hfo-terminal>
     </div>
 
     <div id="panel-bun" role="tabpanel" aria-labelledby="tab-bun" hidden>
-      <div class="terminal">
-        <div class="terminal-bar">
-          <span class="terminal-dot red" aria-hidden="true"></span>
-          <span class="terminal-dot yellow" aria-hidden="true"></span>
-          <span class="terminal-dot green" aria-hidden="true"></span>
-          <span class="terminal-title">bun</span>
-          <button type="button" class="terminal-copy" data-copy="bun add -g hfo-cli">copy</button>
-        </div>
-<pre><code><span class="tok-prompt">$</span> <span class="tok-cmd">bun</span> add <span class="tok-flag">-g</span> hfo-cli</code></pre>
-      </div>
+      <hfo-terminal title="bun" copy="bun add -g hfo-cli">
+<span class="tok-prompt">$</span> <span class="tok-cmd">bun</span> add <span class="tok-flag">-g</span> hfo-cli
+</hfo-terminal>
     </div>
 
     <h3 class="section-eyebrow section-eyebrow--spaced">Manual binary download</h3>
-    <p class="section-lede" style="margin: 0 0 16px;">Tagged releases on GitHub ship per-OS executables. Download directly, or use the one-liner scripts above which wrap this for you.</p>
-    <div class="terminal">
-      <div class="terminal-bar">
-        <span class="terminal-dot red" aria-hidden="true"></span>
-        <span class="terminal-dot yellow" aria-hidden="true"></span>
-        <span class="terminal-dot green" aria-hidden="true"></span>
-        <span class="terminal-title">manual · Linux / macOS</span>
-      </div>
-<pre><code><span class="tok-comment"># Pick the binary matching your OS + arch; available after the first tagged release.</span>
+    <p class="section-lede section-lede--tight">Tagged releases on GitHub ship per-OS executables. Download directly, or use the one-liner scripts above which wrap this for you.</p>
+    <hfo-terminal title="manual · Linux / macOS">
+<span class="tok-comment"># Pick the binary matching your OS + arch; available after the first tagged release.</span>
 <span class="tok-comment">#   hfo-linux-x64    hfo-linux-arm64</span>
 <span class="tok-comment">#   hfo-macos-x64    hfo-macos-arm64</span>
 <span class="tok-comment">#   hfo-win-x64.exe</span>
 <span class="tok-prompt">$</span> <span class="tok-cmd">curl</span> <span class="tok-flag">-LO</span> <span class="tok-url">https://github.com/carrilloapps/hfo/releases/latest/download/hfo-linux-x64</span>
 <span class="tok-prompt">$</span> <span class="tok-cmd">chmod</span> +x hfo-linux-x64
 <span class="tok-prompt">$</span> <span class="tok-cmd">sudo</span> <span class="tok-cmd">mv</span> hfo-linux-x64 <span class="tok-path">/usr/local/bin/hfo</span>
-<span class="tok-prompt">$</span> <span class="tok-cmd">hfo</span> <span class="tok-flag">--version</span></code></pre>
-    </div>
+<span class="tok-prompt">$</span> <span class="tok-cmd">hfo</span> <span class="tok-flag">--version</span>
+</hfo-terminal>
 
     <h3 class="section-eyebrow section-eyebrow--spaced">Try it</h3>
-    <div class="terminal">
-      <div class="terminal-bar">
-        <span class="terminal-dot red" aria-hidden="true"></span>
-        <span class="terminal-dot yellow" aria-hidden="true"></span>
-        <span class="terminal-dot green" aria-hidden="true"></span>
-        <span class="terminal-title">bash</span>
-      </div>
-<pre><code><span class="tok-comment"># Explore — fullscreen dashboard</span>
+    <hfo-terminal title="bash">
+<span class="tok-comment"># Explore — fullscreen dashboard</span>
 <span class="tok-prompt">$</span> <span class="tok-cmd">hfo</span>
 
 <span class="tok-comment"># Install a specific repo (opens the Install tab pre-filled)</span>
@@ -842,8 +1288,8 @@
 <span class="tok-comment"># Or skip the TUI entirely — every capability has a flag</span>
 <span class="tok-prompt">$</span> <span class="tok-cmd">hfo</span> <span class="tok-flag">--view</span>
 <span class="tok-prompt">$</span> <span class="tok-cmd">hfo</span> <span class="tok-flag">--list</span>
-<span class="tok-prompt">$</span> <span class="tok-cmd">hfo</span> <span class="tok-flag">--launch</span> claude <span class="tok-flag">--model</span> llama3.1:8b</code></pre>
-    </div>
+<span class="tok-prompt">$</span> <span class="tok-cmd">hfo</span> <span class="tok-flag">--launch</span> claude <span class="tok-flag">--model</span> llama3.1:8b
+</hfo-terminal>
   </div>
 </section>
 
@@ -930,7 +1376,7 @@
         <p>Ollama install helpers (<code>winget</code>, <code>brew</code>, the official shell script) run only when you explicitly confirm from the installer overlay.</p>
       </div>
     </div>
-    <p style="color: var(--muted); font-size: 14.5px; margin: 0;">
+    <p class="note-small">
       No telemetry. No accounts. No external calls beyond those two HF endpoints. Gated or private HF repos use a standard <code>HF_TOKEN</code> environment variable. See <a href="https://github.com/carrilloapps/hfo/blob/main/SECURITY.md" target="_blank" rel="noreferrer noopener">SECURITY.md</a> for the full threat model and reporting policy.
     </p>
   </div>
@@ -940,7 +1386,7 @@
   <div class="container">
     <h2 id="faq-title">Frequently asked</h2>
     <p class="section-lede">Short answers to the questions people ask first.</p>
-    <div style="display: grid; gap: 8px;">
+    <div class="faq-list">
       <details class="faq" open>
         <summary>Is hfo free?</summary>
         <p>Yes. hfo is MIT-licensed open source with no subscriptions, no accounts, and no telemetry. It only talks to the public Hugging Face API and your local Ollama daemon.</p>
@@ -1069,6 +1515,80 @@
       }, 1200);
     });
   });
+
+  // Mobile nav toggle — the header <button class="nav-toggle"> opens the
+  // dropdown by flipping aria-expanded + .is-open. Closes on outside click
+  // and Escape so it doesn't trap the user in an open state.
+  (function wireNav() {
+    const btn = document.getElementById('nav-toggle');
+    const nav = document.getElementById('site-nav');
+    if (!btn || !nav) return;
+    const close = () => { btn.setAttribute('aria-expanded', 'false'); nav.classList.remove('is-open'); };
+    const open  = () => { btn.setAttribute('aria-expanded', 'true');  nav.classList.add('is-open'); };
+    btn.addEventListener('click', () => {
+      btn.getAttribute('aria-expanded') === 'true' ? close() : open();
+    });
+    document.addEventListener('click', (e) => {
+      if (btn.contains(e.target) || nav.contains(e.target)) return;
+      close();
+    });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
+  })();
+
+  // Hero install pill: the pm-tabs radios set the active command; clicking
+  // the pill copies that command and flashes a success state via CSS class.
+  // The "script" tab auto-adapts to the visitor's OS — PowerShell on
+  // Windows, curl/bash everywhere else — by swapping both its data-cmd
+  // and its visible label on page load.
+  (function wireHeroInstall() {
+    const cmdEl  = document.getElementById('hero-install-cmd');
+    const pill   = document.getElementById('hero-install-pill');
+    if (!cmdEl || !pill) return;
+
+    // Prefer the modern User-Agent Client Hints API; fall back to UA sniffing
+    // only for the Windows check. Everything else (macOS, Linux, BSD, CrOS,
+    // Android, iOS) gets the POSIX curl variant — they all have `sh`.
+    const isWindows = (() => {
+      const uaD = navigator.userAgentData;
+      if (uaD && typeof uaD.platform === 'string') {
+        return /windows/i.test(uaD.platform);
+      }
+      return /Windows NT|Win32|Win64|WOW64/i.test(navigator.userAgent || navigator.platform || '');
+    })();
+
+    const scriptInput = document.getElementById('pm-script');
+    const scriptLabel = document.getElementById('pm-script-label');
+    if (scriptInput && scriptLabel) {
+      const cmdKey   = isWindows ? 'cmdWin'   : 'cmdUnix';
+      const labelKey = isWindows ? 'labelWin' : 'labelUnix';
+      if (scriptInput.dataset[cmdKey])   scriptInput.dataset.cmd   = scriptInput.dataset[cmdKey];
+      if (scriptLabel.dataset[labelKey]) scriptLabel.textContent   = scriptLabel.dataset[labelKey];
+    }
+
+    const pmInputs = document.querySelectorAll('input[name="pm"]');
+    const current  = () => {
+      const checked = document.querySelector('input[name="pm"]:checked');
+      return (checked && checked.getAttribute('data-cmd')) || 'npm i -g hfo-cli';
+    };
+
+    const sync = () => {
+      cmdEl.textContent = current();
+      pill.classList.remove('is-copied');
+    };
+    pmInputs.forEach((el) => el.addEventListener('change', sync));
+    sync();
+
+    let resetTimer;
+    pill.addEventListener('click', () => {
+      const text = current();
+      if (!navigator.clipboard) return;
+      navigator.clipboard.writeText(text).then(() => {
+        pill.classList.add('is-copied');
+        clearTimeout(resetTimer);
+        resetTimer = setTimeout(() => pill.classList.remove('is-copied'), 1400);
+      });
+    });
+  })();
 </script>
 
 </body>

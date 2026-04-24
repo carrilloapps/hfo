@@ -1,5 +1,15 @@
 name: Release
 
+# This workflow ONLY fires when a version tag (v*.*.*) is pushed. It does
+# NOT run on pushes to main, PRs, or any other branch activity. The
+# `if: startsWith(github.ref, 'refs/tags/v')` guard on every job makes it
+# impossible to trigger binary uploads from a non-tag ref, even via a
+# manual `workflow_dispatch`.
+#
+# npm publish is NOT automated here — the maintainer runs `npm publish`
+# locally after the tag is pushed. Rationale: publishing is infrequent,
+# requires a human-held token, and the additional CI step added little
+# value over a local run that also verifies the tarball by eye.
 on:
   push:
     tags: ['v*.*.*']
@@ -10,36 +20,13 @@ permissions:
 
 jobs:
   # -----------------------------------------------------------------------
-  # Primary distribution channel. npm publish runs on Linux only; the
-  # published package is cross-OS (pure Node + @pkg of ink).
-  # -----------------------------------------------------------------------
-  npm-publish:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: pnpm
-          registry-url: https://registry.npmjs.org
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm typecheck
-      - run: pnpm lint
-      - run: pnpm test
-      - run: pnpm build
-      - run: npm publish --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-
-  # -----------------------------------------------------------------------
-  # Secondary distribution: standalone binaries per OS. Uses @yao-pkg/pkg
-  # which has known rough edges with ESM-first deps (ink, execa). The job
-  # is `continue-on-error: true` so a partial failure here never blocks the
-  # npm release — users can always fall back to `npm i -g hfo-cli`.
+  # Standalone binaries per OS. Uses @yao-pkg/pkg which has known rough
+  # edges with ESM-first deps (ink, execa). The job is
+  # `continue-on-error: true` so a partial failure here never blocks the
+  # release — users can always fall back to `npm i -g hfo-cli`.
   # -----------------------------------------------------------------------
   binary:
-    needs: npm-publish
+    if: startsWith(github.ref, 'refs/tags/v')
     continue-on-error: true
     strategy:
       fail-fast: false

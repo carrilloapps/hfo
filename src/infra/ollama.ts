@@ -292,12 +292,14 @@ async function upsertRcFile(entries: [string, string][], candidates: string[]): 
   try {
     content = await readFile(target, 'utf8');
   } catch {}
-  const marker = '# >>> runllama: ollama env >>>';
-  const endMarker = '# <<< runllama: ollama env <<<';
+  const marker = '# >>> hfo: ollama env >>>';
+  const endMarker = '# <<< hfo: ollama env <<<';
   const block = [marker, ...entries.map(([k, v]) => `export ${k}="${v}"`), endMarker].join('\n');
-  if (content.includes(marker)) {
-    const re = new RegExp(`${marker}[\\s\\S]*?${endMarker}`, 'm');
-    content = content.replace(re, block);
+  // Match either the current `hfo:` block OR any legacy `runllama:` block so
+  // users who ran --tune before the rename don't end up with duplicate blocks.
+  const anyBlockRe = /# >>> (?:runllama|hfo): ollama env >>>[\s\S]*?# <<< (?:runllama|hfo): ollama env <<</m;
+  if (anyBlockRe.test(content)) {
+    content = content.replace(anyBlockRe, block);
   } else {
     content = content + (content.endsWith('\n') || content === '' ? '' : '\n') + '\n' + block + '\n';
   }

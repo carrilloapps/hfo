@@ -1,0 +1,45 @@
+# hfo
+
+> Fullscreen terminal UI and headless CLI that turns any Hugging Face GGUF
+> repository into a running, hardware-tuned Ollama model — in one Enter
+> keystroke. Cross-OS (Windows · macOS · Linux). Strict TypeScript. MIT.
+> No telemetry, no accounts, no subscriptions. Version 0.1.0.
+
+hfo (`hfo-cli` on npm) scores every quant in a Hugging Face repo against your
+detected VRAM and RAM, parses the model card for recommended sampling
+parameters, and auto-generates a tuned Modelfile before registering the
+model with the local Ollama daemon. Every TUI capability ships a headless
+`--flag` equivalent so the same pipeline runs from CI, cron, or an editor
+plugin.
+
+## Docs
+
+- [Home](https://hfo.carrillo.app/): overview, hero, install options
+- [Install](https://hfo.carrillo.app/install/): npm, pnpm, yarn, bun, curl, PowerShell, standalone binaries
+- [CLI reference](https://hfo.carrillo.app/cli/): every flag, headless equivalent of each TUI capability
+- [Keyboard shortcuts](https://hfo.carrillo.app/keyboard/): every hotkey across every tab
+- [FAQ](https://hfo.carrillo.app/faq/): most-asked questions (pricing, OS, Ollama, agents, storage)
+- [Privacy](https://hfo.carrillo.app/privacy/): no telemetry — the two HF endpoints hfo calls, and nothing else
+- [Benchmarks](https://hfo.carrillo.app/benchmarks/): run `hfo --bench <tag>` for tok/s + TTFT; submission format for the community leaderboard
+
+## Source
+
+- [Repository](https://github.com/carrilloapps/hfo)
+- [README](https://raw.githubusercontent.com/carrilloapps/hfo/main/README.md)
+- [CHANGELOG](https://raw.githubusercontent.com/carrilloapps/hfo/main/CHANGELOG.md)
+- [CONTRIBUTING](https://raw.githubusercontent.com/carrilloapps/hfo/main/CONTRIBUTING.md)
+- [LICENSE (MIT)](https://raw.githubusercontent.com/carrilloapps/hfo/main/LICENSE)
+- [SECURITY policy](https://github.com/carrilloapps/hfo/blob/main/SECURITY.md)
+
+## Distribution
+
+- [npm package: hfo-cli](https://www.npmjs.com/package/hfo-cli)
+- [GitHub Releases (per-OS binaries on tagged versions)](https://github.com/carrilloapps/hfo/releases)
+- [install.sh (macOS / Linux)](https://hfo.carrillo.app/install.sh)
+- [install.ps1 (Windows PowerShell)](https://hfo.carrillo.app/install.ps1)
+
+## Related
+
+- [Full flattened documentation (llms-full.txt)](https://hfo.carrillo.app/llms-full.txt)
+- [Project website](https://hfo.carrillo.app/)
+- [Author](https://carrillo.app/)

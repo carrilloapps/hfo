@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+
+<title>hfo keyboard shortcuts — every hotkey, every tab</title>
+<meta name="description" content="Complete keyboard reference for the hfo TUI. Global hotkeys, Dashboard, Models, Install quick-confirm, Tune, and Settings shortcuts — one scannable page." />
+<meta name="theme-color" content="#0a0b0f" media="(prefers-color-scheme: dark)" />
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+<meta name="color-scheme" content="dark light" />
+<meta name="robots" content="index,follow,max-image-preview:large" />
+
+<link rel="canonical" href="https://hfo.carrillo.app/keyboard/" />
+<link rel="icon" href="/favicon.ico" sizes="32x32" />
+<link rel="icon" href="/assets/logo-mark.svg" type="image/svg+xml" />
+<link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180" />
+<link rel="mask-icon" href="/assets/logo-mark.svg" color="#7C5BF3" />
+
+<meta property="og:type" content="article" />
+<meta property="og:site_name" content="hfo" />
+<meta property="og:title" content="hfo keyboard shortcuts — every hotkey" />
+<meta property="og:description" content="Complete keyboard reference for the hfo TUI across six tabs." />
+<meta property="og:url" content="https://hfo.carrillo.app/keyboard/" />
+<meta property="og:image" content="https://hfo.carrillo.app/assets/og-image.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="hfo keyboard shortcuts" />
+<meta name="twitter:description" content="Every hotkey across every tab." />
+<meta name="twitter:image" content="https://hfo.carrillo.app/assets/og-image.png" />
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "hfo", "item": "https://hfo.carrillo.app/" },
+    { "@type": "ListItem", "position": 2, "name": "Keyboard shortcuts", "item": "https://hfo.carrillo.app/keyboard/" }
+  ]
+}
+</script>
+
+<link rel="stylesheet" href="/assets/page.css" />
+<script src="/assets/nav.js" defer></script>
+</head>
+<body>
+
+<a class="skip-link" href="#main">Skip to main content</a>
+
+<header class="site-header" role="banner">
+  <div class="container row">
+    <a class="brand" href="/" aria-label="hfo home">
+      <svg viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+        <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3B6FE5"/><stop offset="0.55" stop-color="#5B6BE5"/><stop offset="1" stop-color="#7C5BF3"/></linearGradient></defs>
+        <rect x="1" y="1" width="30" height="30" rx="7" fill="url(#g)"/>
+        <line x1="8" y1="16" x2="24" y2="16" stroke="#0a0b0f" stroke-width="2" stroke-linecap="round"/>
+        <circle cx="8" cy="16" r="3" fill="#0a0b0f"/>
+        <circle cx="16" cy="16" r="3" fill="none" stroke="#0a0b0f" stroke-width="2"/>
+        <circle cx="24" cy="16" r="3" fill="#0a0b0f"/>
+      </svg>
+      <span>hfo</span>
+    </a>
+    <button type="button" class="nav-toggle" id="nav-toggle" aria-label="Open navigation" aria-expanded="false" aria-controls="site-nav">
+      <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M3 12h18"/><path d="M3 18h18"/></svg>
+    </button>
+    <nav class="site-nav" id="site-nav" aria-label="Primary">
+      <a href="/install/">Install</a>
+      <a href="/cli/">CLI</a>
+      <a href="/keyboard/" aria-current="page">Keyboard</a>
+      <a href="/privacy/">Privacy</a>
+      <a href="/faq/">FAQ</a>
+      <a href="https://github.com/carrilloapps/hfo" target="_blank" rel="noreferrer noopener" class="nav-icon-link">
+        <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.4 5.4 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>
+        GitHub
+      </a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+  <div class="container">
+
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <ol>
+        <li><a href="/">hfo</a></li>
+        <li aria-current="page">Keyboard shortcuts</li>
+      </ol>
+    </nav>
+
+    <article class="page">
+      <header class="page-header">
+        <span class="page-eyebrow">Reference</span>
+        <h1>Keyboard shortcuts</h1>
+        <p class="page-lede">Every hotkey in the hfo TUI, grouped by scope. Global shortcuts work on every tab. Tab-specific keys appear in the footer bar as you navigate. All hotkeys are case-sensitive; uppercase means Shift is held.</p>
+      </header>
+
+      <h2>Global (any tab)</h2>
+      <div class="table-wrap">
+        <table class="table">
+          <thead><tr><th>Keys</th><th>Action</th></tr></thead>
+          <tbody>
+            <tr><td><span class="kbd">1</span>–<span class="kbd">6</span></td><td>Jump to a tab (Dashboard · Models · Install · Tune · Help · Settings)</td></tr>
+            <tr><td><span class="kbd">Tab</span> · <span class="kbd">Shift+Tab</span></td><td>Cycle tabs forward / backward</td></tr>
+            <tr><td><span class="kbd">,</span></td><td>Open Settings</td></tr>
+            <tr><td><span class="kbd">?</span></td><td>Open Help</td></tr>
+            <tr><td><span class="kbd">Ctrl+H</span></td><td>Open the author's homepage in the default browser</td></tr>
+            <tr><td><span class="kbd">q</span> · <span class="kbd">Ctrl+C</span></td><td>Quit (restores scrollback)</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>Dashboard</h2>
+      <div class="table-wrap">
+        <table class="table">
+          <thead><tr><th>Keys</th><th>Action</th></tr></thead>
+          <tbody>
+            <tr><td><span class="kbd">Alt</span>+<span class="kbd">↑</span> · <span class="kbd">Alt</span>+<span class="kbd">↓</span></td><td>Focus a panel (full-screen zoom) / cycle through panels</td></tr>
+            <tr><td><span class="kbd">Esc</span> · <span class="kbd">b</span></td><td>Return to the 4-panel grid</td></tr>
+            <tr><td><span class="kbd">Enter</span></td><td>Open the selected link in the default browser</td></tr>
+            <tr><td><span class="kbd">r</span></td><td>Force refresh (re-sample GPU / RAM / Ollama)</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>Models</h2>
+      <div class="table-wrap">
+        <table class="table">
+          <thead><tr><th>Keys</th><th>Action</th></tr></thead>
+          <tbody>
+            <tr><td><span class="kbd">↑</span> · <span class="kbd">↓</span></td><td>Navigate rows</td></tr>
+            <tr><td><span class="kbd">L</span></td><td>Launch integration with the selected model (opens the launch menu pre-filled)</td></tr>
+            <tr><td><span class="kbd">G</span></td><td>Launch menu without preset (pick model + integration manually)</td></tr>
+            <tr><td><span class="kbd">I</span></td><td>Reinstall an orphan — regenerates the Modelfile from the GGUF if the record is gone</td></tr>
+            <tr><td><span class="kbd">B</span></td><td>Create a <code>.zip</code> backup of the selected model (level-9 + metadata sidecar)</td></tr>
+            <tr><td><span class="kbd">d</span></td><td>Remove the tag from Ollama (shallow — keeps files)</td></tr>
+            <tr><td><span class="kbd">Alt</span>+<span class="kbd">d</span></td><td>Remove the tag AND delete its on-disk folder (deep delete)</td></tr>
+            <tr><td><span class="kbd">r</span></td><td>Refresh list</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>Install (quick-confirm)</h2>
+      <div class="table-wrap">
+        <table class="table">
+          <thead><tr><th>Keys</th><th>Action</th></tr></thead>
+          <tbody>
+            <tr><td><span class="kbd">Enter</span></td><td>Install now with recommended defaults (score-picked quant + HF-tuned Modelfile)</td></tr>
+            <tr><td><span class="kbd">O</span></td><td>Open the file browser to change the target directory</td></tr>
+            <tr><td><span class="kbd">C</span></td><td>Customize Modelfile parameters (temperature, top_p, top_k, repeat_penalty, min_p, ctx)</td></tr>
+            <tr><td><span class="kbd">Esc</span></td><td>Back to the quant picker</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>Tune</h2>
+      <div class="table-wrap">
+        <table class="table">
+          <thead><tr><th>Keys</th><th>Action</th></tr></thead>
+          <tbody>
+            <tr><td><span class="kbd">↑</span> <span class="kbd">↓</span></td><td>Navigate rows</td></tr>
+            <tr><td><span class="kbd">←</span> <span class="kbd">→</span></td><td>Cycle enum values (for <code>OLLAMA_KV_CACHE_TYPE</code>, <code>OLLAMA_FLASH_ATTENTION</code>)</td></tr>
+            <tr><td><span class="kbd">E</span></td><td>Edit freely (freeform input for numeric values)</td></tr>
+            <tr><td><span class="kbd">D</span></td><td>Set to <em>Default</em> (Ollama's out-of-the-box value)</td></tr>
+            <tr><td><span class="kbd">S</span></td><td>Set to <em>Suggested</em> (hfo's ~90% capacity recommendation)</td></tr>
+            <tr><td><span class="kbd">R</span></td><td>Reset all rows to Suggested</td></tr>
+            <tr><td><span class="kbd">X</span></td><td>Reset all rows to Default</td></tr>
+            <tr><td><span class="kbd">A</span></td><td>Apply — persist via <code>setx</code>/<code>launchctl</code>/systemd + restart the Ollama daemon</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>Settings</h2>
+      <div class="table-wrap">
+        <table class="table">
+          <thead><tr><th>Keys</th><th>Action</th></tr></thead>
+          <tbody>
+            <tr><td><span class="kbd">↑</span> <span class="kbd">↓</span></td><td>Navigate rows</td></tr>
+            <tr><td><span class="kbd">Enter</span></td><td>Open dropdown (themes or 20 languages — searchable, type to filter)</td></tr>
+            <tr><td><span class="kbd">Esc</span></td><td>Close dropdown without changes</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout callout-info">
+        <p><strong>Searchable dropdown:</strong> the Settings picker is shared across themes, languages, and sort order. Start typing to filter; <span class="kbd">↑</span><span class="kbd">↓</span> navigates matches; <span class="kbd">Enter</span> selects. Perfect when 20 languages won't fit on one screen.</p>
+      </div>
+
+      <nav class="page-related" aria-label="Continue">
+        <a href="/cli/"><small>Reference</small><strong>CLI flags →</strong></a>
+        <a href="/install/"><small>Setup</small><strong>Install guide →</strong></a>
+        <a href="/faq/"><small>Help</small><strong>FAQ →</strong></a>
+      </nav>
+    </article>
+  </div>
+</main>
+
+<footer class="site-footer" role="contentinfo">
+  <div class="container row">
+    <div>
+      <strong>hfo</strong> · MIT · © 2026 <a href="https://carrillo.app" target="_blank" rel="noreferrer noopener me">José Carrillo</a>
+    </div>
+    <div class="footer-links">
+      <a href="/">Home</a>
+      <a href="https://github.com/carrilloapps/hfo" target="_blank" rel="noreferrer noopener">GitHub</a>
+      <a href="https://www.npmjs.com/package/hfo-cli" target="_blank" rel="noreferrer noopener">npm</a>
+      <a href="/privacy/">Privacy</a>
+      <a href="/faq/">FAQ</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

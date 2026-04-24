@@ -14,6 +14,7 @@ import {
   cmdBackup,
   cmdRestore,
   cmdDelete,
+  cmdBench,
   cmdVersion,
 } from './headless.js';
 
@@ -32,9 +33,11 @@ const cli = meow(
     $ hfo --delete <tag>                   # remove the tag from Ollama
     $ hfo --delete <tag> --deep            # remove tag AND delete its folder on disk
     $ hfo --launch <integration>           # run ollama launch <integration> after optional TUI
+    $ hfo --bench <tag>                    # run the standard 4-prompt bench and print tok/s + TTFT
+    $ hfo --bench <tag> --out bench.json   # save a submission file for the community leaderboard
 
   Other flags
-    --dir, -d        Base dir for the install file browser (default: settings.modelDir)
+    --dir, -d        Base dir for the install file browser (default: settings.modelDir ?? cwd)
     --token, -t      HuggingFace token for gated/private repos (also HF_TOKEN env)
     --code, -c       Mark installs as code-specialized (SYSTEM prompt tweak)
     --ctx            Force context size (default: auto)
@@ -71,6 +74,8 @@ const cli = meow(
       restore: { type: 'string' },
       delete: { type: 'string' },
       deep: { type: 'boolean', default: false },
+      bench: { type: 'string' },
+      out: { type: 'string' },
     },
   },
 );
@@ -83,6 +88,7 @@ try {
   if (cli.flags.backup) { await cmdBackup(cli.flags.backup); process.exit(0); }
   if (cli.flags.restore) { await cmdRestore(cli.flags.restore); process.exit(0); }
   if (cli.flags.delete) { await cmdDelete(cli.flags.delete, { deep: cli.flags.deep }); process.exit(process.exitCode ?? 0); }
+  if (cli.flags.bench)  { await cmdBench(cli.flags.bench, { out: cli.flags.out }); process.exit(process.exitCode ?? 0); }
 } catch (err) {
   console.error(err instanceof Error ? err.message : err);
   process.exit(1);
@@ -102,11 +108,14 @@ if (cli.flags.launch && !cli.input[0] && !cli.flags.tab) {
 
 // ─── Fullscreen TUI ──────────────────────────────────────────────────────
 const settings = await loadSettings();
-const defaultBase =
-  settings.modelDir ??
-  (process.platform === 'win32' ? 'D:/Desarrollo/AI/LLMs' : resolve(process.env.HOME ?? '.', 'AI/LLMs'));
-
-const baseDir = resolve(cli.flags.dir ?? defaultBase);
+// Resolution order for where GGUFs land:
+//   1. --dir / -d flag (explicit, one-shot)
+//   2. settings.modelDir (persisted, user configured from Settings tab)
+//   3. process.cwd() (self-contained default — whatever directory `hfo`
+//      was launched from)
+// This keeps the tool portable: running `hfo` from /my/project downloads
+// there; no hidden global path, no pre-existing folder required.
+const baseDir = resolve(cli.flags.dir ?? settings.modelDir ?? process.cwd());
 const token = cli.flags.token ?? process.env.HF_TOKEN;
 const initialUrl = cli.input[0];
 const initialTab = (cli.flags.tab as any) ?? (initialUrl ? 'install' : 'dashboard');

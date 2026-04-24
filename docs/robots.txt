@@ -1,4 +1,6 @@
 User-agent: *
 Allow: /
+Disallow: /install.sh
+Disallow: /install.ps1
 
 Sitemap: https://hfo.carrillo.app/sitemap.xml

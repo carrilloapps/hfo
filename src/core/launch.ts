@@ -1,4 +1,10 @@
 import { execa } from 'execa';
+import {
+  agentHint,
+  renderHint,
+  writeLaunchManifest,
+  DEFAULT_OLLAMA_HOST,
+} from './agentConfig.js';
 
 /**
  * Every target that `ollama launch <name>` supports, mirrored from
@@ -142,8 +148,34 @@ export function buildLaunchArgs(id: LaunchId, opts: LaunchOptions = {}): string[
  * Runs `ollama launch` inheriting stdio so the integration has a real TTY.
  * Intended to be invoked AFTER Ink unmounts (`instance.unmount()` or after
  * `waitUntilExit`) so the user gets a clean handoff to the launched tool.
+ *
+ * Before the handoff, hfo writes a per-agent manifest to
+ *   <configDir>/hfo/agent-launches/<id>.json
+ * recording which model was bound to which agent and when. It also prints
+ * a one-shot hint telling the user how to confirm the wiring in that
+ * agent's own configuration (env vars, config keys, docs link). hfo never
+ * mutates user-owned config files — only educates and records.
  */
 export async function runLaunch(id: LaunchId, opts: LaunchOptions = {}): Promise<number> {
+  const host = process.env.OLLAMA_HOST ?? DEFAULT_OLLAMA_HOST;
+
+  // Best-effort audit trail + hint — neither of these should block the launch.
+  try {
+    await writeLaunchManifest({
+      agent: id,
+      model: opts.model ?? null,
+      ollamaHost: host,
+    });
+  } catch {
+    /* filesystem unavailable — continue anyway */
+  }
+  try {
+    const hint = agentHint(id, { model: opts.model, ollamaHost: host });
+    process.stdout.write('\n' + renderHint(id, hint) + '\n\n');
+  } catch {
+    /* hint printing is purely informational */
+  }
+
   const args = buildLaunchArgs(id, opts);
   const result = await execa('ollama', args, { stdio: 'inherit', reject: false });
   return result.exitCode ?? -1;
