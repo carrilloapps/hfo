@@ -18,7 +18,7 @@ export interface Settings {
   refreshIntervalMs: number;       // Dashboard polling
   defaultSort: 'trending' | 'downloads' | 'likes7d' | 'modified';
   defaultCodeMode: boolean;
-  modelDir: string | null;         // null = platform default
+  modelDir: string | null;         // null = current working directory at launch
   useAltScreen: boolean;
   installations: Installation[];   // index kept by hfo so it can clean up files on Alt+D
 }

@@ -6,6 +6,28 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Changed
+
+- **Portable default install directory.** `hfo` now downloads GGUFs into the
+  current working directory (`process.cwd()`) when neither `--dir/-d` nor
+  `settings.modelDir` is set. The previous behaviour — a hard-coded
+  `D:/Desarrollo/AI/LLMs` (Windows) or `~/AI/LLMs` (Unix) — has been removed.
+  Running `hfo` in any folder now drops its models alongside the project,
+  making the tool fully self-contained.
+- **Landing hero redesign.** `docs/index.html` now uses a full-viewport
+  (`100vh`) two-column hero with an ambient orb + grid backdrop, a CSS-only
+  package-manager switcher (npm / pnpm / yarn / bun / curl), live trust
+  chips (npm version, CI status, tests, stars, Node ≥ 20, OS support), and
+  a stacked terminal preview that shows scoring bars for the quant picker.
+  Three responsive tiers — desktop ≥ 1025 px, tablet 641–1024 px,
+  mobile ≤ 640 px — replace the previous single mobile breakpoint. Dead
+  rules from the v1 hero were retired.
+- **README hero refresh.** Wordmark is linked, tagline tightened, badges
+  switched to `for-the-badge` style with the brand palette, and the
+  signature terminal snippet matches the site hero for cross-surface
+  consistency. An accidental `claude --resume …` line that had leaked into
+  line 1 of `README.md` was removed.
+
 ### Added
 
 - Initial public release. See [README.md](./README.md) for the full feature

@@ -1,22 +1,45 @@
 <div align="center">
 
-<img src="./docs/assets/logo-wordmark.svg" alt="hfo" width="180" />
+<a href="https://hfo.carrillo.app" target="_blank" rel="noopener">
+  <img src="./docs/assets/logo-wordmark.svg" alt="hfo" width="220" />
+</a>
 
-### Hugging Face · Ollama, in your terminal.
+<h3>Hugging&nbsp;Face&nbsp;·&nbsp;Ollama, in your terminal.</h3>
 
-**A fullscreen TUI and headless CLI that turns any Hugging Face GGUF repository into a running,
-hardware-tuned Ollama model — then lets you back it up, restore it, or hand it off to Claude Code,
-Codex, Copilot CLI, OpenCode, Droid, and seven more integrations without leaving your shell.**
+<p>
+  <strong>Turn any Hugging&nbsp;Face GGUF repo into a running, hardware-tuned Ollama model — in three keystrokes.</strong><br/>
+  A fullscreen TUI and a headless CLI with no telemetry, no accounts, no subscriptions.<br/>
+  Cross-OS. Strict TypeScript. MIT.
+</p>
 
-[Site](https://hfo.carrillo.app)  ·  [npm](https://www.npmjs.com/package/hfo-cli)  ·  [Releases](https://github.com/carrilloapps/hfo/releases)  ·  [Issues](https://github.com/carrilloapps/hfo/issues)
+<p>
+  <a href="https://www.npmjs.com/package/hfo-cli"><img alt="npm" src="https://img.shields.io/npm/v/hfo-cli?style=for-the-badge&logo=npm&logoColor=white&color=7C5BF3&labelColor=0a0b0f&label=npm"/></a>
+  <a href="https://github.com/carrilloapps/hfo/actions/workflows/ci.yml"><img alt="CI" src="https://img.shields.io/github/actions/workflow/status/carrilloapps/hfo/ci.yml?branch=main&style=for-the-badge&logo=githubactions&logoColor=white&color=5ED7A8&labelColor=0a0b0f&label=CI"/></a>
+  <a href="https://nodejs.org"><img alt="node" src="https://img.shields.io/node/v/hfo-cli?style=for-the-badge&logo=nodedotjs&logoColor=white&color=3B6FE5&labelColor=0a0b0f"/></a>
+  <a href="./LICENSE"><img alt="license" src="https://img.shields.io/npm/l/hfo-cli?style=for-the-badge&color=FFD766&labelColor=0a0b0f"/></a>
+  <a href="./tsconfig.json"><img alt="typescript strict" src="https://img.shields.io/badge/TypeScript-strict-3178C6?style=for-the-badge&logo=typescript&logoColor=white&labelColor=0a0b0f"/></a>
+</p>
 
-[![npm version](https://img.shields.io/npm/v/hfo-cli.svg?style=flat)](https://www.npmjs.com/package/hfo-cli)
-[![license](https://img.shields.io/npm/l/hfo-cli.svg?style=flat)](./LICENSE)
-[![node](https://img.shields.io/node/v/hfo-cli.svg?style=flat)](https://nodejs.org)
-[![CI](https://github.com/carrilloapps/hfo/actions/workflows/ci.yml/badge.svg)](https://github.com/carrilloapps/hfo/actions/workflows/ci.yml)
-[![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178c6?style=flat&logo=typescript&logoColor=white)](./tsconfig.json)
+<p>
+  <a href="https://hfo.carrillo.app"><strong>Website</strong></a> &nbsp;·&nbsp;
+  <a href="https://www.npmjs.com/package/hfo-cli"><strong>npm</strong></a> &nbsp;·&nbsp;
+  <a href="https://github.com/carrilloapps/hfo/releases"><strong>Releases</strong></a> &nbsp;·&nbsp;
+  <a href="https://github.com/carrilloapps/hfo/issues"><strong>Issues</strong></a> &nbsp;·&nbsp;
+  <a href="./CHANGELOG.md"><strong>Changelog</strong></a>
+</p>
 
 </div>
+
+```console
+$ npm i -g hfo-cli
+$ hfo bartowski/Qwen2.5-Coder-7B-Instruct-GGUF
+→ RTX 4090 · 24 GiB VRAM · 64 GiB RAM
+→ scoring 8 quants…  Q6_K 97/100  ·  Q5_K_M 94/100
+
+? Install Q6_K → ~/AI/LLMs/qwen2-5-coder/q6-k  [Enter]
+```
+
+> **Three keystrokes, no Modelfile by hand.** Pick a quant, press <kbd>Enter</kbd>, wait for the download. Every TUI action has a headless flag so the same pipeline runs in CI, cron, or an editor plugin.
 
 ---
 
@@ -255,7 +278,7 @@ Additional flags:
 
 | Flag | Description |
 | ---- | ----------- |
-| `--dir`, `-d` | Base directory for the install file browser (default: `settings.modelDir`) |
+| `--dir`, `-d` | Base directory for the install file browser (default: `settings.modelDir` → `process.cwd()`) |
 | `--token`, `-t` | Hugging Face token for gated/private repos (or set `$HF_TOKEN`) |
 | `--code`, `-c` | Mark the install as code-specialized (adjusts SYSTEM prompt) |
 | `--ctx` | Force context size (default: auto — 8192 if fits in VRAM, else 4096) |
@@ -309,7 +332,7 @@ interface Settings {
   refreshIntervalMs: number;         // Dashboard polling cadence
   defaultSort: 'trending' | 'downloads' | 'likes7d' | 'modified';
   defaultCodeMode: boolean;
-  modelDir: string | null;           // Base dir for the file browser; null = platform default
+  modelDir: string | null;           // null = current working directory at launch (self-contained)
   useAltScreen: boolean;
   installations: Installation[];     // { tag, dir, repoId, quant, installedAt }
 }

@@ -34,7 +34,7 @@ const cli = meow(
     $ hfo --launch <integration>           # run ollama launch <integration> after optional TUI
 
   Other flags
-    --dir, -d        Base dir for the install file browser (default: settings.modelDir)
+    --dir, -d        Base dir for the install file browser (default: settings.modelDir ?? cwd)
     --token, -t      HuggingFace token for gated/private repos (also HF_TOKEN env)
     --code, -c       Mark installs as code-specialized (SYSTEM prompt tweak)
     --ctx            Force context size (default: auto)
@@ -102,11 +102,14 @@ if (cli.flags.launch && !cli.input[0] && !cli.flags.tab) {
 
 // ─── Fullscreen TUI ──────────────────────────────────────────────────────
 const settings = await loadSettings();
-const defaultBase =
-  settings.modelDir ??
-  (process.platform === 'win32' ? 'D:/Desarrollo/AI/LLMs' : resolve(process.env.HOME ?? '.', 'AI/LLMs'));
-
-const baseDir = resolve(cli.flags.dir ?? defaultBase);
+// Resolution order for where GGUFs land:
+//   1. --dir / -d flag (explicit, one-shot)
+//   2. settings.modelDir (persisted, user configured from Settings tab)
+//   3. process.cwd() (self-contained default — whatever directory `hfo`
+//      was launched from)
+// This keeps the tool portable: running `hfo` from /my/project downloads
+// there; no hidden global path, no pre-existing folder required.
+const baseDir = resolve(cli.flags.dir ?? settings.modelDir ?? process.cwd());
 const token = cli.flags.token ?? process.env.HF_TOKEN;
 const initialUrl = cli.input[0];
 const initialTab = (cli.flags.tab as any) ?? (initialUrl ? 'install' : 'dashboard');
