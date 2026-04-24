@@ -40,6 +40,8 @@
 </script>
 
 <link rel="stylesheet" href="/assets/page.css" />
+<script src="/assets/nav.js" defer></script>
+<script src="/assets/terminal.js" defer></script>
 </head>
 <body>
 
@@ -58,11 +60,10 @@
       </svg>
       <span>hfo</span>
     </a>
-    <input type="checkbox" id="nav-open" class="nav-toggle-cb" aria-label="Toggle navigation menu" />
-    <label for="nav-open" class="nav-toggle" aria-hidden="true">
+    <button type="button" class="nav-toggle" id="nav-toggle" aria-label="Open navigation" aria-expanded="false" aria-controls="site-nav">
       <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M3 12h18"/><path d="M3 18h18"/></svg>
-    </label>
-    <nav class="site-nav" aria-label="Primary">
+    </button>
+    <nav class="site-nav" id="site-nav" aria-label="Primary">
       <a href="/install/">Install</a>
       <a href="/cli/">CLI</a>
       <a href="/keyboard/">Keyboard</a>
@@ -96,19 +97,13 @@
       <h2>What hfo contacts over the network</h2>
       <p>Every network call hfo makes falls into one of two patterns, both against <code>huggingface.co</code>, both unauthenticated by default:</p>
 
-      <div class="terminal">
-        <div class="terminal-bar">
-          <span class="terminal-dot red" aria-hidden="true"></span>
-          <span class="terminal-dot yellow" aria-hidden="true"></span>
-          <span class="terminal-dot green" aria-hidden="true"></span>
-          <span class="terminal-title">network</span>
-        </div>
-<pre><code><span class="tok-comment"># List files in a repo (quant table, README URL, sha256)</span>
+      <hfo-terminal title="network">
+<span class="tok-comment"># List files in a repo (quant table, README URL, sha256)</span>
 <span class="tok-cmd">GET</span> <span class="tok-url">https://huggingface.co/api/models/&lt;repo&gt;/tree/main</span>
 
 <span class="tok-comment"># Download a specific file (the GGUF, or the README for card parsing)</span>
-<span class="tok-cmd">GET</span> <span class="tok-url">https://huggingface.co/&lt;repo&gt;/resolve/main/&lt;file&gt;</span></code></pre>
-      </div>
+<span class="tok-cmd">GET</span> <span class="tok-url">https://huggingface.co/&lt;repo&gt;/resolve/main/&lt;file&gt;</span>
+</hfo-terminal>
 
       <p>That's the full list. No analytics pixel, no Sentry, no PostHog, no Plausible. The user-agent string is <code>hfo/&lt;version&gt;</code> so you can audit traffic from your router logs if you want.</p>
 

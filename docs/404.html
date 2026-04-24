@@ -17,6 +17,7 @@
 <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32" />
 <link rel="icon" href="/assets/logo-mark.svg" type="image/svg+xml" />
 <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180" />
+<script src="/assets/terminal.js" defer></script>
 
 <style>
   :root {
@@ -136,16 +137,10 @@
     <a href="https://github.com/carrilloapps/hfo" rel="noreferrer noopener">GitHub<small>Source &amp; releases</small></a>
   </nav>
 
-  <div class="terminal">
-    <div class="terminal-bar">
-      <span class="dot red" aria-hidden="true"></span>
-      <span class="dot yellow" aria-hidden="true"></span>
-      <span class="dot green" aria-hidden="true"></span>
-      <span style="margin-left:auto;margin-right:auto;">bash</span>
-    </div>
-<pre><code><span class="tok-comment"># ...or just install it and carry on:</span>
-<span class="tok-prompt">$</span> <span class="tok-cmd">curl</span> -fsSL https://hfo.carrillo.app/install.sh | <span class="tok-cmd">sh</span></code></pre>
-  </div>
+  <hfo-terminal title="bash">
+<span class="tok-comment"># ...or just install it and carry on:</span>
+<span class="tok-prompt">$</span> <span class="tok-cmd">curl</span> -fsSL https://hfo.carrillo.app/install.sh | <span class="tok-cmd">sh</span>
+</hfo-terminal>
 </main>
 
 </body>

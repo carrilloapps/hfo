@@ -41,6 +41,8 @@
 </script>
 
 <link rel="stylesheet" href="/assets/page.css" />
+<script src="/assets/nav.js" defer></script>
+<script src="/assets/terminal.js" defer></script>
 </head>
 <body>
 
@@ -59,11 +61,10 @@
       </svg>
       <span>hfo</span>
     </a>
-    <input type="checkbox" id="nav-open" class="nav-toggle-cb" aria-label="Toggle navigation menu" />
-    <label for="nav-open" class="nav-toggle" aria-hidden="true">
+    <button type="button" class="nav-toggle" id="nav-toggle" aria-label="Open navigation" aria-expanded="false" aria-controls="site-nav">
       <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M3 12h18"/><path d="M3 18h18"/></svg>
-    </label>
-    <nav class="site-nav" aria-label="Primary">
+    </button>
+    <nav class="site-nav" id="site-nav" aria-label="Primary">
       <a href="/install/">Install</a>
       <a href="/cli/" aria-current="page">CLI</a>
       <a href="/keyboard/">Keyboard</a>
@@ -135,79 +136,49 @@
       <h2>Examples by task</h2>
 
       <h3>Install a specific repo, no TUI</h3>
-      <div class="terminal">
-        <div class="terminal-bar">
-          <span class="terminal-dot red" aria-hidden="true"></span>
-          <span class="terminal-dot yellow" aria-hidden="true"></span>
-          <span class="terminal-dot green" aria-hidden="true"></span>
-          <span class="terminal-title">bash</span>
-        </div>
-<pre><code><span class="tok-comment"># Quick-confirm flow accepts on Enter. In CI, drop `--no-fullscreen` and pipe yes.</span>
+      <hfo-terminal title="bash">
+<span class="tok-comment"># Quick-confirm flow accepts on Enter. In CI, drop `--no-fullscreen` and pipe yes.</span>
 <span class="tok-prompt">$</span> <span class="tok-cmd">hfo</span> bartowski/Qwen2.5-Coder-7B-Instruct-GGUF <span class="tok-flag">--code</span>
 
 <span class="tok-comment"># Pre-select quant via --dir for a specific install location</span>
-<span class="tok-prompt">$</span> <span class="tok-cmd">hfo</span> bartowski/Llama-3.2-3B-Instruct-GGUF <span class="tok-flag">--dir</span> <span class="tok-path">./models</span></code></pre>
-      </div>
+<span class="tok-prompt">$</span> <span class="tok-cmd">hfo</span> bartowski/Llama-3.2-3B-Instruct-GGUF <span class="tok-flag">--dir</span> <span class="tok-path">./models</span>
+</hfo-terminal>
 
       <h3>Back up and restore models</h3>
-      <div class="terminal">
-        <div class="terminal-bar">
-          <span class="terminal-dot red" aria-hidden="true"></span>
-          <span class="terminal-dot yellow" aria-hidden="true"></span>
-          <span class="terminal-dot green" aria-hidden="true"></span>
-          <span class="terminal-title">bash</span>
-        </div>
-<pre><code><span class="tok-comment"># Creates a level-9 zip + sidecar metadata.json under settings/backups/&lt;date&gt;/</span>
+      <hfo-terminal title="bash">
+<span class="tok-comment"># Creates a level-9 zip + sidecar metadata.json under settings/backups/&lt;date&gt;/</span>
 <span class="tok-prompt">$</span> <span class="tok-cmd">hfo</span> <span class="tok-flag">--backup</span> qwen2-5-coder-7b:q4-k-m
 
 <span class="tok-comment"># Reads the zip, regenerates Modelfile if missing, re-registers with Ollama</span>
-<span class="tok-prompt">$</span> <span class="tok-cmd">hfo</span> <span class="tok-flag">--restore</span> <span class="tok-path">~/.config/hfo/backups/2026-04-23_11-48-25/qwen2-5-coder-7b_q4-k-m.zip</span></code></pre>
-      </div>
+<span class="tok-prompt">$</span> <span class="tok-cmd">hfo</span> <span class="tok-flag">--restore</span> <span class="tok-path">~/.config/hfo/backups/2026-04-23_11-48-25/qwen2-5-coder-7b_q4-k-m.zip</span>
+</hfo-terminal>
 
       <h3>Tune Ollama env to ~90% of capacity</h3>
-      <div class="terminal">
-        <div class="terminal-bar">
-          <span class="terminal-dot red" aria-hidden="true"></span>
-          <span class="terminal-dot yellow" aria-hidden="true"></span>
-          <span class="terminal-dot green" aria-hidden="true"></span>
-          <span class="terminal-title">bash</span>
-        </div>
-<pre><code><span class="tok-comment"># Persists OLLAMA_FLASH_ATTENTION, OLLAMA_KV_CACHE_TYPE, OLLAMA_KEEP_ALIVE,</span>
+      <hfo-terminal title="bash">
+<span class="tok-comment"># Persists OLLAMA_FLASH_ATTENTION, OLLAMA_KV_CACHE_TYPE, OLLAMA_KEEP_ALIVE,</span>
 <span class="tok-comment"># OLLAMA_NUM_PARALLEL, OLLAMA_MAX_LOADED_MODELS, OLLAMA_MAX_QUEUE</span>
 <span class="tok-comment"># via setx (Windows) / launchctl + ~/.zprofile (macOS) / ~/.profile + systemd (Linux)</span>
-<span class="tok-prompt">$</span> <span class="tok-cmd">hfo</span> <span class="tok-flag">--tune</span></code></pre>
-      </div>
+<span class="tok-prompt">$</span> <span class="tok-cmd">hfo</span> <span class="tok-flag">--tune</span>
+</hfo-terminal>
 
       <h3>Launch a coding agent with a local model</h3>
-      <div class="terminal">
-        <div class="terminal-bar">
-          <span class="terminal-dot red" aria-hidden="true"></span>
-          <span class="terminal-dot yellow" aria-hidden="true"></span>
-          <span class="terminal-dot green" aria-hidden="true"></span>
-          <span class="terminal-title">bash</span>
-        </div>
-<pre><code><span class="tok-prompt">$</span> <span class="tok-cmd">hfo</span> <span class="tok-flag">--launch</span> claude   <span class="tok-flag">--model</span> llama3.1:8b
+      <hfo-terminal title="bash">
+<span class="tok-prompt">$</span> <span class="tok-cmd">hfo</span> <span class="tok-flag">--launch</span> claude   <span class="tok-flag">--model</span> llama3.1:8b
 <span class="tok-prompt">$</span> <span class="tok-cmd">hfo</span> <span class="tok-flag">--launch</span> codex    <span class="tok-flag">--model</span> qwen2.5-coder:7b-q6-k
-<span class="tok-prompt">$</span> <span class="tok-cmd">hfo</span> <span class="tok-flag">--launch</span> copilot  <span class="tok-flag">--model</span> deepseek-coder:6.7b-instruct</code></pre>
-      </div>
+<span class="tok-prompt">$</span> <span class="tok-cmd">hfo</span> <span class="tok-flag">--launch</span> copilot  <span class="tok-flag">--model</span> deepseek-coder:6.7b-instruct
+</hfo-terminal>
       <p>Supported launch targets: <code>claude</code>, <code>cline</code>, <code>codex</code>, <code>copilot</code>, <code>droid</code>, <code>hermes</code>, <code>kimi</code>, <code>opencode</code>, <code>openclaw</code>, <code>pi</code>, <code>vscode</code>. Unsupported targets on your installed Ollama version are probed at runtime against <code>ollama launch --help</code>.</p>
 
       <h3>List and clean up</h3>
-      <div class="terminal">
-        <div class="terminal-bar">
-          <span class="terminal-dot red" aria-hidden="true"></span>
-          <span class="terminal-dot yellow" aria-hidden="true"></span>
-          <span class="terminal-dot green" aria-hidden="true"></span>
-          <span class="terminal-title">bash</span>
-        </div>
-<pre><code><span class="tok-prompt">$</span> <span class="tok-cmd">hfo</span> <span class="tok-flag">--list</span>
+      <hfo-terminal title="bash">
+<span class="tok-prompt">$</span> <span class="tok-cmd">hfo</span> <span class="tok-flag">--list</span>
 
 <span class="tok-comment"># Shallow: removes the tag from Ollama but keeps files on disk for re-registration</span>
 <span class="tok-prompt">$</span> <span class="tok-cmd">hfo</span> <span class="tok-flag">--delete</span> old-tag:q4
 
 <span class="tok-comment"># Deep: also wipes the tracked directory</span>
-<span class="tok-prompt">$</span> <span class="tok-cmd">hfo</span> <span class="tok-flag">--delete</span> old-tag:q4 <span class="tok-flag">--deep</span></code></pre>
-      </div>
+<span class="tok-prompt">$</span> <span class="tok-cmd">hfo</span> <span class="tok-flag">--delete</span> old-tag:q4 <span class="tok-flag">--deep</span>
+</hfo-terminal>
 
       <h2>Exit codes</h2>
       <ul>
@@ -241,21 +212,6 @@
     </div>
   </div>
 </footer>
-
-<script>
-  document.addEventListener('click', (e) => {
-    const btn = e.target.closest('.terminal-copy');
-    if (!btn) return;
-    const text = btn.getAttribute('data-copy');
-    if (!text || !navigator.clipboard) return;
-    navigator.clipboard.writeText(text).then(() => {
-      const prev = btn.textContent;
-      btn.textContent = 'copied';
-      btn.style.color = 'var(--success)';
-      setTimeout(() => { btn.textContent = prev; btn.style.color = ''; }, 1200);
-    });
-  });
-</script>
 
 </body>
 </html>

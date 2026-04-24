@@ -86,7 +86,9 @@ pre {
 }
 pre code { background: none; border: 0; padding: 0; font-size: inherit; }
 
-.container { max-width: 980px; margin: 0 auto; padding: 0 clamp(18px, 4vw, 36px); }
+/* Container width matches the landing's 1120px cap so every page feels
+   part of the same product. Padding clamps identically. */
+.container { max-width: 1120px; margin: 0 auto; padding: 0 clamp(18px, 4vw, 36px); }
 .skip-link {
   position: absolute; top: -40px; left: 12px;
   background: var(--primary); color: var(--bg);
@@ -117,19 +119,21 @@ pre code { background: none; border: 0; padding: 0; font-size: inherit; }
 .brand:hover { text-decoration: none; color: var(--primary); }
 .brand svg { width: 28px; height: 28px; }
 
-.nav-toggle-cb { position: absolute; opacity: 0; width: 1px; height: 1px; pointer-events: none; }
-@media (min-width: 821px) { .nav-toggle-cb { display: none; } }
+/* Nav toggle — real <button>, not a hidden-checkbox hack. Hidden on
+   desktop (display: none) so nothing leaks into the layout. JS in
+   /assets/nav.js flips aria-expanded + toggles .is-open on .site-nav. */
 .nav-toggle {
   display: none; cursor: pointer; padding: 8px;
   border-radius: var(--radius-sm);
   color: var(--fg); background: transparent;
   border: 1px solid var(--border);
   align-items: center; justify-content: center;
-  transition: border-color .15s ease, background .15s ease;
+  transition: border-color .15s ease, background .15s ease, color .15s ease;
   margin-left: auto;
 }
 .nav-toggle svg { width: 22px; height: 22px; display: block; }
 .nav-toggle:hover { border-color: var(--border-strong); background: var(--bg-alt); }
+.nav-toggle[aria-expanded="true"] { border-color: var(--border-strong); background: var(--bg-alt); color: var(--primary); }
 
 .site-nav { margin-left: auto; display: flex; gap: 4px; align-items: center; }
 .site-nav a {
@@ -156,11 +160,7 @@ pre code { background: none; border: 0; padding: 0; font-size: inherit; }
     border-radius: var(--radius-md);
     padding: 8px; box-shadow: var(--shadow); z-index: 20;
   }
-  .nav-toggle-cb:checked ~ .site-nav { display: flex; }
-  .nav-toggle-cb:checked ~ .nav-toggle {
-    border-color: var(--border-strong);
-    background: var(--bg-alt); color: var(--primary);
-  }
+  .site-nav.is-open { display: flex; }
   .site-nav a { padding: 10px 12px; font-size: 15px; }
   .nav-icon-link { justify-content: flex-start; }
 }

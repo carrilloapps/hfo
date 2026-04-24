@@ -63,6 +63,8 @@
 </script>
 
 <link rel="stylesheet" href="/assets/page.css" />
+<script src="/assets/nav.js" defer></script>
+<script src="/assets/terminal.js" defer></script>
 </head>
 <body>
 
@@ -87,11 +89,10 @@
       </svg>
       <span>hfo</span>
     </a>
-    <input type="checkbox" id="nav-open" class="nav-toggle-cb" aria-label="Toggle navigation menu" />
-    <label for="nav-open" class="nav-toggle" aria-hidden="true">
+    <button type="button" class="nav-toggle" id="nav-toggle" aria-label="Open navigation" aria-expanded="false" aria-controls="site-nav">
       <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M3 12h18"/><path d="M3 18h18"/></svg>
-    </label>
-    <nav class="site-nav" aria-label="Primary">
+    </button>
+    <nav class="site-nav" id="site-nav" aria-label="Primary">
       <a href="/install/" aria-current="page">Install</a>
       <a href="/cli/">CLI</a>
       <a href="/keyboard/">Keyboard</a>
@@ -125,29 +126,15 @@
       <h2>One-liner scripts (no Node required)</h2>
       <p>Both scripts always pull the <strong>latest GitHub Release</strong> binary for your platform. No <code>sudo</code>, no admin prompt. Override with <code>HFO_VERSION=v0.2.0</code> (or <code>$env:HFO_VERSION</code>) to pin a specific tag, or <code>HFO_INSTALL_DIR=/some/dir</code> to relocate.</p>
 
-      <div class="terminal">
-        <div class="terminal-bar">
-          <span class="terminal-dot red" aria-hidden="true"></span>
-          <span class="terminal-dot yellow" aria-hidden="true"></span>
-          <span class="terminal-dot green" aria-hidden="true"></span>
-          <span class="terminal-title">macOS · Linux</span>
-          <button type="button" class="terminal-copy" data-copy="curl -fsSL https://hfo.carrillo.app/install.sh | sh" aria-label="Copy install command">copy</button>
-        </div>
-<pre><code><span class="tok-comment"># Detects OS + arch, installs to /usr/local/bin or ~/.local/bin</span>
-<span class="tok-prompt">$</span> <span class="tok-cmd">curl</span> <span class="tok-flag">-fsSL</span> <span class="tok-url">https://hfo.carrillo.app/install.sh</span> <span class="tok-op">|</span> <span class="tok-cmd">sh</span></code></pre>
-      </div>
+      <hfo-terminal title="macOS · Linux" copy="curl -fsSL https://hfo.carrillo.app/install.sh | sh">
+<span class="tok-comment"># Detects OS + arch, installs to /usr/local/bin or ~/.local/bin</span>
+<span class="tok-prompt">$</span> <span class="tok-cmd">curl</span> <span class="tok-flag">-fsSL</span> <span class="tok-url">https://hfo.carrillo.app/install.sh</span> <span class="tok-op">|</span> <span class="tok-cmd">sh</span>
+</hfo-terminal>
 
-      <div class="terminal">
-        <div class="terminal-bar">
-          <span class="terminal-dot red" aria-hidden="true"></span>
-          <span class="terminal-dot yellow" aria-hidden="true"></span>
-          <span class="terminal-dot green" aria-hidden="true"></span>
-          <span class="terminal-title">Windows · PowerShell</span>
-          <button type="button" class="terminal-copy" data-copy="irm https://hfo.carrillo.app/install.ps1 | iex" aria-label="Copy PowerShell install command">copy</button>
-        </div>
-<pre><code><span class="tok-comment"># Installs to %LOCALAPPDATA%\Programs\hfo and adds it to user PATH. No admin needed.</span>
-<span class="tok-prompt">PS&gt;</span> <span class="tok-cmd">irm</span> <span class="tok-url">https://hfo.carrillo.app/install.ps1</span> <span class="tok-op">|</span> <span class="tok-cmd">iex</span></code></pre>
-      </div>
+      <hfo-terminal title="Windows · PowerShell" copy="irm https://hfo.carrillo.app/install.ps1 | iex">
+<span class="tok-comment"># Installs to %LOCALAPPDATA%\Programs\hfo and adds it to user PATH. No admin needed.</span>
+<span class="tok-prompt">PS&gt;</span> <span class="tok-cmd">irm</span> <span class="tok-url">https://hfo.carrillo.app/install.ps1</span> <span class="tok-op">|</span> <span class="tok-cmd">iex</span>
+</hfo-terminal>
 
       <div class="callout callout-info">
         <p><strong>Binaries are built only when a <code>v*.*.*</code> tag is pushed</strong>, never on regular commits. CI runs typecheck + lint + test + build on every commit, but release artifacts are reserved for tagged versions.</p>
@@ -156,18 +143,12 @@
       <h2>Package managers</h2>
       <p>All four publish the same <code>hfo-cli</code> package. Node.js <strong>≥ 20</strong> required.</p>
 
-      <div class="terminal">
-        <div class="terminal-bar">
-          <span class="terminal-dot red" aria-hidden="true"></span>
-          <span class="terminal-dot yellow" aria-hidden="true"></span>
-          <span class="terminal-dot green" aria-hidden="true"></span>
-          <span class="terminal-title">pick any</span>
-        </div>
-<pre><code><span class="tok-prompt">$</span> <span class="tok-cmd">npm</span>  <span class="tok-cmd">i</span>   <span class="tok-flag">-g</span> hfo-cli
+      <hfo-terminal title="pick any">
+<span class="tok-prompt">$</span> <span class="tok-cmd">npm</span>  <span class="tok-cmd">i</span>   <span class="tok-flag">-g</span> hfo-cli
 <span class="tok-prompt">$</span> <span class="tok-cmd">pnpm</span> add <span class="tok-flag">-g</span> hfo-cli
 <span class="tok-prompt">$</span> <span class="tok-cmd">yarn</span> global add hfo-cli
-<span class="tok-prompt">$</span> <span class="tok-cmd">bun</span>  add <span class="tok-flag">-g</span> hfo-cli</code></pre>
-      </div>
+<span class="tok-prompt">$</span> <span class="tok-cmd">bun</span>  add <span class="tok-flag">-g</span> hfo-cli
+</hfo-terminal>
 
       <h2>Standalone binaries</h2>
       <p>Each tagged release publishes self-contained executables — no Node runtime required. Download and drop on your PATH.</p>
@@ -185,36 +166,24 @@
         </table>
       </div>
 
-      <div class="terminal">
-        <div class="terminal-bar">
-          <span class="terminal-dot red" aria-hidden="true"></span>
-          <span class="terminal-dot yellow" aria-hidden="true"></span>
-          <span class="terminal-dot green" aria-hidden="true"></span>
-          <span class="terminal-title">manual · Linux / macOS</span>
-        </div>
-<pre><code><span class="tok-prompt">$</span> <span class="tok-cmd">curl</span> <span class="tok-flag">-LO</span> <span class="tok-url">https://github.com/carrilloapps/hfo/releases/latest/download/hfo-linux-x64</span>
+      <hfo-terminal title="manual · Linux / macOS">
+<span class="tok-prompt">$</span> <span class="tok-cmd">curl</span> <span class="tok-flag">-LO</span> <span class="tok-url">https://github.com/carrilloapps/hfo/releases/latest/download/hfo-linux-x64</span>
 <span class="tok-prompt">$</span> <span class="tok-cmd">chmod</span> +x hfo-linux-x64
 <span class="tok-prompt">$</span> <span class="tok-cmd">sudo</span> <span class="tok-cmd">mv</span> hfo-linux-x64 <span class="tok-path">/usr/local/bin/hfo</span>
-<span class="tok-prompt">$</span> <span class="tok-cmd">hfo</span> <span class="tok-flag">--version</span></code></pre>
-      </div>
+<span class="tok-prompt">$</span> <span class="tok-cmd">hfo</span> <span class="tok-flag">--version</span>
+</hfo-terminal>
 
       <h2>Verify the install</h2>
-      <div class="terminal">
-        <div class="terminal-bar">
-          <span class="terminal-dot red" aria-hidden="true"></span>
-          <span class="terminal-dot yellow" aria-hidden="true"></span>
-          <span class="terminal-dot green" aria-hidden="true"></span>
-          <span class="terminal-title">bash</span>
-        </div>
-<pre><code><span class="tok-prompt">$</span> <span class="tok-cmd">hfo</span> <span class="tok-flag">--version</span>
+      <hfo-terminal title="bash">
+<span class="tok-prompt">$</span> <span class="tok-cmd">hfo</span> <span class="tok-flag">--version</span>
 hfo v0.1.0 · MIT · José Carrillo
 
 <span class="tok-comment"># Print hardware profile and recommended picks</span>
 <span class="tok-prompt">$</span> <span class="tok-cmd">hfo</span> <span class="tok-flag">--view</span>
 
 <span class="tok-comment"># Launch the fullscreen TUI</span>
-<span class="tok-prompt">$</span> <span class="tok-cmd">hfo</span></code></pre>
-      </div>
+<span class="tok-prompt">$</span> <span class="tok-cmd">hfo</span>
+</hfo-terminal>
 
       <h2>Troubleshooting</h2>
 
@@ -243,22 +212,16 @@ npm config set registry    https://your-registry.example.com/</code></pre>
       <p>Hardware scoring calls <code>nvidia-smi</code> to read VRAM. If the binary runs confined, the call silently fails and GPU scoring returns zero. Either run hfo unconfined or pre-populate <code>settings.modelDir</code> and skip the scoring step by passing <code>--dir</code>.</p>
 
       <h2>Uninstall</h2>
-      <div class="terminal">
-        <div class="terminal-bar">
-          <span class="terminal-dot red" aria-hidden="true"></span>
-          <span class="terminal-dot yellow" aria-hidden="true"></span>
-          <span class="terminal-dot green" aria-hidden="true"></span>
-          <span class="terminal-title">bash</span>
-        </div>
-<pre><code><span class="tok-comment"># via npm / pnpm / yarn / bun</span>
+      <hfo-terminal title="bash">
+<span class="tok-comment"># via npm / pnpm / yarn / bun</span>
 <span class="tok-prompt">$</span> <span class="tok-cmd">npm</span>  uninstall <span class="tok-flag">-g</span> hfo-cli
 
 <span class="tok-comment"># standalone binary on Linux / macOS</span>
 <span class="tok-prompt">$</span> <span class="tok-cmd">sudo</span> <span class="tok-cmd">rm</span> <span class="tok-path">/usr/local/bin/hfo</span>
 
 <span class="tok-comment"># Windows (PowerShell)</span>
-<span class="tok-prompt">PS&gt;</span> <span class="tok-cmd">Remove-Item</span> <span class="tok-path">"$env:LOCALAPPDATA\Programs\hfo"</span> <span class="tok-flag">-Recurse</span> <span class="tok-flag">-Force</span></code></pre>
-      </div>
+<span class="tok-prompt">PS&gt;</span> <span class="tok-cmd">Remove-Item</span> <span class="tok-path">"$env:LOCALAPPDATA\Programs\hfo"</span> <span class="tok-flag">-Recurse</span> <span class="tok-flag">-Force</span>
+</hfo-terminal>
       <p>Settings file (<code>settings.json</code>) and model downloads are untouched. Remove them manually if desired:</p>
       <ul>
         <li>Windows — <code>%APPDATA%\hfo\</code></li>
@@ -289,21 +252,6 @@ npm config set registry    https://your-registry.example.com/</code></pre>
     </div>
   </div>
 </footer>
-
-<script>
-  document.addEventListener('click', (e) => {
-    const btn = e.target.closest('.terminal-copy');
-    if (!btn) return;
-    const text = btn.getAttribute('data-copy');
-    if (!text || !navigator.clipboard) return;
-    navigator.clipboard.writeText(text).then(() => {
-      const prev = btn.textContent;
-      btn.textContent = 'copied';
-      btn.style.color = 'var(--success)';
-      setTimeout(() => { btn.textContent = prev; btn.style.color = ''; }, 1200);
-    });
-  });
-</script>
 
 </body>
 </html>

@@ -19,6 +19,7 @@
 <meta name="generator" content="hfo-cli docs" />
 
 <link rel="canonical" href="https://hfo.carrillo.app/" />
+<script src="/assets/terminal.js" defer></script>
 <link rel="author" href="/humans.txt" />
 <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
 
@@ -246,18 +247,8 @@
   .brand svg { width: 28px; height: 28px; color: var(--primary); }
 
   /* Navigation — desktop: inline links always visible. Mobile (<=820px):
-     hamburger label + visually-hidden checkbox drives a dropdown. No JS. */
-  /* Visually-hidden checkbox that drives the mobile dropdown. On desktop
-     we hide it entirely so it doesn't occupy a tab stop; there the nav
-     is always visible and the checkbox state is irrelevant. */
-  .nav-toggle-cb {
-    position: absolute; opacity: 0;
-    width: 1px; height: 1px; margin: 0; padding: 0;
-    pointer-events: none;
-  }
-  @media (min-width: 821px) {
-    .nav-toggle-cb { display: none; }
-  }
+     a real <button> toggles the dropdown via a small script in the
+     footer. No hidden form controls in the DOM. */
   .nav-toggle {
     display: none;
     cursor: pointer; padding: 8px; border-radius: var(--radius-sm);
@@ -269,8 +260,10 @@
   }
   .nav-toggle svg { width: 22px; height: 22px; display: block; }
   .nav-toggle:hover { border-color: var(--border-strong); background: var(--bg-alt); }
-  .nav-toggle-cb:focus-visible ~ .nav-toggle {
-    outline: 2px solid var(--primary); outline-offset: 3px;
+  .nav-toggle[aria-expanded="true"] {
+    border-color: var(--border-strong);
+    background: var(--bg-alt);
+    color: var(--primary);
   }
   .site-nav { margin-left: auto; display: flex; gap: 4px; align-items: center; }
   .site-nav a { color: var(--muted); padding: 8px 12px; border-radius: var(--radius-sm); font-size: 14.5px; font-weight: 500; }
@@ -293,12 +286,7 @@
       box-shadow: var(--shadow);
       z-index: 20;
     }
-    .nav-toggle-cb:checked ~ .site-nav { display: flex; }
-    .nav-toggle-cb:checked ~ .nav-toggle {
-      border-color: var(--border-strong);
-      background: var(--bg-alt);
-      color: var(--primary);
-    }
+    .site-nav.is-open { display: flex; }
     .site-nav a { padding: 10px 12px; font-size: 15px; }
     .nav-icon-link { justify-content: flex-start; }
   }
@@ -808,6 +796,11 @@
   }
   .stats-strip .stat-val.stat-ok { color: var(--success); }
 
+  /* Platforms stat — inline OS icons instead of truncated text. */
+  .stats-strip .stat-platforms { display: inline-flex; align-items: center; gap: 10px; color: var(--fg); }
+  .stats-strip .stat-platforms svg { width: 18px; height: 18px; display: block; transition: color .15s ease; }
+  .stats-strip .stat-platforms svg:hover { color: var(--primary); }
+
   /* Tablet: 3-4 per row using flex-wrap. Each stat gets a bottom border so
      wrapped rows remain visually separated. */
   @media (max-width: 960px) {
@@ -994,11 +987,10 @@
       </svg>
       <span>hfo</span>
     </a>
-    <input type="checkbox" id="nav-open" class="nav-toggle-cb" aria-label="Toggle navigation menu" />
-    <label for="nav-open" class="nav-toggle" aria-hidden="true">
+    <button type="button" class="nav-toggle" id="nav-toggle" aria-label="Open navigation" aria-expanded="false" aria-controls="site-nav">
       <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M3 12h18"/><path d="M3 18h18"/></svg>
-    </label>
-    <nav class="site-nav" aria-label="Primary">
+    </button>
+    <nav class="site-nav" id="site-nav" aria-label="Primary">
       <a href="#features">Features</a>
       <a href="/install/">Install</a>
       <a href="/cli/">CLI</a>
@@ -1158,7 +1150,11 @@
       </span>
       <span class="stat">
         <span class="stat-label">Platforms</span>
-        <span class="stat-val">Win · macOS · Linux</span>
+        <span class="stat-val stat-platforms" aria-label="Windows, macOS, Linux">
+          <svg role="img" aria-label="Windows" viewBox="0 0 24 24" fill="currentColor"><path d="M0 3.449L9.75 2.1v9.451H0m10.949-9.602L24 0v11.4H10.949M0 12.6h9.75v9.451L0 20.699M10.949 12.6H24V24l-12.9-1.801"/></svg>
+          <svg role="img" aria-label="macOS" viewBox="0 0 24 24" fill="currentColor"><path d="M17.05 20.28c-.98.95-2.05.94-3.08.47-1.09-.47-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.47C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
+          <svg role="img" aria-label="Linux" viewBox="0 0 24 24" fill="currentColor"><path d="M12.504 0c-.155 0-.315.008-.480.021-4.226.333-3.105 4.807-3.17 6.298-.076 1.092-.3 1.953-1.05 3.02-.885 1.051-2.127 2.75-2.716 4.521-.278.832-.41 1.684-.287 2.489a.424.424 0 00-.11.135c-.26.268-.45.6-.663.839-.199.199-.485.267-.797.4-.313.136-.658.269-.864.68-.09.189-.136.394-.132.602 0 .199.027.4.055.536.058.399.116.728.04.97-.249.68-.28 1.145-.106 1.474.174.334.535.47.94.601.81.2 1.91.135 2.774.6.926.466 1.866.67 2.616.47.526-.116.97-.464 1.208-.946.587-.003 1.23-.269 2.26-.334.699-.058 1.574.267 2.577.2.025.134.063.198.114.333l.003.003c.391.778 1.113 1.132 1.884 1.071.771-.06 1.592-.536 2.257-1.306.631-.765 1.683-1.084 2.378-1.503.348-.199.629-.469.649-.853.023-.4-.2-.811-.714-1.376v-.097l-.003-.003c-.17-.2-.25-.535-.338-.926-.085-.401-.182-.786-.492-1.046h-.003c-.059-.054-.123-.067-.188-.135a.357.357 0 00-.19-.064c.431-1.278.264-2.55-.173-3.694-.533-1.41-1.465-2.638-2.175-3.483-.796-1.005-1.576-1.957-1.56-3.368.026-2.152.236-6.133-3.544-6.139zm.225 1.834c.715 0 1.495.394 1.922 1.205.41.785.41 1.7 0 2.48-.358.68-1.08 1.072-1.828 1.072-.715 0-1.461-.392-1.828-1.072-.385-.713-.418-1.561 0-2.48.42-.811 1.12-1.205 1.834-1.205z"/></svg>
+        </span>
       </span>
     </div>
 
@@ -1221,31 +1217,17 @@
     <h3 class="section-eyebrow">One-liner install</h3>
     <div class="one-liner-grid">
 
-      <div class="terminal">
-        <div class="terminal-bar">
-          <span class="terminal-dot red" aria-hidden="true"></span>
-          <span class="terminal-dot yellow" aria-hidden="true"></span>
-          <span class="terminal-dot green" aria-hidden="true"></span>
-          <span class="terminal-title">macOS · Linux</span>
-          <button type="button" class="terminal-copy" data-copy="curl -fsSL https://hfo.carrillo.app/install.sh | sh" aria-label="Copy macOS / Linux install command">copy</button>
-        </div>
-<pre><code><span class="tok-comment"># Detects OS + arch, downloads the latest binary,</span>
+      <hfo-terminal title="macOS · Linux" copy="curl -fsSL https://hfo.carrillo.app/install.sh | sh">
+<span class="tok-comment"># Detects OS + arch, downloads the latest binary,</span>
 <span class="tok-comment"># drops it on your PATH (no sudo needed on ~/.local/bin).</span>
-<span class="tok-prompt">$</span> <span class="tok-cmd">curl</span> <span class="tok-flag">-fsSL</span> <span class="tok-url">https://hfo.carrillo.app/install.sh</span> <span class="tok-op">|</span> <span class="tok-cmd">sh</span></code></pre>
-      </div>
+<span class="tok-prompt">$</span> <span class="tok-cmd">curl</span> <span class="tok-flag">-fsSL</span> <span class="tok-url">https://hfo.carrillo.app/install.sh</span> <span class="tok-op">|</span> <span class="tok-cmd">sh</span>
+</hfo-terminal>
 
-      <div class="terminal">
-        <div class="terminal-bar">
-          <span class="terminal-dot red" aria-hidden="true"></span>
-          <span class="terminal-dot yellow" aria-hidden="true"></span>
-          <span class="terminal-dot green" aria-hidden="true"></span>
-          <span class="terminal-title">Windows · PowerShell</span>
-          <button type="button" class="terminal-copy" data-copy="irm https://hfo.carrillo.app/install.ps1 | iex" aria-label="Copy Windows PowerShell install command">copy</button>
-        </div>
-<pre><code><span class="tok-comment"># Installs to %LOCALAPPDATA%\Programs\hfo and adds it to user PATH.</span>
+      <hfo-terminal title="Windows · PowerShell" copy="irm https://hfo.carrillo.app/install.ps1 | iex">
+<span class="tok-comment"># Installs to %LOCALAPPDATA%\Programs\hfo and adds it to user PATH.</span>
 <span class="tok-comment"># No admin prompt required.</span>
-<span class="tok-prompt">PS&gt;</span> <span class="tok-cmd">irm</span> <span class="tok-url">https://hfo.carrillo.app/install.ps1</span> <span class="tok-op">|</span> <span class="tok-cmd">iex</span></code></pre>
-      </div>
+<span class="tok-prompt">PS&gt;</span> <span class="tok-cmd">irm</span> <span class="tok-url">https://hfo.carrillo.app/install.ps1</span> <span class="tok-op">|</span> <span class="tok-cmd">iex</span>
+</hfo-terminal>
 
     </div>
 
@@ -1259,85 +1241,45 @@
     </div>
 
     <div id="panel-npm" role="tabpanel" aria-labelledby="tab-npm">
-      <div class="terminal">
-        <div class="terminal-bar">
-          <span class="terminal-dot red" aria-hidden="true"></span>
-          <span class="terminal-dot yellow" aria-hidden="true"></span>
-          <span class="terminal-dot green" aria-hidden="true"></span>
-          <span class="terminal-title">npm</span>
-          <button type="button" class="terminal-copy" data-copy="npm i -g hfo-cli">copy</button>
-        </div>
-<pre><code><span class="tok-prompt">$</span> <span class="tok-cmd">npm</span> <span class="tok-cmd">i</span> <span class="tok-flag">-g</span> hfo-cli</code></pre>
-      </div>
+      <hfo-terminal title="npm" copy="npm i -g hfo-cli">
+<span class="tok-prompt">$</span> <span class="tok-cmd">npm</span> <span class="tok-cmd">i</span> <span class="tok-flag">-g</span> hfo-cli
+</hfo-terminal>
     </div>
 
     <div id="panel-pnpm" role="tabpanel" aria-labelledby="tab-pnpm" hidden>
-      <div class="terminal">
-        <div class="terminal-bar">
-          <span class="terminal-dot red" aria-hidden="true"></span>
-          <span class="terminal-dot yellow" aria-hidden="true"></span>
-          <span class="terminal-dot green" aria-hidden="true"></span>
-          <span class="terminal-title">pnpm</span>
-          <button type="button" class="terminal-copy" data-copy="pnpm add -g hfo-cli">copy</button>
-        </div>
-<pre><code><span class="tok-prompt">$</span> <span class="tok-cmd">pnpm</span> add <span class="tok-flag">-g</span> hfo-cli</code></pre>
-      </div>
+      <hfo-terminal title="pnpm" copy="pnpm add -g hfo-cli">
+<span class="tok-prompt">$</span> <span class="tok-cmd">pnpm</span> add <span class="tok-flag">-g</span> hfo-cli
+</hfo-terminal>
     </div>
 
     <div id="panel-yarn" role="tabpanel" aria-labelledby="tab-yarn" hidden>
-      <div class="terminal">
-        <div class="terminal-bar">
-          <span class="terminal-dot red" aria-hidden="true"></span>
-          <span class="terminal-dot yellow" aria-hidden="true"></span>
-          <span class="terminal-dot green" aria-hidden="true"></span>
-          <span class="terminal-title">yarn</span>
-          <button type="button" class="terminal-copy" data-copy="yarn global add hfo-cli">copy</button>
-        </div>
-<pre><code><span class="tok-prompt">$</span> <span class="tok-cmd">yarn</span> global add hfo-cli</code></pre>
-      </div>
+      <hfo-terminal title="yarn" copy="yarn global add hfo-cli">
+<span class="tok-prompt">$</span> <span class="tok-cmd">yarn</span> global add hfo-cli
+</hfo-terminal>
     </div>
 
     <div id="panel-bun" role="tabpanel" aria-labelledby="tab-bun" hidden>
-      <div class="terminal">
-        <div class="terminal-bar">
-          <span class="terminal-dot red" aria-hidden="true"></span>
-          <span class="terminal-dot yellow" aria-hidden="true"></span>
-          <span class="terminal-dot green" aria-hidden="true"></span>
-          <span class="terminal-title">bun</span>
-          <button type="button" class="terminal-copy" data-copy="bun add -g hfo-cli">copy</button>
-        </div>
-<pre><code><span class="tok-prompt">$</span> <span class="tok-cmd">bun</span> add <span class="tok-flag">-g</span> hfo-cli</code></pre>
-      </div>
+      <hfo-terminal title="bun" copy="bun add -g hfo-cli">
+<span class="tok-prompt">$</span> <span class="tok-cmd">bun</span> add <span class="tok-flag">-g</span> hfo-cli
+</hfo-terminal>
     </div>
 
     <h3 class="section-eyebrow section-eyebrow--spaced">Manual binary download</h3>
     <p class="section-lede section-lede--tight">Tagged releases on GitHub ship per-OS executables. Download directly, or use the one-liner scripts above which wrap this for you.</p>
-    <div class="terminal">
-      <div class="terminal-bar">
-        <span class="terminal-dot red" aria-hidden="true"></span>
-        <span class="terminal-dot yellow" aria-hidden="true"></span>
-        <span class="terminal-dot green" aria-hidden="true"></span>
-        <span class="terminal-title">manual · Linux / macOS</span>
-      </div>
-<pre><code><span class="tok-comment"># Pick the binary matching your OS + arch; available after the first tagged release.</span>
+    <hfo-terminal title="manual · Linux / macOS">
+<span class="tok-comment"># Pick the binary matching your OS + arch; available after the first tagged release.</span>
 <span class="tok-comment">#   hfo-linux-x64    hfo-linux-arm64</span>
 <span class="tok-comment">#   hfo-macos-x64    hfo-macos-arm64</span>
 <span class="tok-comment">#   hfo-win-x64.exe</span>
 <span class="tok-prompt">$</span> <span class="tok-cmd">curl</span> <span class="tok-flag">-LO</span> <span class="tok-url">https://github.com/carrilloapps/hfo/releases/latest/download/hfo-linux-x64</span>
 <span class="tok-prompt">$</span> <span class="tok-cmd">chmod</span> +x hfo-linux-x64
 <span class="tok-prompt">$</span> <span class="tok-cmd">sudo</span> <span class="tok-cmd">mv</span> hfo-linux-x64 <span class="tok-path">/usr/local/bin/hfo</span>
-<span class="tok-prompt">$</span> <span class="tok-cmd">hfo</span> <span class="tok-flag">--version</span></code></pre>
-    </div>
+<span class="tok-prompt">$</span> <span class="tok-cmd">hfo</span> <span class="tok-flag">--version</span>
+</hfo-terminal>
 
     <h3 class="section-eyebrow section-eyebrow--spaced">Try it</h3>
-    <div class="terminal">
-      <div class="terminal-bar">
-        <span class="terminal-dot red" aria-hidden="true"></span>
-        <span class="terminal-dot yellow" aria-hidden="true"></span>
-        <span class="terminal-dot green" aria-hidden="true"></span>
-        <span class="terminal-title">bash</span>
-      </div>
-<pre><code><span class="tok-comment"># Explore — fullscreen dashboard</span>
+    <hfo-terminal title="bash">
+<span class="tok-comment"># Explore — fullscreen dashboard</span>
 <span class="tok-prompt">$</span> <span class="tok-cmd">hfo</span>
 
 <span class="tok-comment"># Install a specific repo (opens the Install tab pre-filled)</span>
@@ -1346,8 +1288,8 @@
 <span class="tok-comment"># Or skip the TUI entirely — every capability has a flag</span>
 <span class="tok-prompt">$</span> <span class="tok-cmd">hfo</span> <span class="tok-flag">--view</span>
 <span class="tok-prompt">$</span> <span class="tok-cmd">hfo</span> <span class="tok-flag">--list</span>
-<span class="tok-prompt">$</span> <span class="tok-cmd">hfo</span> <span class="tok-flag">--launch</span> claude <span class="tok-flag">--model</span> llama3.1:8b</code></pre>
-    </div>
+<span class="tok-prompt">$</span> <span class="tok-cmd">hfo</span> <span class="tok-flag">--launch</span> claude <span class="tok-flag">--model</span> llama3.1:8b
+</hfo-terminal>
   </div>
 </section>
 
@@ -1573,6 +1515,25 @@
       }, 1200);
     });
   });
+
+  // Mobile nav toggle — the header <button class="nav-toggle"> opens the
+  // dropdown by flipping aria-expanded + .is-open. Closes on outside click
+  // and Escape so it doesn't trap the user in an open state.
+  (function wireNav() {
+    const btn = document.getElementById('nav-toggle');
+    const nav = document.getElementById('site-nav');
+    if (!btn || !nav) return;
+    const close = () => { btn.setAttribute('aria-expanded', 'false'); nav.classList.remove('is-open'); };
+    const open  = () => { btn.setAttribute('aria-expanded', 'true');  nav.classList.add('is-open'); };
+    btn.addEventListener('click', () => {
+      btn.getAttribute('aria-expanded') === 'true' ? close() : open();
+    });
+    document.addEventListener('click', (e) => {
+      if (btn.contains(e.target) || nav.contains(e.target)) return;
+      close();
+    });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
+  })();
 
   // Hero install pill: the pm-tabs radios set the active command; clicking
   // the pill copies that command and flashes a success state via CSS class.
