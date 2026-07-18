@@ -62,7 +62,7 @@
     "link": "npm link"
   },
   "dependencies": {
-    "adm-zip": "~0.5.17",
+    "adm-zip": "~0.6.0",
     "archiver": "~7.0.1",
     "execa": "~9.6.1",
     "figures": "~6.1.0",
