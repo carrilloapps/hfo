@@ -3,7 +3,7 @@
 > Fullscreen terminal UI and headless CLI that turns any Hugging Face GGUF
 > repository into a running, hardware-tuned Ollama model — in one Enter
 > keystroke. Cross-OS (Windows · macOS · Linux). Strict TypeScript. MIT.
-> No telemetry, no accounts, no subscriptions. Version 0.1.0.
+> No telemetry, no accounts, no subscriptions. Version 0.2.1.
 
 hfo (`hfo-cli` on npm) scores every quant in a Hugging Face repo against your
 detected VRAM and RAM, parses the model card for recommended sampling

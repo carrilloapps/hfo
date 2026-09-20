@@ -3,7 +3,7 @@
 Fullscreen terminal UI and headless CLI that turns any Hugging Face GGUF
 repository into a running, hardware-tuned Ollama model — in one Enter
 keystroke. Cross-OS (Windows, macOS, Linux). Strict TypeScript. MIT
-licensed. No telemetry, no accounts, no subscriptions. Version 0.1.0.
+licensed. No telemetry, no accounts, no subscriptions. Version 0.2.1.
 
 Website: https://hfo.carrillo.app/
 Repository: https://github.com/carrilloapps/hfo
@@ -70,6 +70,7 @@ Each tagged release on GitHub publishes self-contained executables:
 - hfo-macos-x64 (Intel)
 - hfo-macos-arm64 (Apple Silicon)
 - hfo-win-x64.exe
+- hfo-win-arm64.exe
 
 Download from the Releases page, make it executable, and put it on your
 PATH. No Node runtime required.
@@ -119,6 +120,9 @@ exits non-zero on failure.
 - `hfo --delete <tag>`: remove the tag from Ollama (shallow)
 - `hfo --delete <tag> --deep`: remove tag AND delete files on disk
 - `hfo --launch <integration>`: run `ollama launch` with the given model
+- `hfo --launch-targets`: print every launch target, its runner, and whether it is usable here
+- `hfo --bench <tag>`: run the standard 4-prompt bench, print tok/s and TTFT
+- `hfo --bench <tag> --out <file>`: also write an hfo-bench-v1 JSON submission
 - `hfo --tab <name>`: open the TUI on dashboard | models | install | tune | help | settings
 
 Flags:
@@ -128,6 +132,7 @@ Flags:
 - `--ctx`: force context size (default: auto — 8192 if fits in VRAM, else 4096)
 - `--model`: model tag to pass to --launch
 - `--deep`: deep-delete alongside --delete
+- `--out`: destination file for the --bench submission JSON
 - `--no-fullscreen`: disable the alt-screen buffer
 
 ## Keyboard reference
@@ -204,6 +209,7 @@ All costs are zero: no subscriptions, no API keys, no rate-limited tiers.
 - Launch integrations via ollama launch: Claude Code, Cline, Codex, Copilot CLI, Droid, Hermes, Kimi, OpenCode, OpenClaw, Pi, VS Code
 - Launched directly by hfo (no Ollama integration exists): Kiro CLI (kiro-cli), Antigravity CLI (agy).
 - Custom launch targets: register your own agents in <configDir>/hfo/launch-plugins.json (id, name, bin required). They appear in the picker and in --launch-targets, and are spawned directly. A plugin cannot shadow a built-in id or alias. Both run only their vendor's hosted models, so an Ollama tag cannot be bound as their backend.
+- Benchmark mode: `hfo --bench <tag>` runs warmup + code + reasoning + translation prompts at temperature 0.2 and reports tok/s and TTFT; `--out` writes an hfo-bench-v1 JSON file for the PR-based community leaderboard at https://hfo.carrillo.app/benchmarks/
 - ~90% capacity tuner for OLLAMA_FLASH_ATTENTION, OLLAMA_KV_CACHE_TYPE, OLLAMA_KEEP_ALIVE, OLLAMA_NUM_PARALLEL, OLLAMA_MAX_LOADED_MODELS, OLLAMA_MAX_QUEUE
 - 7 themes (Dark, Light, Dracula, Solarized Dark/Light, Nord, Monokai)
 - 20 languages (English, Spanish, Chinese, Hindi, Arabic, Portuguese, Bengali, Russian, Japanese, German, French, Korean, Italian, Turkish, Vietnamese, Indonesian, Polish, Dutch, Thai, Ukrainian)
@@ -229,6 +235,15 @@ interface Settings {
   installations: Installation[];   // { tag, dir, repoId, quant, installedAt }
 }
 ```
+
+Environment variables:
+- `HF_TOKEN`: Hugging Face token for gated or private repos (same as --token)
+- `HFO_VRAM_MIB`: override detected VRAM, in MiB. On Apple Silicon there is no
+  discrete VRAM to report, so hfo derives the budget from the
+  `iogpu.wired_limit_mb` sysctl or a conservative share of unified memory —
+  set this when you know your real figure.
+- `OLLAMA_HOST`: daemon endpoint used by --bench and written into the launch
+  configs hfo prints for coding agents (default http://localhost:11434)
 
 Backups live under <configDir>/hfo/backups/<timestamp>/<slug>.zip with a
 sidecar .metadata.json containing tag, repo, quant, byte counts, and

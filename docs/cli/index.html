@@ -72,6 +72,7 @@
       <a href="/install/">Install</a>
       <a href="/cli/" aria-current="page">CLI</a>
       <a href="/keyboard/">Keyboard</a>
+      <a href="/benchmarks/">Benchmarks</a>
       <a href="/privacy/">Privacy</a>
       <a href="/faq/">FAQ</a>
       <a href="https://github.com/carrilloapps/hfo" target="_blank" rel="noreferrer noopener" class="nav-icon-link">
@@ -115,6 +116,8 @@
             <tr><td><code>hfo --delete &lt;tag&gt; --deep</code></td><td>Remove the tag AND delete its on-disk folder</td></tr>
             <tr><td><code>hfo --launch &lt;integration&gt;</code></td><td>Hand off to a coding agent with the chosen model</td></tr>
             <tr><td><code>hfo --launch-targets</code></td><td>Print every launch target, its runner, and whether it is usable here</td></tr>
+            <tr><td><code>hfo --bench &lt;tag&gt;</code></td><td>Run the standard 4-prompt bench and print tok/s + TTFT per prompt</td></tr>
+            <tr><td><code>hfo --bench &lt;tag&gt; --out &lt;file&gt;</code></td><td>Also write an <code>hfo-bench-v1</code> JSON file for the <a href="/benchmarks/">community leaderboard</a></td></tr>
             <tr><td><code>hfo --tab &lt;name&gt;</code></td><td>Open the TUI on <code>dashboard</code> · <code>models</code> · <code>install</code> · <code>tune</code> · <code>help</code> · <code>settings</code></td></tr>
             <tr><td><code>hfo --help</code> · <code>-h</code></td><td>Print the full flag reference</td></tr>
             <tr><td><code>hfo --version</code></td><td>Print <code>hfo vX.Y.Z · MIT · &lt;author&gt;</code></td></tr>
@@ -133,6 +136,7 @@
             <tr><td><code>--ctx</code></td><td>Force context size. Default: auto — 8192 if fits in VRAM, else 4096</td></tr>
             <tr><td><code>--model</code></td><td>Model tag to pass to <code>--launch</code>. Ignored by agents that only serve their vendor's hosted models (<code>kiro</code>, <code>antigravity</code>)</td></tr>
             <tr><td><code>--deep</code></td><td>Deep-delete (removes the tracked directory too) alongside <code>--delete</code></td></tr>
+            <tr><td><code>--out</code></td><td>Destination file for the <code>--bench</code> submission JSON. Without it the bench only prints</td></tr>
             <tr><td><code>--no-fullscreen</code></td><td>Disable the alt-screen buffer (helpful on legacy terminals)</td></tr>
           </tbody>
         </table>
@@ -184,6 +188,16 @@
       reason rather than breaking the picker — <code>hfo --launch-targets</code> lists both the
       resolved targets and any problems, and exits non-zero when there are any.</p>
       <p>Launched directly by hfo, because Ollama has no integration for them: <code>kiro</code> (alias <code>kiro-cli</code>) and <code>antigravity</code> (alias <code>agy</code>). These are marked available only when their binary resolves on PATH or at the vendor's default install location. Both run exclusively on their vendor's hosted models and expose no custom-endpoint setting, so <code>--model &lt;ollama-tag&gt;</code> cannot bind — hfo warns and launches them unbound. Run <code>hfo --launch-targets</code> to print every target with its runner and local status.</p>
+
+      <h3>Benchmark a model</h3>
+      <hfo-terminal title="bash">
+<span class="tok-comment"># Warmup + code + reasoning + translation prompts at temperature 0.2</span>
+<span class="tok-prompt">$</span> <span class="tok-cmd">hfo</span> <span class="tok-flag">--bench</span> qwen2.5-coder:7b-q5_k_m
+
+<span class="tok-comment"># Same run, saved in the hfo-bench-v1 schema for a leaderboard PR</span>
+<span class="tok-prompt">$</span> <span class="tok-cmd">hfo</span> <span class="tok-flag">--bench</span> qwen2.5-coder:7b-q5_k_m <span class="tok-flag">--out</span> <span class="tok-path">bench.json</span>
+</hfo-terminal>
+      <p>The model has to be registered with Ollama first — the bench drives the local daemon, nothing leaves the machine. See <a href="/benchmarks/">Benchmarks</a> for the schema, the prompt set, and how to submit a run.</p>
 
       <h3>List and clean up</h3>
       <hfo-terminal title="bash">

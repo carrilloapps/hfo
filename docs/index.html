@@ -105,7 +105,7 @@
       "operatingSystem": "Windows, macOS, Linux",
       "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
       "license": "https://spdx.org/licenses/MIT.html",
-      "softwareVersion": "0.1.0",
+      "softwareVersion": "0.2.1",
       "programmingLanguage": "TypeScript",
       "codeRepository": "https://github.com/carrilloapps/hfo",
       "downloadUrl": "https://www.npmjs.com/package/hfo-cli",
@@ -999,6 +999,7 @@
       <a href="/install/">Install</a>
       <a href="/cli/">CLI</a>
       <a href="/keyboard/">Keyboard</a>
+      <a href="/benchmarks/">Benchmarks</a>
       <a href="/privacy/">Privacy</a>
       <a href="/faq/">FAQ</a>
       <a href="https://github.com/carrilloapps/hfo" target="_blank" rel="noreferrer noopener" class="nav-icon-link">
@@ -1028,7 +1029,7 @@
     <div class="hero-head">
       <a class="hero-eyebrow" href="https://github.com/carrilloapps/hfo/releases" target="_blank" rel="noreferrer noopener">
         <span class="pulse-dot" aria-hidden="true"></span>
-        <strong>Stable</strong>&nbsp;·&nbsp;v0.1.0&nbsp;·&nbsp;what&rsquo;s new →
+        <strong>Stable</strong>&nbsp;·&nbsp;v0.2.1&nbsp;·&nbsp;what&rsquo;s new →
       </a>
 
       <h1 id="hero-title">
@@ -1130,7 +1131,7 @@
     <div class="stats-strip" aria-label="Project status and compatibility">
       <a class="stat" href="https://www.npmjs.com/package/hfo-cli" target="_blank" rel="noreferrer noopener">
         <span class="stat-label">Version</span>
-        <span class="stat-val">v0.1.0</span>
+        <span class="stat-val">v0.2.1</span>
       </a>
       <a class="stat" href="https://github.com/carrilloapps/hfo/actions/workflows/ci.yml" target="_blank" rel="noreferrer noopener">
         <span class="stat-label">CI</span>
@@ -1138,7 +1139,7 @@
       </a>
       <span class="stat">
         <span class="stat-label">Tests</span>
-        <span class="stat-val">76&nbsp;/&nbsp;76</span>
+        <span class="stat-val">764&nbsp;/&nbsp;764</span>
       </span>
       <a class="stat" href="https://github.com/carrilloapps/hfo/stargazers" target="_blank" rel="noreferrer noopener">
         <span class="stat-label">GitHub</span>
@@ -1316,6 +1317,7 @@
           <tr><td><code>hfo --delete &lt;tag&gt; [--deep]</code></td><td>Remove the Ollama tag. With <code>--deep</code> also delete the folder</td></tr>
           <tr><td><code>hfo --launch &lt;integration&gt;</code></td><td>Hand off to a coding agent (claude · codex · copilot · opencode · droid · cline · hermes · kimi · openclaw · pi · vscode via <code>ollama launch</code>; kiro · antigravity spawned directly)</td></tr>
           <tr><td><code>hfo --launch-targets</code></td><td>Print every launch target, its runner, and whether it is usable on this machine</td></tr>
+          <tr><td><code>hfo --bench &lt;tag&gt; [--out f.json]</code></td><td>Run the 4-prompt bench and print tok/s + TTFT. <code>--out</code> writes a <a href="/benchmarks/">leaderboard submission</a></td></tr>
           <tr><td><code>hfo --tab &lt;name&gt;</code></td><td>Open the TUI on a specific tab (dashboard · models · install · tune · help · settings)</td></tr>
         </tbody>
       </table>
@@ -1482,7 +1484,7 @@
       <a href="https://github.com/carrilloapps/hfo/blob/main/LICENSE" target="_blank" rel="noreferrer noopener">License</a>
       <a href="/sitemap.xml">Sitemap</a>
       <a href="/humans.txt">humans.txt</a>
-      <a href="/changelog">Changelog</a>
+      <a href="https://github.com/carrilloapps/hfo/blob/main/CHANGELOG.md" target="_blank" rel="noreferrer noopener">Changelog</a>
     </div>
   </div>
 </footer>

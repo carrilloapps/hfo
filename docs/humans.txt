@@ -14,7 +14,7 @@ Repository:    https://github.com/carrilloapps/hfo
 Site:          https://hfo.carrillo.app
 npm:           https://www.npmjs.com/package/hfo-cli
 License:       MIT
-Version:       0.1.0
+Version:       0.2.1
 
 /* STACK */
 Language:      TypeScript (strict mode, every flag on)
@@ -33,6 +33,6 @@ Hugging Face    — the public API this project is built on top of
 Ollama team     — for the local LLM runtime and the launch integrations
 
 /* SITE */
-Last updated:  2026-04-23
+Last updated:  2026-09-20
 Standards:     HTML5, CSS3, JSON-LD, Web App Manifest
 Components:    Inline Lucide-style SVG icons, system font stack

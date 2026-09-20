@@ -57,7 +57,9 @@
     "lint:fix": "eslint \"src/**/*.{ts,tsx}\" --fix",
     "typecheck": "tsc --noEmit",
     "skills:install": "node scripts/install-skills.mjs",
-    "ci": "npm run typecheck && npm run lint && npm run test:coverage && npm run build",
+    "site:sync": "node scripts/sync-site.mjs",
+    "site:check": "node scripts/sync-site.mjs --check",
+    "ci": "npm run typecheck && npm run lint && npm run site:check && npm run test:coverage && npm run build",
     "prepublishOnly": "npm run build",
     "link": "npm link"
   },
