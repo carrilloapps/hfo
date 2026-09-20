@@ -50,3 +50,11 @@ docs/apple-touch-icon.png
 docs/android-chrome-192.png
 docs/android-chrome-512.png
 docs/assets/og-image.png
+
+## Security scan reports (scripts/security-scan.sh)
+.security/
+.scannerwork/
+
+
+## Launch manifests hfo writes at runtime; only ever here if a test leaked
+hfo/

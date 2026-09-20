@@ -1,4 +1,4 @@
-import archiver from 'archiver';
+import { ZipArchive } from 'archiver';
 import { createWriteStream } from 'node:fs';
 import { mkdir, readdir, stat, writeFile } from 'node:fs/promises';
 import { basename, dirname, join } from 'node:path';
@@ -71,10 +71,23 @@ async function computeTotalBytes(dir: string): Promise<number> {
  * buffering the whole file in memory. Writes a `metadata.json` next to the
  * `.zip` with tag + repo + byte counts so backups can be audited later.
  */
+/**
+ * archiver reports a vanished entry as a non-fatal `warning` with code ENOENT —
+ * a file disappearing mid-walk should not lose the whole backup. Anything else
+ * is a real failure and must abort.
+ */
+export function isFatalArchiveWarning(err: unknown): boolean {
+  return (err as NodeJS.ErrnoException | undefined)?.code !== 'ENOENT';
+}
+
+/** Builds the archive. Overridable so tests can drive its event wiring. */
+export type ArchiveFactory = () => ZipArchive;
+
 export async function backupDirectory(
   subject: BackupSubject,
   backupsRoot: string,
   onProgress?: (p: BackupProgress) => void,
+  makeArchive: ArchiveFactory = () => new ZipArchive({ zlib: { level: 9 } }),
 ): Promise<BackupResult> {
   const ts = timestamp();
   const targetFolder = join(backupsRoot, ts);
@@ -88,7 +101,7 @@ export async function backupDirectory(
 
   await new Promise<void>((resolve, reject) => {
     const output = createWriteStream(zipPath);
-    const archive = archiver('zip', { zlib: { level: 9 } });
+    const archive = makeArchive();
 
     let processedBytes = 0;
     let fileCount = 0;
@@ -98,7 +111,7 @@ export async function backupDirectory(
     output.on('error', reject);
     archive.on('error', reject);
     archive.on('warning', (err) => {
-      if ((err as NodeJS.ErrnoException).code !== 'ENOENT') reject(err);
+      if (isFatalArchiveWarning(err)) reject(err);
     });
     archive.on('entry', (entry) => {
       const size = Number((entry.stats as { size?: number } | undefined)?.size ?? 0);
@@ -112,7 +125,7 @@ export async function backupDirectory(
 
     archive.pipe(output);
     archive.directory(subject.dir, basename(subject.dir));
-    archive.finalize();
+    archive.finalize().catch(reject);
   });
 
   const finalStat = await stat(zipPath);

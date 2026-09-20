@@ -16,6 +16,12 @@ export async function checkOllama(): Promise<OllamaStatus> {
     const { stdout } = await execa('ollama', ['--version']);
     const version = stdout.split('\n').find((l) => /version/i.test(l))?.trim() ?? stdout.trim();
     try {
+      // The Ollama daemon listens on plain HTTP on the loopback interface and
+      // offers no TLS listener, so https:// here would simply fail to connect.
+      // The request never leaves the machine, so there is no transport to
+      // protect. hfo talks to exactly two endpoints — this one and the public
+      // Hugging Face API, which is https.
+      // nosemgrep: typescript.react.security.react-insecure-request.react-insecure-request
       const res = await fetch('http://127.0.0.1:11434/api/tags', {
         signal: AbortSignal.timeout(2000),
       });
@@ -222,7 +228,10 @@ export interface PersistResult {
   note?: string;
 }
 
-export async function persistEnv(profile: EnvProfile): Promise<PersistResult[]> {
+export async function persistEnv(
+  profile: EnvProfile,
+  opts: { systemdDir?: string } = {},
+): Promise<PersistResult[]> {
   const os = platform();
   const entries = Object.entries(profile) as [string, string][];
   if (os === 'win32') {
@@ -267,7 +276,9 @@ export async function persistEnv(profile: EnvProfile): Promise<PersistResult[]> 
   // linux + others
   const out: PersistResult[] = entries.map(([k, v]) => ({ key: k, value: v, applied: true, method: '~/.profile' }));
   await upsertRcFile(entries, ['.profile', '.bashrc']);
-  await writeSystemdOverride(entries).catch(() => undefined);
+  // writeSystemdOverride swallows its own errors (systemd may not be in use,
+  // or we may lack privileges), so there is nothing to catch here.
+  await writeSystemdOverride(entries, opts.systemdDir);
   return out;
 }
 
@@ -306,9 +317,22 @@ async function upsertRcFile(entries: [string, string][], candidates: string[]): 
   await writeFile(target, content, 'utf8');
 }
 
-async function writeSystemdOverride(entries: [string, string][]): Promise<void> {
-  // Only if user is running Ollama as a systemd service
-  const overrideDir = '/etc/systemd/system/ollama.service.d';
+/** Where a systemd unit override lives on a stock Linux install. */
+export const SYSTEMD_OVERRIDE_DIR = '/etc/systemd/system/ollama.service.d';
+
+/**
+ * Drop an Environment= override for the Ollama systemd unit.
+ *
+ * Only meaningful when the user runs Ollama as a service, so every failure is
+ * swallowed: no systemd, no privileges, or no unit are all normal. The
+ * directory is a parameter so this can be exercised somewhere writable —
+ * hardcoding an absolute system path would make it untestable, and on Windows
+ * it would quietly create C:\etc.
+ */
+export async function writeSystemdOverride(
+  entries: [string, string][],
+  overrideDir: string = SYSTEMD_OVERRIDE_DIR,
+): Promise<void> {
   const overrideFile = join(overrideDir, 'override.conf');
   try {
     await mkdir(overrideDir, { recursive: true });

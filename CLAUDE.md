@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Commands
 
-Package manager is **pnpm** (lockfile is `pnpm-lock.yaml`; `packageManager` is pinned in `package.json`). Node ≥ 20.
+Package manager is **pnpm** (lockfile is `pnpm-lock.yaml`; `packageManager` is pinned in `package.json`). Node ≥ 22.
 
 ```bash
 pnpm dev           # run from source via tsx (src/cli.tsx)

@@ -5,11 +5,12 @@ import meow from 'meow';
 import { resolve } from 'node:path';
 import Shell from './Shell.js';
 import { loadSettings } from './infra/settings.js';
-import { runLaunch, findTarget, type LaunchId } from './core/launch.js';
+import { runLaunch, findTargetIn, allLaunchTargets, type LaunchId } from './core/launch.js';
 import type { LaunchSelection } from './components/LaunchMenu.js';
 import {
   cmdView,
   cmdList,
+  cmdLaunchTargets,
   cmdTune,
   cmdBackup,
   cmdRestore,
@@ -32,7 +33,8 @@ const cli = meow(
     $ hfo --restore <zip>                  # extract a backup and re-register with Ollama
     $ hfo --delete <tag>                   # remove the tag from Ollama
     $ hfo --delete <tag> --deep            # remove tag AND delete its folder on disk
-    $ hfo --launch <integration>           # run ollama launch <integration> after optional TUI
+    $ hfo --launch <integration>           # hand off to a coding agent after optional TUI
+    $ hfo --launch-targets                 # print every launch target and whether it's usable here
     $ hfo --bench <tag>                    # run the standard 4-prompt bench and print tok/s + TTFT
     $ hfo --bench <tag> --out bench.json   # save a submission file for the community leaderboard
 
@@ -42,7 +44,8 @@ const cli = meow(
     --code, -c       Mark installs as code-specialized (SYSTEM prompt tweak)
     --ctx            Force context size (default: auto)
     --tab            Open on a specific tab: dashboard | models | install | tune | help | settings
-    --model          Model tag to pass through to --launch
+    --model          Model tag to pass through to --launch (ignored by agents that
+                     only serve their vendor's hosted models, e.g. kiro, antigravity)
     --no-fullscreen  Disable the alternate-screen buffer
     --version        Print version info
     -h, --help       Show this help
@@ -55,6 +58,8 @@ const cli = meow(
     $ hfo --backup opus4-7-codex:4b-q8
     $ hfo --restore ~/.config/hfo/backups/2026-04-23_11-48-25/opus4-7-codex_4b-q8.zip
     $ hfo --launch claude --model llama3.1:8b
+    $ hfo --launch kiro
+    $ hfo --launch antigravity
 `,
   {
     importMeta: import.meta,
@@ -66,6 +71,7 @@ const cli = meow(
       fullscreen: { type: 'boolean', default: true },
       tab: { type: 'string' },
       launch: { type: 'string' },
+      launchTargets: { type: 'boolean', default: false },
       model: { type: 'string' },
       view: { type: 'boolean', default: false },
       list: { type: 'boolean', default: false },
@@ -84,6 +90,7 @@ const cli = meow(
 try {
   if (cli.flags.view) { await cmdView(); process.exit(0); }
   if (cli.flags.list) { await cmdList(); process.exit(0); }
+  if (cli.flags.launchTargets) { await cmdLaunchTargets(); process.exit(0); }
   if (cli.flags.tune) { await cmdTune(); process.exit(0); }
   if (cli.flags.backup) { await cmdBackup(cli.flags.backup); process.exit(0); }
   if (cli.flags.restore) { await cmdRestore(cli.flags.restore); process.exit(0); }
@@ -96,13 +103,16 @@ try {
 
 // Fallback for `hfo --launch` without any TUI step
 if (cli.flags.launch && !cli.input[0] && !cli.flags.tab) {
-  const target = findTarget(cli.flags.launch);
+  // Resolve against the user's plugin targets too, not just the built-ins.
+  const { targets, pluginErrors } = await allLaunchTargets();
+  for (const e of pluginErrors) console.error(`[!] launch plugin: ${e}`);
+  const target = findTargetIn(targets, cli.flags.launch);
   if (!target) {
     console.error(`Unknown --launch target "${cli.flags.launch}".`);
     cmdVersion();
     process.exit(2);
   }
-  const code = await runLaunch(target.id as LaunchId, { model: cli.flags.model });
+  const code = await runLaunch(target.id as LaunchId, { model: cli.flags.model }, targets);
   process.exit(code);
 }
 
@@ -141,7 +151,7 @@ if (useAltScreen) {
 let pendingLaunch: LaunchSelection | null = null;
 
 if (cli.flags.launch) {
-  const target = findTarget(cli.flags.launch);
+  const target = findTargetIn((await allLaunchTargets()).targets, cli.flags.launch);
   if (!target) {
     restoreAltScreen();
     console.error(`Unknown --launch target "${cli.flags.launch}".`);

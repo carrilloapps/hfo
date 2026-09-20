@@ -58,7 +58,7 @@ yarn global add hfo-cli
 bun  add -g hfo-cli
 ```
 
-Requires Node.js 20 or newer. Ollama is optional — hfo will install it for
+Requires Node.js 22 or newer. Ollama is optional — hfo will install it for
 you via winget, brew, or the official shell script if it isn't already on
 your PATH.
 
@@ -201,7 +201,9 @@ All costs are zero: no subscriptions, no API keys, no rate-limited tiers.
 - Orphan reinstall: tags removed from Ollama but GGUFs still on disk get recovered
 - Zip backup + restore with level-9 compression and metadata sidecar
 - Deep delete: d removes tag only, Alt+d also wipes the tracked directory
-- Launch integrations: Claude Code, Cline, Codex, Copilot CLI, Droid, Hermes, Kimi, OpenCode, OpenClaw, Pi, VS Code
+- Launch integrations via ollama launch: Claude Code, Cline, Codex, Copilot CLI, Droid, Hermes, Kimi, OpenCode, OpenClaw, Pi, VS Code
+- Launched directly by hfo (no Ollama integration exists): Kiro CLI (kiro-cli), Antigravity CLI (agy).
+- Custom launch targets: register your own agents in <configDir>/hfo/launch-plugins.json (id, name, bin required). They appear in the picker and in --launch-targets, and are spawned directly. A plugin cannot shadow a built-in id or alias. Both run only their vendor's hosted models, so an Ollama tag cannot be bound as their backend.
 - ~90% capacity tuner for OLLAMA_FLASH_ATTENTION, OLLAMA_KV_CACHE_TYPE, OLLAMA_KEEP_ALIVE, OLLAMA_NUM_PARALLEL, OLLAMA_MAX_LOADED_MODELS, OLLAMA_MAX_QUEUE
 - 7 themes (Dark, Light, Dracula, Solarized Dark/Light, Nord, Monokai)
 - 20 languages (English, Spanish, Chinese, Hindi, Arabic, Portuguese, Bengali, Russian, Japanese, German, French, Korean, Italian, Turkish, Vietnamese, Indonesian, Polish, Dutch, Thai, Ukrainian)
@@ -257,7 +259,9 @@ the install directory with O, or customise the Modelfile parameters with C.
 **Can I launch Claude Code or Codex with a local model?** Yes. Press L on
 any installed model and hfo will run ollama launch against the chosen
 integration — Claude Code, Cline, Codex, Copilot CLI, Droid, Hermes, Kimi,
-OpenCode, OpenClaw, Pi, or VS Code — with that model as the backend.
+OpenCode, OpenClaw, Pi, or VS Code — with that model as the backend. Kiro CLI
+and Antigravity CLI are also listed and hfo launches them directly, but they
+only run their vendor's hosted models, so they cannot take an Ollama tag.
 
 **Where are my model files stored?** By default under the directory you
 launched hfo from (process.cwd()). Each model lives in

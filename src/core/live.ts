@@ -20,7 +20,7 @@ export async function sampleGpu(): Promise<LiveGpu | null> {
     if (!line) return null;
     const parts = line.split(',').map((s) => s.trim());
     return {
-      name: parts[0] ?? null,
+      name: parts[0],
       vramTotalMiB: Number(parts[1]) || 0,
       vramUsedMiB: Number(parts[2]) || 0,
       vramFreeMiB: Number(parts[3]) || 0,
@@ -49,11 +49,11 @@ export async function sampleOllamaPs(): Promise<LoadedModel[]> {
       // name id size processor until_time...
       const parts = line.split(/\s{2,}/).map((p) => p.trim());
       return {
-        name: parts[0] ?? '',
+        name: parts[0],
         id: parts[1] ?? '',
         size: parts[2] ?? '',
         processor: parts[3] ?? '',
-        until: parts.slice(4).join(' ') ?? '',
+        until: parts.slice(4).join(' '),
       };
     });
   } catch {
@@ -75,10 +75,10 @@ export async function sampleOllamaList(): Promise<RegisteredModel[]> {
     return lines.map((line) => {
       const parts = line.split(/\s{2,}/).map((p) => p.trim());
       return {
-        name: parts[0] ?? '',
+        name: parts[0],
         id: parts[1] ?? '',
         size: parts[2] ?? '',
-        modified: parts.slice(3).join(' ') ?? '',
+        modified: parts.slice(3).join(' '),
       };
     });
   } catch {

@@ -146,3 +146,44 @@ describe('agentLaunchesDir / agentManifestPath', () => {
     expect(path).toBe(join(dir, 'droid.json'));
   });
 });
+
+describe('agentHint for vendor-hosted agents (kiro, antigravity)', () => {
+  it('states plainly that kiro cannot use a local model as its backend', () => {
+    const h = agentHint('kiro', { model: 'llama3.1:8b' });
+    expect(h.summary).toMatch(/cannot use your Ollama model as its backend/);
+    // Points at the route that does work rather than dead-ending
+    expect(h.summary).toMatch(/MCP/);
+    expect(h.configPath).toMatch(/\.kiro/);
+    expect(h.docsUrl).toBe('https://kiro.dev/docs/cli/');
+  });
+
+  it('surfaces the real kiro env vars, not invented ones', () => {
+    const names = agentHint('kiro').envVars.map((v) => v.name);
+    expect(names).toContain('KIRO_HOME');
+    expect(names).toContain('KIRO_LOG_LEVEL');
+  });
+
+  it('never echoes an Ollama tag back as if antigravity would accept it', () => {
+    const h = agentHint('antigravity', { model: 'llama3.1:8b' });
+    const modelEntry = h.envVars.find((v) => v.name === '--model');
+    expect(modelEntry?.value).toBeUndefined();
+    expect(h.summary).toMatch(/bring-your-own-endpoint/);
+  });
+
+  it('does echo a vendor model id, which agy does accept', () => {
+    const h = agentHint('antigravity', { model: 'gemini-3.1-pro-high' });
+    const modelEntry = h.envVars.find((v) => v.name === '--model');
+    expect(modelEntry?.value).toBe('gemini-3.1-pro-high');
+  });
+
+  it('still records a manifest for a direct-runner agent', async () => {
+    const path = await writeLaunchManifest({
+      agent: 'antigravity',
+      model: null,
+      ollamaHost: DEFAULT_OLLAMA_HOST,
+    });
+    const body = JSON.parse(await readFile(path, 'utf8'));
+    expect(body.agent).toBe('antigravity');
+    expect(body.model).toBeNull();
+  });
+});

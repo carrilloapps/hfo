@@ -10,6 +10,15 @@ updates:
       time: '06:00'
       timezone: America/Bogota
     open-pull-requests-limit: 5
+    # Wait before adopting a brand-new release. Most compromised-package
+    # incidents are caught and yanked within days, so a short hold keeps the
+    # window where Dependabot would hand us a malicious version very small
+    # without meaningfully delaying real fixes.
+    cooldown:
+      default-days: 7
+      semver-major-days: 14
+      semver-minor-days: 7
+      semver-patch-days: 3
     commit-message:
       prefix: deps
       include: scope
@@ -33,6 +42,8 @@ updates:
     directory: /
     schedule:
       interval: monthly
+    cooldown:
+      default-days: 7
     commit-message:
       prefix: ci
       include: scope

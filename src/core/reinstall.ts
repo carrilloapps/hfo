@@ -105,7 +105,9 @@ export async function reinstallInstallation(
     const content = buildModelfile({
       ggufFilename: inspection.gguf,
       repoId: install.repoId || 'local-directory',
-      quant: inspection.quant || install.quant || 'unknown',
+      // extractQuant never returns empty — it yields 'unknown' when it cannot
+      // parse — so this needs no further fallback.
+      quant: inspection.quant,
       hw,
       params,
       cardSource: card.foundKeys,

@@ -13,6 +13,10 @@
 <meta name="robots" content="index,follow,max-image-preview:large" />
 <meta name="referrer" content="strict-origin-when-cross-origin" />
 
+<!-- Subresource Integrity does not apply to rel="canonical": it is a metadata
+     link, not a fetched subresource. Every asset these pages load is same-origin
+     (/assets/...), with no CDN in the dependency chain. -->
+<!-- nosemgrep: html.security.audit.missing-integrity.missing-integrity -->
 <link rel="canonical" href="https://hfo.carrillo.app/install/" />
 
 <link rel="icon" href="/favicon.ico" sizes="32x32" />
@@ -50,7 +54,7 @@
       "name": "Install hfo on Windows, macOS, or Linux",
       "description": "Install the hfo CLI (hfo-cli on npm) in one command on any major OS.",
       "totalTime": "PT2M",
-      "supply": [{ "@type": "HowToSupply", "name": "Node.js 20 or newer (for npm / pnpm / yarn / bun installs)" }],
+      "supply": [{ "@type": "HowToSupply", "name": "Node.js 22 or newer (for npm / pnpm / yarn / bun installs)" }],
       "tool":   [{ "@type": "HowToTool",   "name": "Terminal or PowerShell" }],
       "step": [
         { "@type": "HowToStep", "position": 1, "name": "Pick an installer",  "text": "Choose the one-liner script for your OS, a package manager you already have, or download a standalone binary from GitHub Releases." },
@@ -199,7 +203,7 @@ hfo v0.1.0 · MIT · José Carrillo
       <p>hfo doesn't require Ollama to already be installed. On first run, if it's missing, you'll see an installer overlay offering the platform-appropriate method (<code>winget install Ollama.Ollama</code>, <code>brew install ollama</code>, or the official <code>curl | sh</code>). Confirm with Enter, or install manually and re-run hfo.</p>
 
       <h3>Node version mismatch</h3>
-      <p>All four package managers require <strong>Node.js 20 or newer</strong>. Check with <code>node -v</code>. Upgrade via <a href="https://github.com/nvm-sh/nvm" target="_blank" rel="noreferrer noopener">nvm</a> (Unix), <a href="https://github.com/Schniz/fnm" target="_blank" rel="noreferrer noopener">fnm</a>, or <a href="https://www.npmjs.com/package/n" target="_blank" rel="noreferrer noopener"><code>n</code></a>. The standalone binaries have no Node dependency.</p>
+      <p>All four package managers require <strong>Node.js 22 or newer</strong>. Check with <code>node -v</code>. Upgrade via <a href="https://github.com/nvm-sh/nvm" target="_blank" rel="noreferrer noopener">nvm</a> (Unix), <a href="https://github.com/Schniz/fnm" target="_blank" rel="noreferrer noopener">fnm</a>, or <a href="https://www.npmjs.com/package/n" target="_blank" rel="noreferrer noopener"><code>n</code></a>. The standalone binaries have no Node dependency.</p>
 
       <h3>Corporate proxy / mirror</h3>
       <p>If <code>npm</code> can't reach the registry, set your proxy first:</p>
