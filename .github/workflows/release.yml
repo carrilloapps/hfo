@@ -74,7 +74,10 @@ jobs:
           - os: windows-2025
             target: node22-win-x64
             artifact: hfo-win-x64.exe
-          - os: windows-2025
+          # pkg executes the target's base binary while bundling, so the
+          # ARM64 build needs an ARM64 host — cross-building it on x64 dies
+          # with `spawn UNKNOWN`.
+          - os: windows-11-vs2026-arm
             target: node22-win-arm64
             artifact: hfo-win-arm64.exe
     runs-on: ${{ matrix.os }}
@@ -92,10 +95,11 @@ jobs:
         shell: bash
         run: |
           mkdir -p dist-bin
-          pkg . --targets ${{ matrix.target }} --output dist-bin/${{ matrix.artifact }} || {
-            echo "::warning::pkg failed for ${{ matrix.target }} — ESM bundling is best-effort"
-            exit 0
-          }
+          pkg . --targets ${{ matrix.target }} --output dist-bin/${{ matrix.artifact }} ||             echo "::warning::pkg failed for ${{ matrix.target }} — ESM bundling is best-effort"
+          # A failed pkg leaves a zero-byte file behind, and uploading that
+          # fails the job with "size must be greater than or equal to 1".
+          # Drop empties so a best-effort build really is best-effort.
+          find dist-bin -type f -size 0 -print -delete
       - uses: softprops/action-gh-release@efb35369e0ad2afab669f228072c1b0d510eae64 # v3.0.3
         if: hashFiles('dist-bin/*') != ''
         with:
