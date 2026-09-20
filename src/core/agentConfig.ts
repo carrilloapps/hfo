@@ -75,7 +75,7 @@ export async function writeLaunchManifest(
  */
 export function agentHint(
   id: LaunchId,
-  opts: { model?: string | null; ollamaHost?: string } = {},
+  opts: { model?: string | null; ollamaHost?: string; directBin?: string } = {},
 ): AgentHint {
   const host = opts.ollamaHost ?? DEFAULT_OLLAMA_HOST;
   const model = opts.model ?? undefined;
@@ -155,13 +155,40 @@ export function agentHint(
         ],
         configPath: '~/.vscode/settings.json (or the workspace one)',
       };
+    case 'kiro':
+      return {
+        summary:
+          'Kiro CLI runs against AWS-hosted models and has no custom-endpoint setting, so it cannot use your Ollama model as its backend. hfo launches `kiro-cli chat`; reach local models from inside it by registering an Ollama MCP server with `kiro-cli mcp add`.',
+        envVars: [
+          { name: 'KIRO_HOME',      value: '~/.kiro', note: 'Overrides where agents, prompts, skills and settings live' },
+          { name: 'KIRO_LOG_LEVEL', value: undefined, note: 'trace | debug | info | warn | error' },
+          { name: 'OLLAMA_HOST',    value: host,      note: 'What an Ollama MCP server would point at' },
+        ],
+        configPath: '~/.kiro (see `kiro-cli settings open`)',
+        docsUrl: 'https://kiro.dev/docs/cli/',
+      };
+    case 'antigravity':
+      return {
+        summary:
+          "Antigravity only talks to Google's hosted models — its docs state there is no bring-your-own-key or bring-your-own-endpoint — so an Ollama tag will not bind. hfo launches `agy`; run `agy models` for the ids --model accepts, and use /mcp inside the CLI to reach local tooling.",
+        envVars: [
+          { name: '--model',     value: model && !model.includes(':') ? model : undefined, note: "An id from `agy models`, e.g. gemini-3.1-pro-high — not an Ollama tag" },
+          { name: 'OLLAMA_HOST', value: host, note: 'What an Ollama MCP server would point at' },
+        ],
+        configPath: '~/.antigravity/settings.json',
+        docsUrl: 'https://antigravity.google/docs/getting-started?tab=cli',
+      };
     case 'hermes':
     case 'kimi':
     case 'openclaw':
     case 'pi':
     default:
       return {
-        summary: `\`ollama launch ${id}\` handles its own wiring; no additional configuration is required on the hfo side.`,
+        // A user-registered plugin target is spawned by hfo, not by Ollama, so
+        // the wording has to follow how it is actually started.
+        summary: opts.directBin
+          ? `hfo launches \`${opts.directBin}\` directly. hfo does not configure it — point it at your Ollama host the way that CLI documents.`
+          : `\`ollama launch ${id}\` handles its own wiring; no additional configuration is required on the hfo side.`,
         envVars: [
           { name: 'OLLAMA_HOST', value: host, note: 'Respected by most Ollama-aware CLIs if they ever need an override' },
         ],

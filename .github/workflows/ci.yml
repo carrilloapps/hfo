@@ -11,18 +11,36 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
-        node: [20, 22]
+        # Runner labels are pinned rather than -latest. The floating labels
+        # emit a migration notice on every run and would move the whole matrix
+        # to a new image without warning; these are what they resolved to.
+        #
+        # macos-26 is Apple Silicon; the -intel and -arm labels cover the
+        # architectures that would otherwise never be exercised. Every OS gets
+        # both supported Node majors on its primary arch, and one Node on the
+        # secondary arch — enough to catch an arch-specific break without
+        # doubling the whole grid.
+        include:
+          - { os: ubuntu-24.04, node: 22, label: linux-x64 }
+          - { os: ubuntu-24.04, node: 24, label: linux-x64 }
+          - { os: ubuntu-24.04-arm, node: 22, label: linux-arm64 }
+          - { os: macos-26, node: 22, label: macos-arm64 }
+          - { os: macos-26, node: 24, label: macos-arm64 }
+          - { os: macos-15-intel, node: 22, label: macos-x64 }
+          - { os: windows-2025, node: 22, label: win-x64 }
+          - { os: windows-2025, node: 24, label: win-x64 }
+          - { os: windows-11-vs2026-arm, node: 22, label: win-arm64 }
+    name: ${{ matrix.label }} · node ${{ matrix.node }}
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: ${{ matrix.node }}
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm typecheck
       - run: pnpm lint
-      - run: pnpm test
+      - run: pnpm test:coverage
       - run: pnpm build

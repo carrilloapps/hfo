@@ -55,6 +55,7 @@ $ hfo bartowski/Qwen2.5-Coder-7B-Instruct-GGUF
 - [Architecture](#architecture)
 - [Development](#development)
 - [Privacy, security, cost](#privacy-security-cost)
+- [Custom launch targets](#custom-launch-targets)
 - [Roadmap](#roadmap)
 - [Author](#author)
 - [License](#license)
@@ -238,10 +239,17 @@ stateDiagram-v2
   `B` zips a model; `hfo --restore <zip>` extracts and re-registers, regenerating the Modelfile
   if needed.
 - **Deep delete.** `d` removes the Ollama tag only; `Alt+d` also wipes the tracked directory.
-- **Launch integrations.** Press `L` on any model to run `ollama launch <integration>` with that
-  model as the backend. Supports Claude Code, Cline, Codex, Copilot CLI, Droid, Hermes, Kimi,
-  OpenCode, OpenClaw, Pi, and VS Code, with runtime probing against `ollama launch --help` to
-  mark unsupported targets.
+- **Launch integrations.** Press `L` on any model to hand off to a coding agent with that model
+  as the backend. Claude Code, Cline, Codex, Copilot CLI, Droid, Hermes, Kimi, OpenCode,
+  OpenClaw, Pi, and VS Code go through `ollama launch <integration>`, probed at runtime against
+  `ollama launch --help` so unsupported targets are marked. Kiro CLI (`kiro-cli`) and
+  Antigravity CLI (`agy`) have no Ollama integration, so hfo spawns them itself and marks them
+  available only when their binary resolves. Both vendors serve their own hosted models and
+  offer no custom-endpoint setting, so hfo will not pretend `--model <ollama-tag>` binds — it
+  says so and launches them unbound. `hfo --launch-targets` prints the whole table.
+- **Custom launch targets.** Drop a `launch-plugins.json` in hfo's config dir to register
+  your own agent — it then appears in the picker, in `hfo --launch-targets`, and works with
+  `hfo --launch <id>` exactly like a built-in. See [Custom launch targets](#custom-launch-targets).
 - **~90% capacity tuner.** Side-by-side default / suggested / current for
   `OLLAMA_FLASH_ATTENTION`, `OLLAMA_KV_CACHE_TYPE`, `OLLAMA_KEEP_ALIVE`, `OLLAMA_NUM_PARALLEL`,
   `OLLAMA_MAX_LOADED_MODELS`, `OLLAMA_MAX_QUEUE`. Persists via `setx` on Windows,
@@ -496,7 +504,7 @@ pnpm test:coverage # generate coverage/index.html
 pnpm run ci        # typecheck + lint + test + build in one go
 ```
 
-The CI workflow runs the same chain on Ubuntu / macOS / Windows × Node 20 / 22 for every push
+The CI workflow runs the same chain on Ubuntu / macOS / Windows × Node 22 / 24 for every push
 and PR. The release workflow publishes to npm and uploads per-OS binaries to GitHub Releases
 when a `v*.*.*` tag is pushed.
 
@@ -534,12 +542,57 @@ when the user explicitly opts in from the TUI's Ollama installer overlay.
 
 All costs are zero: no subscriptions, no API keys, no rate-limited tiers.
 
+## Custom launch targets
+
+hfo ships integrations for the agents Ollama serves plus Kiro and Antigravity, but that list
+will never cover every coding agent. Register your own in:
+
+| OS | Path |
+| --- | --- |
+| Windows | `%APPDATA%\hfo\launch-plugins.json` |
+| macOS | `~/Library/Application Support/hfo/launch-plugins.json` |
+| Linux | `${XDG_CONFIG_HOME:-~/.config}/hfo/launch-plugins.json` |
+
+```json
+{
+  "targets": [
+    {
+      "id": "myagent",
+      "name": "My Agent",
+      "description": "In-house coding agent",
+      "bin": "myagent",
+      "args": ["chat"],
+      "fallbackPaths": ["~/.local/bin/myagent"],
+      "aliases": ["ma"],
+      "docsUrl": "https://example.com/docs",
+      "ollamaBackend": true,
+      "modelFlag": "--model"
+    }
+  ]
+}
+```
+
+Only `id`, `name` and `bin` are required. Plugin targets are always spawned directly by hfo —
+if Ollama served the agent it would already be built in.
+
+| Field | Meaning |
+| --- | --- |
+| `id` | Lowercase letters, digits, `.`, `-`, `_`. Cannot shadow a built-in id or alias. |
+| `bin` | Executable to spawn. Resolved on `PATH`, then against `fallbackPaths`. |
+| `args` | Arguments always passed first, e.g. a `chat` subcommand. |
+| `fallbackPaths` | Extra locations to look in. `~` and `%VAR%` / `$VAR` are expanded. |
+| `ollamaBackend` | `false` if the agent only talks to its vendor's service; hfo then refuses to pass an Ollama tag to `modelFlag`. Defaults to `true`. |
+| `modelFlag` | Flag the CLI uses to pick a model, or `null` if it has none. |
+
+A malformed entry is skipped with a reason rather than breaking the picker — run
+`hfo --launch-targets` to see both the resolved targets and any problems.
+
 ## Roadmap
 
 - [ ] Real-time progress in backup/restore for multi-gigabyte archives (pause / resume).
 - [ ] Multi-install batch mode in `--install <file-with-repos>`.
 - [ ] Snapshot diffing between two Modelfiles (for A/B testing parameter changes).
-- [ ] Plugin API for custom launch integrations.
+- [x] Plugin API for custom launch integrations. *(v0.2.0 — see [Custom launch targets](#custom-launch-targets))*
 - [ ] Windows-native toast notifications when a long backup finishes.
 
 Open an issue with the label `enhancement` to propose items.

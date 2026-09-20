@@ -18,6 +18,10 @@
 <meta name="referrer" content="strict-origin-when-cross-origin" />
 <meta name="generator" content="hfo-cli docs" />
 
+<!-- Subresource Integrity does not apply to rel="canonical": it is a metadata
+     link, not a fetched subresource. Every asset these pages load is same-origin
+     (/assets/...), with no CDN in the dependency chain. -->
+<!-- nosemgrep: html.security.audit.missing-integrity.missing-integrity -->
 <link rel="canonical" href="https://hfo.carrillo.app/" />
 <script src="/assets/terminal.js" defer></script>
 <link rel="author" href="/humans.txt" />
@@ -136,7 +140,7 @@
         {
           "@type": "Question",
           "name": "Can I launch Claude Code or Codex with a local model?",
-          "acceptedAnswer": { "@type": "Answer", "text": "Yes. Press L on any installed model and hfo will run ollama launch against the chosen integration — Claude Code, Cline, Codex, Copilot CLI, Droid, Hermes, Kimi, OpenCode, OpenClaw, Pi, or VS Code — with that model as the backend." }
+          "acceptedAnswer": { "@type": "Answer", "text": "Yes. Press L on any installed model and hfo will run ollama launch against the chosen integration — Claude Code, Cline, Codex, Copilot CLI, Droid, Hermes, Kimi, OpenCode, OpenClaw, Pi, or VS Code, plus Kiro CLI and Antigravity CLI which hfo starts directly — with that model as the backend." }
         },
         {
           "@type": "Question",
@@ -1192,7 +1196,7 @@
       <article class="card">
         <span class="card-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.25-2 5-2 5s3.75-.5 5-2c.73-.86.71-2.2-.08-3-.78-.8-2.15-.84-3-.08z"/><path d="M12 15V9"/><path d="M15 12l-3-3-3 3"/><path d="M16 11a5 5 0 0 0-5-5"/><path d="M20 15a9 9 0 0 0-9-9"/></svg></span>
         <h3>Launch integrations</h3>
-        <p>Press <span class="kbd">L</span> on any model to run <code>ollama launch</code> with it as backend: Claude Code, Cline, Codex, Copilot CLI, Droid, Hermes, Kimi, OpenCode, OpenClaw, Pi, VS Code.</p>
+        <p>Press <span class="kbd">L</span> on any model to run <code>ollama launch</code> with it as backend: Claude Code, Cline, Codex, Copilot CLI, Droid, Hermes, Kimi, OpenCode, OpenClaw, Pi, VS Code. Kiro CLI and Antigravity CLI are launched directly by hfo and run their vendor's hosted models.</p>
       </article>
       <article class="card">
         <span class="card-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V11"/><path d="M4 11V3"/><path d="M12 21v-6"/><path d="M12 11V3"/><path d="M20 21v-10"/><path d="M20 5V3"/><path d="M2 11h4"/><path d="M10 15h4"/><path d="M18 11h4"/></svg></span>
@@ -1310,7 +1314,8 @@
           <tr><td><code>hfo --backup &lt;tag&gt;</code></td><td>Create a <code>.zip</code> backup of the model's folder</td></tr>
           <tr><td><code>hfo --restore &lt;zip&gt;</code></td><td>Extract a backup and re-register with Ollama</td></tr>
           <tr><td><code>hfo --delete &lt;tag&gt; [--deep]</code></td><td>Remove the Ollama tag. With <code>--deep</code> also delete the folder</td></tr>
-          <tr><td><code>hfo --launch &lt;integration&gt;</code></td><td>Run <code>ollama launch &lt;integration&gt;</code> (claude · codex · copilot · opencode · droid · cline · hermes · kimi · openclaw · pi · vscode)</td></tr>
+          <tr><td><code>hfo --launch &lt;integration&gt;</code></td><td>Hand off to a coding agent (claude · codex · copilot · opencode · droid · cline · hermes · kimi · openclaw · pi · vscode via <code>ollama launch</code>; kiro · antigravity spawned directly)</td></tr>
+          <tr><td><code>hfo --launch-targets</code></td><td>Print every launch target, its runner, and whether it is usable on this machine</td></tr>
           <tr><td><code>hfo --tab &lt;name&gt;</code></td><td>Open the TUI on a specific tab (dashboard · models · install · tune · help · settings)</td></tr>
         </tbody>
       </table>
@@ -1405,7 +1410,7 @@
       </details>
       <details class="faq">
         <summary>Can I launch Claude Code or Codex with a local model?</summary>
-        <p>Yes. Press <span class="kbd">L</span> on any installed model and hfo will run <code>ollama launch</code> against the chosen integration — Claude Code, Cline, Codex, Copilot CLI, Droid, Hermes, Kimi, OpenCode, OpenClaw, Pi, or VS Code — with that model as the backend.</p>
+        <p>Yes. Press <span class="kbd">L</span> on any installed model and hfo will run <code>ollama launch</code> against the chosen integration — Claude Code, Cline, Codex, Copilot CLI, Droid, Hermes, Kimi, OpenCode, OpenClaw, Pi, or VS Code, plus Kiro CLI and Antigravity CLI which hfo starts directly — with that model as the backend.</p>
       </details>
       <details class="faq">
         <summary>Where are my model files stored?</summary>

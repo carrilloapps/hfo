@@ -12,6 +12,10 @@
 <meta name="color-scheme" content="dark light" />
 <meta name="robots" content="index,follow,max-image-preview:large" />
 
+<!-- Subresource Integrity does not apply to rel="canonical": it is a metadata
+     link, not a fetched subresource. Every asset these pages load is same-origin
+     (/assets/...), with no CDN in the dependency chain. -->
+<!-- nosemgrep: html.security.audit.missing-integrity.missing-integrity -->
 <link rel="canonical" href="https://hfo.carrillo.app/cli/" />
 <link rel="icon" href="/favicon.ico" sizes="32x32" />
 <link rel="icon" href="/assets/logo-mark.svg" type="image/svg+xml" />
@@ -109,7 +113,8 @@
             <tr><td><code>hfo --restore &lt;zip&gt;</code></td><td>Extract a backup, regenerate Modelfile if needed, re-register with Ollama</td></tr>
             <tr><td><code>hfo --delete &lt;tag&gt;</code></td><td>Remove the tag from Ollama (shallow)</td></tr>
             <tr><td><code>hfo --delete &lt;tag&gt; --deep</code></td><td>Remove the tag AND delete its on-disk folder</td></tr>
-            <tr><td><code>hfo --launch &lt;integration&gt;</code></td><td>Run <code>ollama launch &lt;integration&gt;</code> with the chosen model</td></tr>
+            <tr><td><code>hfo --launch &lt;integration&gt;</code></td><td>Hand off to a coding agent with the chosen model</td></tr>
+            <tr><td><code>hfo --launch-targets</code></td><td>Print every launch target, its runner, and whether it is usable here</td></tr>
             <tr><td><code>hfo --tab &lt;name&gt;</code></td><td>Open the TUI on <code>dashboard</code> · <code>models</code> · <code>install</code> · <code>tune</code> · <code>help</code> · <code>settings</code></td></tr>
             <tr><td><code>hfo --help</code> · <code>-h</code></td><td>Print the full flag reference</td></tr>
             <tr><td><code>hfo --version</code></td><td>Print <code>hfo vX.Y.Z · MIT · &lt;author&gt;</code></td></tr>
@@ -126,7 +131,7 @@
             <tr><td><code>--token</code> · <code>-t</code></td><td>Hugging Face token for gated/private repos. Falls back to <code>$HF_TOKEN</code></td></tr>
             <tr><td><code>--code</code> · <code>-c</code></td><td>Mark the install as code-specialized (SYSTEM prompt tweak)</td></tr>
             <tr><td><code>--ctx</code></td><td>Force context size. Default: auto — 8192 if fits in VRAM, else 4096</td></tr>
-            <tr><td><code>--model</code></td><td>Model tag to pass to <code>--launch</code></td></tr>
+            <tr><td><code>--model</code></td><td>Model tag to pass to <code>--launch</code>. Ignored by agents that only serve their vendor's hosted models (<code>kiro</code>, <code>antigravity</code>)</td></tr>
             <tr><td><code>--deep</code></td><td>Deep-delete (removes the tracked directory too) alongside <code>--delete</code></td></tr>
             <tr><td><code>--no-fullscreen</code></td><td>Disable the alt-screen buffer (helpful on legacy terminals)</td></tr>
           </tbody>
@@ -166,8 +171,19 @@
 <span class="tok-prompt">$</span> <span class="tok-cmd">hfo</span> <span class="tok-flag">--launch</span> claude   <span class="tok-flag">--model</span> llama3.1:8b
 <span class="tok-prompt">$</span> <span class="tok-cmd">hfo</span> <span class="tok-flag">--launch</span> codex    <span class="tok-flag">--model</span> qwen2.5-coder:7b-q6-k
 <span class="tok-prompt">$</span> <span class="tok-cmd">hfo</span> <span class="tok-flag">--launch</span> copilot  <span class="tok-flag">--model</span> deepseek-coder:6.7b-instruct
+<span class="tok-prompt">$</span> <span class="tok-cmd">hfo</span> <span class="tok-flag">--launch</span> kiro
+<span class="tok-prompt">$</span> <span class="tok-cmd">hfo</span> <span class="tok-flag">--launch</span> antigravity
+<span class="tok-prompt">$</span> <span class="tok-cmd">hfo</span> <span class="tok-flag">--launch-targets</span>
 </hfo-terminal>
-      <p>Supported launch targets: <code>claude</code>, <code>cline</code>, <code>codex</code>, <code>copilot</code>, <code>droid</code>, <code>hermes</code>, <code>kimi</code>, <code>opencode</code>, <code>openclaw</code>, <code>pi</code>, <code>vscode</code>. Unsupported targets on your installed Ollama version are probed at runtime against <code>ollama launch --help</code>.</p>
+      <p>Launch targets served by Ollama: <code>claude</code>, <code>cline</code>, <code>codex</code>, <code>copilot</code>, <code>droid</code>, <code>hermes</code>, <code>kimi</code>, <code>opencode</code>, <code>openclaw</code>, <code>pi</code>, <code>vscode</code>. Unsupported targets on your installed Ollama version are probed at runtime against <code>ollama launch --help</code>.</p>
+      <p><strong>Custom targets.</strong> A <code>launch-plugins.json</code> in hfo's config dir
+      (<code>%APPDATA%\hfo\</code> on Windows, <code>~/Library/Application Support/hfo/</code> on
+      macOS, <code>$XDG_CONFIG_HOME/hfo/</code> on Linux) registers your own agents. Each entry needs
+      at least <code>id</code>, <code>name</code> and <code>bin</code>; they are always spawned
+      directly. An id may not shadow a built-in id or alias, and a malformed entry is skipped with a
+      reason rather than breaking the picker — <code>hfo --launch-targets</code> lists both the
+      resolved targets and any problems, and exits non-zero when there are any.</p>
+      <p>Launched directly by hfo, because Ollama has no integration for them: <code>kiro</code> (alias <code>kiro-cli</code>) and <code>antigravity</code> (alias <code>agy</code>). These are marked available only when their binary resolves on PATH or at the vendor's default install location. Both run exclusively on their vendor's hosted models and expose no custom-endpoint setting, so <code>--model &lt;ollama-tag&gt;</code> cannot bind — hfo warns and launches them unbound. Run <code>hfo --launch-targets</code> to print every target with its runner and local status.</p>
 
       <h3>List and clean up</h3>
       <hfo-terminal title="bash">
@@ -185,6 +201,7 @@
         <li><strong>0</strong> — success</li>
         <li><strong>1</strong> — generic runtime error (message on stderr)</li>
         <li><strong>2</strong> — invalid flag / unknown launch target</li>
+        <li><strong>127</strong> — a directly-launched agent's binary (<code>kiro-cli</code>, <code>agy</code>) is not installed</li>
         <li><strong>130</strong> — interrupted by Ctrl+C (SIGINT)</li>
         <li><strong>143</strong> — terminated by SIGTERM</li>
       </ul>

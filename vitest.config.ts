@@ -22,6 +22,16 @@ export default defineConfig({
         'src/tabs/**',
         'src/components/**',
       ],
+      // The layers above are fully covered and must stay that way: a new
+      // branch without a test fails `pnpm test:coverage` rather than quietly
+      // eroding the number. Unreachable defensive code is deleted, not
+      // ignored, so there are no v8-ignore comments propping this up.
+      thresholds: {
+        statements: 100,
+        branches: 100,
+        functions: 100,
+        lines: 100,
+      },
     },
   },
 });

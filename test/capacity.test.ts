@@ -3,7 +3,7 @@ import { scoreHardware, tierFor, hfSearchUrl, hfSearchUrlForKeyword } from '../s
 import type { HardwareProfile } from '../src/core/hardware.js';
 
 function hw(vram: number, ram: number, cores = 8): HardwareProfile {
-  return { gpuName: vram > 0 ? 'GPU' : null, vramMiB: vram * 1024, ramMiB: ram * 1024, cpuCores: cores, platform: 'linux' };
+  return { gpuName: vram > 0 ? 'GPU' : null, vramMiB: vram * 1024, ramMiB: ram * 1024, cpuCores: cores, platform: 'linux', unifiedMemory: false };
 }
 
 describe('scoreHardware', () => {

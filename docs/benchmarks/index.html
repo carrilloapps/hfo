@@ -11,6 +11,10 @@
 <meta name="color-scheme" content="dark light" />
 <meta name="robots" content="index,follow,max-image-preview:large" />
 
+<!-- Subresource Integrity does not apply to rel="canonical": it is a metadata
+     link, not a fetched subresource. Every asset these pages load is same-origin
+     (/assets/...), with no CDN in the dependency chain. -->
+<!-- nosemgrep: html.security.audit.missing-integrity.missing-integrity -->
 <link rel="canonical" href="https://hfo.carrillo.app/benchmarks/" />
 <link rel="icon" href="/favicon.ico" sizes="32x32" />
 <link rel="icon" href="/assets/logo-mark.svg" type="image/svg+xml" />

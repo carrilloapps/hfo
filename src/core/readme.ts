@@ -33,13 +33,14 @@ function firstMatch(text: string, patterns: RegExp[]): number | undefined {
     const m = text.match(p);
     if (!m) continue;
     // Range → average; single → parse
+    // Both capture groups come from NUM, which only matches digits, so
+    // parseFloat always succeeds — no NaN guard needed.
     if (m[2] !== undefined) {
       const a = parseFloat(m[1]);
       const b = parseFloat(m[2]);
-      if (!isNaN(a) && !isNaN(b)) return +((a + b) / 2).toFixed(3);
+      return +((a + b) / 2).toFixed(3);
     }
-    const n = parseFloat(m[1]);
-    if (!isNaN(n)) return n;
+    return parseFloat(m[1]);
   }
   return undefined;
 }

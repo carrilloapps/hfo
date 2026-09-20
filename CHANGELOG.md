@@ -8,6 +8,123 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 _Nothing yet — open an issue or PR to propose the next thing._
 
+## [0.2.0] — 2026-09-19
+
+Cross-platform correctness pass, two new launch targets, and a clean
+`pnpm audit`. **This release requires Node.js 22 or newer.**
+
+### Security
+
+- Closed all 25 advisories reported by `pnpm audit` (17 high, 7 moderate,
+  1 low) by updating the dependencies that pulled them in: `adm-zip`
+  (symlink-following extraction, arbitrary file overwrite),
+  `systeminformation`, `ws` (via `ink`), `vite` / `postcss` / `nanoid`,
+  `brace-expansion` (via `archiver` and `typescript-eslint`), `esbuild`
+  (via `tsx`), and `vitest` / `@vitest/mocker`. `pnpm audit` is now clean.
+
+### Changed
+
+- **Requires Node.js 22 or newer** (was 20). Node 20 reached end of life on
+  2026-04-30 and Ink 7 declares `engines.node >= 22`. The CI matrix moves
+  from Node 20 / 22 to Node 22 / 24.
+- Upgraded React 18 → 19 and Ink 5 → 7. `ink-select-input`,
+  `ink-text-input` and `ink-spinner` were already compatible.
+- Upgraded `archiver` 7 → 8, which is now ESM-only with named exports and
+  no default factory. `src/core/backup.ts` uses `new ZipArchive(...)`, and
+  `finalize()` — now promise-returning — rejects into the surrounding
+  promise instead of going unhandled.
+- Upgraded `adm-zip` 0.5 → 0.6, `execa` 9 → 10, `vitest` 4 → 5, plus
+  `eslint`, `typescript-eslint`, `tsx`, `vite`, `systeminformation` and the
+  `@types/*` packages to their latest releases.
+- **Full platform matrix in CI.** The grid moves from `{ubuntu, macos,
+  windows} x {20, 22}` to nine explicit entries covering linux-x64,
+  linux-arm64, macos-arm64 (Apple Silicon), macos-x64 (Intel), win-x64 and
+  win-arm64 — each primary arch on both supported Node majors, each secondary
+  arch on one. Release binaries add a `node22-win-arm64` target.
+
+- GitHub Actions bumped to current majors: `actions/checkout` v7,
+  `actions/setup-node` v7, `pnpm/action-setup` v6, `actions/deploy-pages` v5.
+
+- The release workflow now creates the GitHub Release itself, with notes
+  lifted from this file by `scripts/changelog-section.mjs`, before the binary
+  matrix runs. Previously the release only came into existence as a
+  side-effect of a binary upload, so a release where every `pkg` build failed
+  produced no release at all.
+
+- TypeScript stays on 6.0.3. TypeScript 7 typechecks this project cleanly,
+  but `typescript-eslint` 8.70 refuses to load against the TS 7 API
+  (typescript-eslint#10940), so `pnpm lint` would break. Revisit once
+  typescript-eslint ships TS 7 support.
+
+### Fixed
+
+- **Apple Silicon reported 0 GB of VRAM, so every model scored as CPU-only.**
+  `systeminformation` has no discrete VRAM to report on an Apple GPU, which
+  left `vramMiB` at zero — on an M-series Mac with 64 GB of unified memory,
+  capable of running a 70B model on the GPU, hfo advertised "no GPU" and
+  recommended accordingly. `detectHardware()` now derives the real budget:
+  it reads the `iogpu.wired_limit_mb` sysctl (or `debug.iogpu.wired_limit`
+  on older macOS) and uses it verbatim when set, otherwise falls back to a
+  tiered share of total RAM. The whole scoring, tiering and picks pipeline
+  keys off `vramMiB`, so fixing detection at the source corrects all of it.
+
+  The default share is a heuristic: Apple does not publish the rule and
+  measurements range from ~62% to ~78% across machines and OS releases.
+  The tiers sit at the conservative end deliberately — over-estimating makes
+  hfo recommend a quant that then spills to swap, which is a worse failure
+  than under-promising by a gigabyte. `HFO_VRAM_MIB` overrides the result on
+  any platform for anyone who knows their real figure.
+
+- `HardwareProfile` gained `unifiedMemory`, and `--view` now marks the VRAM
+  line with a footnote on Apple Silicon, where VRAM and RAM are one pool and
+  would otherwise read as memory the machine does not have.
+
+### Added
+
+- **Plugin API for custom launch integrations** (roadmap item). A
+  `launch-plugins.json` in hfo's config dir registers extra agents, which then
+  appear in the TUI picker and `hfo --launch-targets` and work with
+  `hfo --launch <id>` exactly like a built-in. Plugin targets are always
+  spawned directly, since anything Ollama serves is already built in.
+
+  Entries are validated rather than trusted: an id may not shadow a built-in id
+  or alias, so `hfo --launch claude` cannot be redefined, and a malformed entry
+  is skipped with a reason instead of breaking the picker. Problems are listed
+  by `--launch-targets`, which exits non-zero when any are present.
+
+- **Kiro CLI and Antigravity CLI as launch targets.** `hfo --launch kiro` and
+  `hfo --launch antigravity` (aliases `kiro-cli` and `agy`), both listed in the
+  TUI launch picker and in the new `hfo --launch-targets` table.
+
+  Neither is served by `ollama launch`, so `LaunchTarget` gained a `runner`
+  descriptor: existing targets keep delegating to `ollama launch <id>`, while
+  these two are spawned by hfo directly (`kiro-cli chat` and `agy`). Their
+  availability is probed by resolving the binary rather than by scanning
+  `ollama launch --help`, so the picker distinguishes "not installed" from
+  "unsupported by this Ollama", and a missing binary exits 127.
+
+- `hfo --launch-targets`: headless mirror of the launch picker — every target,
+  its runner, whether it is usable here, and whether it can bind a local model.
+
+- `test/platform.test.ts` for the new `resolveBinary` / `expandHome` helpers.
+
+### Known limitations
+
+- **Kiro and Antigravity cannot run on a local Ollama model.** Kiro CLI has no
+  custom-endpoint setting, and Antigravity's own docs state there is no
+  bring-your-own-key or bring-your-own-endpoint; `agy models` only lists
+  Google-served ids. hfo therefore launches both but refuses to imply a binding
+  that will not happen: passing `--model <ollama-tag>` prints a warning, is
+  dropped rather than forwarded, and is recorded as `null` in the launch
+  manifest. A vendor model id (`agy --model gemini-3.1-pro-high`) is forwarded
+  normally; `kiro-cli` has no model flag at all, so none is ever passed. Both
+  hints point at MCP as the route that does reach local tooling. Tracking:
+  ollama/ollama#16329, kirodotdev/Kiro#9367.
+
+- `test/restore.test.ts`: a backup → restore round-trip that asserts the
+  extracted bytes match the source, covering the new `archiver` and
+  `adm-zip` majors together.
+
 ## [0.1.0] — 2026-04-24
 
 First public release of **hfo** (`hfo-cli` on npm).

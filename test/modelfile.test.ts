@@ -9,6 +9,7 @@ const hw: HardwareProfile = {
   ramMiB: 65536,
   cpuCores: 12,
   platform: 'win32',
+  unifiedMemory: false,
 };
 
 const params: ResolvedParams = {

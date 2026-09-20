@@ -11,6 +11,10 @@
 <meta name="color-scheme" content="dark light" />
 <meta name="robots" content="index,follow,max-image-preview:large" />
 
+<!-- Subresource Integrity does not apply to rel="canonical": it is a metadata
+     link, not a fetched subresource. Every asset these pages load is same-origin
+     (/assets/...), with no CDN in the dependency chain. -->
+<!-- nosemgrep: html.security.audit.missing-integrity.missing-integrity -->
 <link rel="canonical" href="https://hfo.carrillo.app/faq/" />
 <link rel="icon" href="/favicon.ico" sizes="32x32" />
 <link rel="icon" href="/assets/logo-mark.svg" type="image/svg+xml" />
@@ -46,7 +50,7 @@
         { "@type": "Question", "name": "Which operating systems does hfo support?", "acceptedAnswer": { "@type": "Answer", "text": "Windows, macOS, and Linux. The npm package is cross-OS; standalone binaries for each platform are published on the GitHub Releases page when a version is tagged." } },
         { "@type": "Question", "name": "Do I need to install Ollama first?", "acceptedAnswer": { "@type": "Answer", "text": "No. If Ollama isn't on your PATH, hfo will offer to install it using winget on Windows, Homebrew on macOS, or the official shell script on Linux. You always confirm before anything is installed." } },
         { "@type": "Question", "name": "How does hfo choose which GGUF to recommend?", "acceptedAnswer": { "@type": "Answer", "text": "Every quant in a Hugging Face repo is scored 0–100 against your detected VRAM and RAM headroom. The tool reads the model's README for recommended temperature, top_p, top_k, repeat_penalty, min_p and context size, then synthesises a tuned Modelfile." } },
-        { "@type": "Question", "name": "Can I launch Claude Code or Codex with a local model?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. Press L on any installed model and hfo will run ollama launch against the chosen integration — Claude Code, Cline, Codex, Copilot CLI, Droid, Hermes, Kimi, OpenCode, OpenClaw, Pi, or VS Code — with that model as the backend." } },
+        { "@type": "Question", "name": "Can I launch Claude Code or Codex with a local model?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. Press L on any installed model and hfo will run ollama launch against the chosen integration — Claude Code, Cline, Codex, Copilot CLI, Droid, Hermes, Kimi, OpenCode, OpenClaw, Pi, or VS Code, plus Kiro CLI and Antigravity CLI which hfo starts directly — with that model as the backend." } },
         { "@type": "Question", "name": "Where are my model files stored?", "acceptedAnswer": { "@type": "Answer", "text": "By default under the directory you launched hfo from (process.cwd()). Each model lives in <baseDir>/<repo-slug>/<quant>/, with the GGUF and a tuned Modelfile. hfo records the tag-to-directory mapping so Alt+d (deep delete) and B (backup) know what to operate on." } },
         { "@type": "Question", "name": "What's a GGUF?", "acceptedAnswer": { "@type": "Answer", "text": "GGUF is the file format llama.cpp and Ollama use to package a quantised LLM. Typical quants (Q4_K_M, Q5_K_M, Q6_K, Q8_0, F16) trade quality for size — Q5/Q6 is a good sweet spot for most hardware." } },
         { "@type": "Question", "name": "Why not just use `ollama pull`?", "acceptedAnswer": { "@type": "Answer", "text": "Ollama's library is curated; if the model you want is on Hugging Face only, you're on your own for picking the right quant, downloading the GGUF, writing a Modelfile, and running `ollama create`. hfo collapses that sequence into one Enter keystroke with hardware-aware recommendations." } },
@@ -55,7 +59,7 @@
         { "@type": "Question", "name": "What does the Tune tab actually change?", "acceptedAnswer": { "@type": "Answer", "text": "It reads your current Ollama environment variables (OLLAMA_FLASH_ATTENTION, OLLAMA_KV_CACHE_TYPE, OLLAMA_KEEP_ALIVE, OLLAMA_NUM_PARALLEL, OLLAMA_MAX_LOADED_MODELS, OLLAMA_MAX_QUEUE) and shows them side-by-side with defaults and hfo's ~90%-capacity suggestions. Apply persists via setx on Windows, launchctl + ~/.zprofile on macOS, or ~/.profile + systemd override on Linux." } },
         { "@type": "Question", "name": "How big can a backup be?", "acceptedAnswer": { "@type": "Answer", "text": "The archiver is streaming so backups scale to multi-GB without blowing memory. Level-9 compression typically shrinks GGUFs by 5-15%. Each backup is a standalone .zip with a metadata.json sidecar containing tag, repo, quant, byte counts, and compression ratio." } },
         { "@type": "Question", "name": "Does hfo work offline after the initial install?", "acceptedAnswer": { "@type": "Answer", "text": "Yes, everything except the Install tab (which needs HF) works offline. Dashboard, Models, Tune, Help, Settings — fully local. You can also use --launch and --list without a network." } },
-        { "@type": "Question", "name": "What Node version is required?", "acceptedAnswer": { "@type": "Answer", "text": "Node.js 20 or newer for the npm / pnpm / yarn / bun installs. The standalone binaries have no Node dependency at all." } }
+        { "@type": "Question", "name": "What Node version is required?", "acceptedAnswer": { "@type": "Answer", "text": "Node.js 22 or newer for the npm / pnpm / yarn / bun installs. The standalone binaries have no Node dependency at all." } }
       ]
     }
   ]
@@ -149,7 +153,7 @@
       </details>
 
       <details class="qa" id="q-agents"><summary>Can I launch Claude Code or Codex with a local model?</summary>
-        <p>Yes. Press <kbd class="kbd">L</kbd> on any installed model and hfo will run <code>ollama launch</code> against the chosen integration — Claude Code, Cline, Codex, Copilot CLI, Droid, Hermes, Kimi, OpenCode, OpenClaw, Pi, or VS Code — with that model as the backend.</p>
+        <p>Yes. Press <kbd class="kbd">L</kbd> on any installed model and hfo will run <code>ollama launch</code> against the chosen integration — Claude Code, Cline, Codex, Copilot CLI, Droid, Hermes, Kimi, OpenCode, OpenClaw, Pi, or VS Code, plus Kiro CLI and Antigravity CLI which hfo starts directly — with that model as the backend.</p>
       </details>
 
       <h2>Files &amp; storage</h2>

@@ -8,11 +8,18 @@ import { backupDirectory, resolveBackupRoot } from './core/backup.js';
 import { restoreBackup, readBackupManifest } from './core/restore.js';
 import { buildEnvProfile, persistEnv, restartOllama } from './infra/ollama.js';
 import { formatBytes } from './ui/format.js';
-import { APP } from './infra/about.js';
+import { APP, versionLines } from './infra/about.js';
 import { setLang, t } from './ui/i18n.js';
 import { execa } from 'execa';
 import { rm, writeFile } from 'node:fs/promises';
 import { runBench } from './core/bench.js';
+import {
+  allLaunchTargets,
+  bindsOllamaModel,
+  detectAvailableTargets,
+  runnerFor,
+} from './core/launch.js';
+import { launchPluginsPath } from './core/launchPlugins.js';
 
 function hr(label: string): void {
   const pad = '─'.repeat(Math.max(1, 70 - label.length - 4));
@@ -36,7 +43,13 @@ export async function cmdView(): Promise<void> {
 
   hr('Hardware');
   console.log(`GPU        ${hw.gpuName ?? '(no discrete GPU)'}`);
-  if (hw.vramMiB > 0) console.log(`VRAM       ${formatBytes(hw.vramMiB * 1024 * 1024)}`);
+  // On Apple Silicon this is a slice of RAM, not a second pool — say so, or
+  // the VRAM and RAM lines read as memory the machine does not have.
+  if (hw.vramMiB > 0) {
+    const label = hw.unifiedMemory ? 'VRAM*     ' : 'VRAM      ';
+    console.log(`${label} ${formatBytes(hw.vramMiB * 1024 * 1024)}`);
+    if (hw.unifiedMemory) console.log('           * unified memory shared with RAM, not a separate pool');
+  }
   console.log(`RAM        ${formatBytes(hw.ramMiB * 1024 * 1024)}`);
   console.log(`CPU cores  ${hw.cpuCores}`);
   console.log(`Platform   ${hw.platform}`);
@@ -117,6 +130,40 @@ export async function cmdList(): Promise<void> {
   }
 }
 
+/**
+ * Headless mirror of the TUI launch picker: every target, how hfo starts it,
+ * whether it is usable on this machine, and whether it can actually run on a
+ * local Ollama model. Keeps the `--launch` surface discoverable without
+ * entering the TUI (see "TUI ↔ headless parity" in CONTRIBUTING).
+ */
+export async function cmdLaunchTargets(): Promise<void> {
+  await applyLanguage();
+  const { targets, pluginErrors } = await allLaunchTargets();
+  const available = new Set(await detectAvailableTargets(targets));
+
+  hr(`Launch targets (${targets.length})`);
+  for (const target of targets) {
+    const runner = runnerFor(target);
+    const via = runner.kind === 'direct' ? runner.bin : 'ollama launch';
+    const state = available.has(target.id)
+      ? 'available'
+      : runner.kind === 'direct'
+        ? 'not installed'
+        : 'unsupported by this Ollama';
+    console.log(`  ${target.id.padEnd(12)} ${target.name.padEnd(18)} ${via.padEnd(15)} ${state}`);
+    if (!bindsOllamaModel(target)) {
+      console.log('    -> vendor-hosted models only; --model will not bind an Ollama tag');
+    }
+  }
+
+  if (pluginErrors.length > 0) {
+    hr('Plugin problems');
+    for (const e of pluginErrors) console.error(`  [!] ${e}`);
+    console.log(`  Fix them in ${launchPluginsPath()}`);
+    process.exitCode = 1;
+  }
+}
+
 export async function cmdTune(): Promise<void> {
   await applyLanguage();
   const hw = await detectHardware();
@@ -137,8 +184,10 @@ export async function cmdBackup(tag: string): Promise<void> {
   await applyLanguage();
   const install = await findInstallation(tag);
   if (!install) {
-    console.error(`No installation record for "${tag}". Install via hfo first or pass a known tag.`);
-    process.exit(1);
+    // Throw rather than process.exit() so this stays callable from a test and
+    // from any future caller. cli.tsx already catches, prints the message and
+    // exits 1, so the user-visible behaviour is unchanged.
+    throw new Error(`No installation record for "${tag}". Install via hfo first or pass a known tag.`);
   }
   const settings = await loadSettings();
   const backupsRoot = resolveBackupRoot((settings as any).backupsDir);
@@ -208,8 +257,7 @@ export async function cmdDelete(tag: string, opts: { deep?: boolean }): Promise<
 }
 
 export function cmdVersion(): void {
-  console.log(`${APP.binary} v${APP.version}`);
-  console.log(`${APP.license} · ${APP.author.name} · ${APP.author.url ?? APP.homepage}`);
+  for (const line of versionLines()) console.log(line);
 }
 
 /**
@@ -234,7 +282,13 @@ export async function cmdBench(tag: string, opts: { out?: string } = {}): Promis
   hr(`Benchmarking ${tag}`);
   console.log(`Model      ${tag}`);
   console.log(`GPU        ${hw.gpuName ?? '(no discrete GPU)'}`);
-  if (hw.vramMiB > 0) console.log(`VRAM       ${formatBytes(hw.vramMiB * 1024 * 1024)}`);
+  // On Apple Silicon this is a slice of RAM, not a second pool — say so, or
+  // the VRAM and RAM lines read as memory the machine does not have.
+  if (hw.vramMiB > 0) {
+    const label = hw.unifiedMemory ? 'VRAM*     ' : 'VRAM      ';
+    console.log(`${label} ${formatBytes(hw.vramMiB * 1024 * 1024)}`);
+    if (hw.unifiedMemory) console.log('           * unified memory shared with RAM, not a separate pool');
+  }
   console.log(`RAM        ${formatBytes(hw.ramMiB * 1024 * 1024)}`);
   console.log(`Ollama     ${ollama.version ?? 'unknown'}`);
   console.log('');
