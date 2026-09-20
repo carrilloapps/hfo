@@ -1058,16 +1058,17 @@
             <label for="pm-yarn">yarn</label>
             <input type="radio" name="pm" id="pm-bun"  data-cmd="bun add -g hfo-cli" />
             <label for="pm-bun">bun</label>
-            <!-- "script" tab auto-adapts to the visitor's OS: the runtime picks
-                 `curl … | sh` for macOS/Linux and `irm … | iex` for Windows,
-                 swapping the label (curl ↔ powershell) and the command at the
-                 same time. The data-cmd attribute is seeded with the Unix
-                 variant so non-JS visitors still see a working command. -->
-            <input type="radio" name="pm" id="pm-script"
-                   data-cmd="curl -fsSL https://hfo.carrillo.app/install.sh | sh"
-                   data-cmd-unix="curl -fsSL https://hfo.carrillo.app/install.sh | sh"
-                   data-cmd-win="irm https://hfo.carrillo.app/install.ps1 | iex" />
-            <label for="pm-script" id="pm-script-label" data-label-unix="curl" data-label-win="powershell">curl</label>
+            <!-- Both one-liner scripts are always listed. They used to share a
+                 single OS-adaptive tab, which meant a Windows visitor could
+                 never reach the macOS/Linux command (and vice versa) — the
+                 exact thing someone copying an install line for another
+                 machine needs. -->
+            <input type="radio" name="pm" id="pm-curl"
+                   data-cmd="curl -fsSL https://hfo.carrillo.app/install.sh | sh" />
+            <label for="pm-curl">curl</label>
+            <input type="radio" name="pm" id="pm-powershell"
+                   data-cmd="irm https://hfo.carrillo.app/install.ps1 | iex" />
+            <label for="pm-powershell">powershell</label>
           </div>
           <button type="button" class="install-pill" id="hero-install-pill" aria-label="Copy install command">
             <code id="hero-install-cmd">npm i -g hfo-cli</code>
@@ -1236,7 +1237,7 @@
 
     </div>
 
-    <p class="section-lede section-lede--medium">Prefer a package manager? All three publish the same <code>hfo-cli</code> package — use whichever you already have.</p>
+    <p class="section-lede section-lede--medium">Prefer a package manager? All four publish the same <code>hfo-cli</code> package — use whichever you already have.</p>
 
     <div class="tabs" role="tablist" aria-label="Package manager">
       <button type="button" class="tab-btn" role="tab" aria-selected="true"  id="tab-npm"  aria-controls="panel-npm"  onclick="switchTab('npm')">npm</button>
@@ -1275,7 +1276,7 @@
 <span class="tok-comment"># Pick the binary matching your OS + arch; available after the first tagged release.</span>
 <span class="tok-comment">#   hfo-linux-x64    hfo-linux-arm64</span>
 <span class="tok-comment">#   hfo-macos-x64    hfo-macos-arm64</span>
-<span class="tok-comment">#   hfo-win-x64.exe</span>
+<span class="tok-comment">#   hfo-win-x64.exe  hfo-win-arm64.exe</span>
 <span class="tok-prompt">$</span> <span class="tok-cmd">curl</span> <span class="tok-flag">-LO</span> <span class="tok-url">https://github.com/carrilloapps/hfo/releases/latest/download/hfo-linux-x64</span>
 <span class="tok-prompt">$</span> <span class="tok-cmd">chmod</span> +x hfo-linux-x64
 <span class="tok-prompt">$</span> <span class="tok-cmd">sudo</span> <span class="tok-cmd">mv</span> hfo-linux-x64 <span class="tok-path">/usr/local/bin/hfo</span>
@@ -1544,33 +1545,10 @@
 
   // Hero install pill: the pm-tabs radios set the active command; clicking
   // the pill copies that command and flashes a success state via CSS class.
-  // The "script" tab auto-adapts to the visitor's OS — PowerShell on
-  // Windows, curl/bash everywhere else — by swapping both its data-cmd
-  // and its visible label on page load.
   (function wireHeroInstall() {
     const cmdEl  = document.getElementById('hero-install-cmd');
     const pill   = document.getElementById('hero-install-pill');
     if (!cmdEl || !pill) return;
-
-    // Prefer the modern User-Agent Client Hints API; fall back to UA sniffing
-    // only for the Windows check. Everything else (macOS, Linux, BSD, CrOS,
-    // Android, iOS) gets the POSIX curl variant — they all have `sh`.
-    const isWindows = (() => {
-      const uaD = navigator.userAgentData;
-      if (uaD && typeof uaD.platform === 'string') {
-        return /windows/i.test(uaD.platform);
-      }
-      return /Windows NT|Win32|Win64|WOW64/i.test(navigator.userAgent || navigator.platform || '');
-    })();
-
-    const scriptInput = document.getElementById('pm-script');
-    const scriptLabel = document.getElementById('pm-script-label');
-    if (scriptInput && scriptLabel) {
-      const cmdKey   = isWindows ? 'cmdWin'   : 'cmdUnix';
-      const labelKey = isWindows ? 'labelWin' : 'labelUnix';
-      if (scriptInput.dataset[cmdKey])   scriptInput.dataset.cmd   = scriptInput.dataset[cmdKey];
-      if (scriptLabel.dataset[labelKey]) scriptLabel.textContent   = scriptLabel.dataset[labelKey];
-    }
 
     const pmInputs = document.querySelectorAll('input[name="pm"]');
     const current  = () => {
