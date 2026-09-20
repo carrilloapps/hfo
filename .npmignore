@@ -8,5 +8,5 @@ tsconfig.json
 pnpm-lock.yaml
 .gitignore
 .npmignore
-CONTRIBUTING.md
+.github/
 CHANGELOG.md

@@ -138,7 +138,7 @@ yarn global add hfo-cli
 bun  add -g hfo-cli
 ```
 
-Requires Node.js **≥ 20**. Ollama is optional — `hfo` will install it for
+Requires Node.js **≥ 22**. Ollama is optional — `hfo` will install it for
 you via `winget`, `brew`, or the official shell script if it isn't
 already on your PATH.
 
@@ -437,7 +437,8 @@ hfo/
 ├─ .github/                    # Community health + CI/CD
 │  ├─ ISSUE_TEMPLATE/           #   bug_report.yml · feature_request.yml · config.yml
 │  ├─ workflows/                #   ci.yml (every push) · pages.yml (docs) · release.yml (tags only)
-│  ├─ CODEOWNERS · FUNDING.yml · dependabot.yml · SUPPORT.md · PULL_REQUEST_TEMPLATE.md
+│  ├─ CODEOWNERS · FUNDING.yml · dependabot.yml · PULL_REQUEST_TEMPLATE.md
+│  └─ CONTRIBUTING.md · CODE_OF_CONDUCT.md · SECURITY.md · SUPPORT.md
 ├─ bin/hfo.js                  # npm bin entrypoint → dist/cli.js
 ├─ docs/                       # Static site deployed at hfo.carrillo.app
 │  ├─ .well-known/security.txt  #   RFC 9116 disclosure contact
@@ -481,8 +482,8 @@ hfo/
 │  │  └─ format.ts              #   byte / ETA / progress-bar formatters
 │  ├─ tabs/                    #   Dashboard · Models · Install · Tune · Help · Settings
 │  └─ components/              #   Dropdown · QuickConfirm · BootScreen · PlanReviewer · ParamsEditor · FileBrowser · LaunchMenu · …
-├─ test/                       # 12 vitest suites · 71 tests · v8 coverage
-├─ CHANGELOG.md · CODE_OF_CONDUCT.md · CONTRIBUTING.md · LICENSE · README.md · SECURITY.md
+├─ test/                       # 38 vitest suites · 764 tests · 100% coverage
+├─ CHANGELOG.md · CLAUDE.md · LICENSE · README.md
 ├─ eslint.config.js · tsconfig.json · vitest.config.ts
 └─ package.json                # packageManager pinned; pkg config for binaries
 ```
@@ -519,9 +520,9 @@ when a `v*.*.*` tag is pushed.
 - **No telemetry.** `hfo` only talks to the public Hugging Face API and the local Ollama daemon.
 - **English source.** Spanish and 18 other languages live in `src/i18n.ts`.
 
-See [`CONTRIBUTING.md`](./CONTRIBUTING.md) for the PR workflow and
-[`CODE_OF_CONDUCT.md`](./CODE_OF_CONDUCT.md) for community guidelines.
-Security issues: see [`SECURITY.md`](./SECURITY.md).
+See [`CONTRIBUTING.md`](./.github/CONTRIBUTING.md) for the PR workflow and
+[`CODE_OF_CONDUCT.md`](./.github/CODE_OF_CONDUCT.md) for community guidelines.
+Security issues: see [`SECURITY.md`](./.github/SECURITY.md).
 
 ## Privacy, security, cost
 

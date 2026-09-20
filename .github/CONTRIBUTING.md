@@ -14,7 +14,7 @@ pnpm dev
 
 Prerequisites:
 
-- **Node.js ≥ 20** (we rely on built-in `fetch`, `AbortSignal.timeout`, and modern
+- **Node.js ≥ 22** (we rely on built-in `fetch`, `AbortSignal.timeout`, and modern
   ESM).
 - **pnpm** (npm and yarn also work, but the lockfile is pnpm's).
 - **Ollama** for end-to-end testing — installable from inside `hfo`.
@@ -40,7 +40,7 @@ shared across tabs/components go under `src/ui/`. Keeping these separate
 makes the core logic trivially unit-testable and keeps cross-OS risk
 contained.
 
-See [README.md — Architecture](./README.md#architecture) for the full tree.
+See [README.md — Architecture](../README.md#architecture) for the full tree.
 
 ## Workflow
 

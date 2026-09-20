@@ -10,7 +10,7 @@
 
 ## Scope checklist
 
-- [ ] Follows the coding style in [CONTRIBUTING.md](../CONTRIBUTING.md)
+- [ ] Follows the coding style in [CONTRIBUTING.md](./CONTRIBUTING.md)
 - [ ] No raw emojis in source — uses `src/icons.ts`
 - [ ] No new telemetry, external calls beyond the HF public API, or Google Fonts
 - [ ] OS-specific logic lives behind `src/platform.ts` or `src/ollama.ts`

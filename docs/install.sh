@@ -7,12 +7,16 @@
 # Downloads the latest release binary for your OS + architecture from
 # https://github.com/carrilloapps/hfo/releases/latest and installs it to a
 # writable location on your PATH. Prefers /usr/local/bin; falls back to
-# ~/.local/bin (and hints at PATH setup if your shell doesn't already have
-# it). No sudo required unless you opt into /usr/local/bin.
+# ~/.local/bin and adds that directory to your shell profile so `hfo` works
+# in the next terminal. No sudo required unless you opt into /usr/local/bin.
+#
+# On macOS it also clears the com.apple.quarantine flag, which Gatekeeper
+# would otherwise use to block an unsigned binary.
 #
 # Override defaults via environment variables:
 #   HFO_VERSION=v0.2.0          install a specific tag (default: latest)
 #   HFO_INSTALL_DIR=/some/dir   install to a custom directory
+#   HFO_NO_MODIFY_PATH=1        print the PATH line instead of writing it
 
 set -e
 
@@ -73,15 +77,73 @@ else
 fi
 
 chmod +x "$DEST.tmp"
+
+# macOS tags downloaded files with com.apple.quarantine, and Gatekeeper refuses
+# to run an unsigned binary carrying it ("developer cannot be verified"). curl
+# from a terminal usually does not set it, but a proxy or wrapper can, so clear
+# it either way — xattr -d is a no-op when the attribute is absent.
+if [ "$OS_SLUG" = "macos" ] && command -v xattr >/dev/null 2>&1; then
+  xattr -d com.apple.quarantine "$DEST.tmp" 2>/dev/null || true
+fi
+
 mv "$DEST.tmp" "$DEST"
 printf "hfo: installed %s\n" "$DEST"
 
-# --- PATH check --------------------------------------------------------
+# --- PATH ---------------------------------------------------------------
+# Windows' install.ps1 writes the user PATH outright, so `hfo` works in the
+# next shell with no follow-up. Do the same here instead of printing an
+# instruction and leaving the job half done.
+#
+# Set HFO_NO_MODIFY_PATH=1 to skip this and get the manual line printed.
+add_to_path() {
+  dir="$1"
+  line="export PATH=\"$dir:\$PATH\""
+
+  # Which rc file does this shell actually read?
+  shell_name=$(basename "${SHELL:-/bin/sh}")
+  case "$shell_name" in
+    zsh)
+      # macOS Terminal and iTerm start login shells, which read .zprofile.
+      profile="${ZDOTDIR:-$HOME}/.zprofile" ;;
+    bash)
+      # macOS bash reads .bash_profile for login shells; Linux terminals are
+      # usually non-login and read .bashrc.
+      if [ "$OS_SLUG" = "macos" ]; then profile="$HOME/.bash_profile"
+      else profile="$HOME/.bashrc"; fi ;;
+    fish)
+      profile="$HOME/.config/fish/config.fish"
+      line="fish_add_path $dir" ;;
+    *)
+      profile="$HOME/.profile" ;;
+  esac
+
+  # Idempotent: a second run must not stack duplicate exports.
+  if [ -f "$profile" ] && grep -Fq "$line" "$profile" 2>/dev/null; then
+    printf "hfo: %s already adds %s to PATH.\n" "$profile" "$dir"
+    return 0
+  fi
+
+  mkdir -p "$(dirname "$profile")" 2>/dev/null || true
+  if printf '\n# Added by the hfo installer\n%s\n' "$line" >> "$profile" 2>/dev/null; then
+    printf "hfo: added %s to PATH in %s. Open a new terminal, or run:\n    %s\n" \
+      "$dir" "$profile" "$line"
+  else
+    printf "hfo: could not write %s. Add this line to your shell profile yourself:\n    %s\n" \
+      "$profile" "$line"
+  fi
+}
+
 case ":$PATH:" in
-  *":$DEST_DIR:"*) ;;
+  *":$DEST_DIR:"*)
+    ;;
   *)
-    printf "\nhfo: %s is not on your PATH. Add this line to your shell profile:\n" "$DEST_DIR"
-    printf "    export PATH=\"%s:\$PATH\"\n" "$DEST_DIR"
+    if [ "${HFO_NO_MODIFY_PATH:-0}" = "1" ]; then
+      printf "\nhfo: %s is not on your PATH. Add this line to your shell profile:\n" "$DEST_DIR"
+      printf "    export PATH=\"%s:\$PATH\"\n" "$DEST_DIR"
+    else
+      printf "\n"
+      add_to_path "$DEST_DIR"
+    fi
     ;;
 esac
 

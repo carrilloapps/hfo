@@ -128,10 +128,21 @@
       </header>
 
       <h2>One-liner scripts (no Node required)</h2>
-      <p>Both scripts always pull the <strong>latest GitHub Release</strong> binary for your platform. No <code>sudo</code>, no admin prompt. Override with <code>HFO_VERSION=v0.2.0</code> (or <code>$env:HFO_VERSION</code>) to pin a specific tag, or <code>HFO_INSTALL_DIR=/some/dir</code> to relocate.</p>
+      <p>Both scripts pull the <strong>latest GitHub Release</strong> binary for your platform, put it somewhere writable and <strong>add that directory to your PATH</strong>, so <code>hfo</code> works in the next terminal with no follow-up. No <code>sudo</code>, no admin prompt.</p>
+      <div class="table-wrap">
+        <table class="table">
+          <thead><tr><th scope="col">Variable</th><th scope="col">Effect</th></tr></thead>
+          <tbody>
+            <tr><td><code>HFO_VERSION=v0.2.0</code></td><td>Pin a specific tag instead of the latest release</td></tr>
+            <tr><td><code>HFO_INSTALL_DIR=/some/dir</code></td><td>Install somewhere other than the default</td></tr>
+            <tr><td><code>HFO_NO_MODIFY_PATH=1</code></td><td>Print the PATH line instead of writing it to your profile <small>(shell script only)</small></td></tr>
+          </tbody>
+        </table>
+      </div>
 
       <hfo-terminal title="macOS · Linux" copy="curl -fsSL https://hfo.carrillo.app/install.sh | sh">
-<span class="tok-comment"># Detects OS + arch, installs to /usr/local/bin or ~/.local/bin</span>
+<span class="tok-comment"># Detects macOS/Linux + arch, installs to /usr/local/bin or ~/.local/bin,</span>
+<span class="tok-comment"># updates your shell profile, and clears the macOS quarantine flag.</span>
 <span class="tok-prompt">$</span> <span class="tok-cmd">curl</span> <span class="tok-flag">-fsSL</span> <span class="tok-url">https://hfo.carrillo.app/install.sh</span> <span class="tok-op">|</span> <span class="tok-cmd">sh</span>
 </hfo-terminal>
 
@@ -145,7 +156,7 @@
       </div>
 
       <h2>Package managers</h2>
-      <p>All four publish the same <code>hfo-cli</code> package. Node.js <strong>≥ 20</strong> required.</p>
+      <p>All four publish the same <code>hfo-cli</code> package. Node.js <strong>≥ 22</strong> required.</p>
 
       <hfo-terminal title="pick any">
 <span class="tok-prompt">$</span> <span class="tok-cmd">npm</span>  <span class="tok-cmd">i</span>   <span class="tok-flag">-g</span> hfo-cli
@@ -166,14 +177,38 @@
             <tr><td><code>hfo-macos-x64</code></td><td>macOS x64 (Intel)</td></tr>
             <tr><td><code>hfo-macos-arm64</code></td><td>macOS arm64 (Apple Silicon M1+)</td></tr>
             <tr><td><code>hfo-win-x64.exe</code></td><td>Windows x64</td></tr>
+            <tr><td><code>hfo-win-arm64.exe</code></td><td>Windows arm64 (Snapdragon X, Surface Pro 11)<sup>*</sup></td></tr>
           </tbody>
         </table>
+      </div>
+      <p><small><sup>*</sup> Not attached to <code>v0.2.0</code> — the bundler could not cross-build it on an x64 runner. Use <code>npm i -g hfo-cli</code> on Windows ARM until the next tag; the package is plain JavaScript and runs natively.</small></p>
+
+      <h3>Which macOS build do I need?</h3>
+      <p>Apple Silicon (M1 and later) takes <code>arm64</code>; Intel Macs take <code>x64</code>. If you are unsure, ask the machine — the one-liner above picks for you automatically.</p>
+
+      <hfo-terminal title="macOS · check your architecture" copy="uname -m">
+<span class="tok-prompt">$</span> <span class="tok-cmd">uname</span> <span class="tok-flag">-m</span>
+arm64   <span class="tok-comment"># Apple Silicon  -> hfo-macos-arm64</span>
+x86_64  <span class="tok-comment"># Intel          -> hfo-macos-x64</span>
+</hfo-terminal>
+
+      <div class="callout callout-warn">
+        <p>Running the Intel build on Apple Silicon works through Rosetta 2, but it gives up the unified-memory GPU detection hfo relies on for scoring — every model would look CPU-only. Pick the native <code>arm64</code> asset.</p>
       </div>
 
       <hfo-terminal title="manual · Linux / macOS">
 <span class="tok-prompt">$</span> <span class="tok-cmd">curl</span> <span class="tok-flag">-LO</span> <span class="tok-url">https://github.com/carrilloapps/hfo/releases/latest/download/hfo-linux-x64</span>
 <span class="tok-prompt">$</span> <span class="tok-cmd">chmod</span> +x hfo-linux-x64
 <span class="tok-prompt">$</span> <span class="tok-cmd">sudo</span> <span class="tok-cmd">mv</span> hfo-linux-x64 <span class="tok-path">/usr/local/bin/hfo</span>
+<span class="tok-prompt">$</span> <span class="tok-cmd">hfo</span> <span class="tok-flag">--version</span>
+</hfo-terminal>
+
+      <hfo-terminal title="manual · macOS (Apple Silicon)">
+<span class="tok-prompt">$</span> <span class="tok-cmd">curl</span> <span class="tok-flag">-LO</span> <span class="tok-url">https://github.com/carrilloapps/hfo/releases/latest/download/hfo-macos-arm64</span>
+<span class="tok-prompt">$</span> <span class="tok-cmd">chmod</span> +x hfo-macos-arm64
+<span class="tok-comment"># Clear the quarantine flag if the file came from a browser (see below)</span>
+<span class="tok-prompt">$</span> <span class="tok-cmd">xattr</span> <span class="tok-flag">-d</span> com.apple.quarantine hfo-macos-arm64 <span class="tok-op">||</span> <span class="tok-cmd">true</span>
+<span class="tok-prompt">$</span> <span class="tok-cmd">sudo</span> <span class="tok-cmd">mv</span> hfo-macos-arm64 <span class="tok-path">/usr/local/bin/hfo</span>
 <span class="tok-prompt">$</span> <span class="tok-cmd">hfo</span> <span class="tok-flag">--version</span>
 </hfo-terminal>
 
@@ -194,10 +229,31 @@ hfo v0.1.0 · MIT · José Carrillo
       <h3>Command not found after install</h3>
       <p>If <code>hfo: command not found</code> appears immediately after the install script, the install directory isn't on your <code>PATH</code> yet.</p>
       <ul>
-        <li><strong>macOS / Linux</strong>: open a new terminal (the script edits <code>~/.profile</code> or <code>~/.zprofile</code>), or run <code>source ~/.profile</code>.</li>
+        <li><strong>macOS / Linux</strong>: open a new terminal. The script appends the PATH line to the profile your shell actually reads — <code>~/.zprofile</code> for zsh (the macOS default), <code>~/.bash_profile</code> for bash on macOS, <code>~/.bashrc</code> for bash on Linux, <code>~/.config/fish/config.fish</code> for fish, else <code>~/.profile</code>. To apply it in the current shell, <code>source</code> that file.</li>
         <li><strong>Windows</strong>: close and reopen PowerShell. The PATH change is per-user and takes a new session.</li>
         <li><strong>Global npm</strong>: check <code>npm prefix -g</code> — that directory's <code>bin</code> subfolder must be on <code>PATH</code>.</li>
       </ul>
+
+      <h3 id="macos-gatekeeper">macOS: &ldquo;cannot be opened because the developer cannot be verified&rdquo;</h3>
+      <p>The standalone binaries are not code-signed or notarised. When a file is downloaded through a browser, macOS attaches a <code>com.apple.quarantine</code> attribute, and Gatekeeper then refuses to run it. The one-liner installer clears the attribute for you; a manual download needs one command:</p>
+
+      <hfo-terminal title="macOS · clear the quarantine flag" copy="xattr -d com.apple.quarantine /usr/local/bin/hfo">
+<span class="tok-prompt">$</span> <span class="tok-cmd">xattr</span> <span class="tok-flag">-d</span> com.apple.quarantine <span class="tok-path">/usr/local/bin/hfo</span>
+<span class="tok-comment"># Confirm nothing is left on the file</span>
+<span class="tok-prompt">$</span> <span class="tok-cmd">xattr</span> <span class="tok-path">/usr/local/bin/hfo</span>
+</hfo-terminal>
+
+      <p>If you already hit the dialog, you can also allow it once from <strong>System Settings &rarr; Privacy &amp; Security</strong>, where the blocked binary appears with an <em>Open Anyway</em> button. Prefer <code>npm i -g hfo-cli</code> if you would rather not run unsigned binaries at all — the npm package is plain JavaScript executed by your own Node install.</p>
+
+      <h3>macOS: hfo reports the wrong VRAM on Apple Silicon</h3>
+      <p>Apple Silicon has no discrete VRAM; the GPU draws from unified memory. hfo derives the usable budget from the <code>iogpu.wired_limit_mb</code> sysctl when you have set one, and otherwise from a conservative share of total RAM. To check or override it:</p>
+
+      <hfo-terminal title="macOS · unified memory budget">
+<span class="tok-comment"># 0 means "system default" — hfo then uses its own tiered estimate</span>
+<span class="tok-prompt">$</span> <span class="tok-cmd">sysctl</span> iogpu.wired_limit_mb
+<span class="tok-comment"># Tell hfo exactly how much to assume, in MiB</span>
+<span class="tok-prompt">$</span> <span class="tok-cmd">HFO_VRAM_MIB</span>=49152 <span class="tok-cmd">hfo</span> <span class="tok-flag">--view</span>
+</hfo-terminal>
 
       <h3>Ollama not found</h3>
       <p>hfo doesn't require Ollama to already be installed. On first run, if it's missing, you'll see an installer overlay offering the platform-appropriate method (<code>winget install Ollama.Ollama</code>, <code>brew install ollama</code>, or the official <code>curl | sh</code>). Confirm with Enter, or install manually and re-run hfo.</p>
@@ -220,8 +276,9 @@ npm config set registry    https://your-registry.example.com/</code></pre>
 <span class="tok-comment"># via npm / pnpm / yarn / bun</span>
 <span class="tok-prompt">$</span> <span class="tok-cmd">npm</span>  uninstall <span class="tok-flag">-g</span> hfo-cli
 
-<span class="tok-comment"># standalone binary on Linux / macOS</span>
+<span class="tok-comment"># standalone binary on Linux / macOS — the installer picks whichever is writable</span>
 <span class="tok-prompt">$</span> <span class="tok-cmd">sudo</span> <span class="tok-cmd">rm</span> <span class="tok-path">/usr/local/bin/hfo</span>
+<span class="tok-prompt">$</span> <span class="tok-cmd">rm</span> <span class="tok-path">~/.local/bin/hfo</span>
 
 <span class="tok-comment"># Windows (PowerShell)</span>
 <span class="tok-prompt">PS&gt;</span> <span class="tok-cmd">Remove-Item</span> <span class="tok-path">"$env:LOCALAPPDATA\Programs\hfo"</span> <span class="tok-flag">-Recurse</span> <span class="tok-flag">-Force</span>

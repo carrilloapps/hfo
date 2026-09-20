@@ -68,7 +68,7 @@ The alt-screen is managed by `cli.tsx`, not Ink. Any code path that exits (inclu
 
 ## Project conventions
 
-These are enforced by code review and (where possible) ESLint. CONTRIBUTING.md has the full version.
+These are enforced by code review and (where possible) ESLint. `.github/CONTRIBUTING.md` has the full version.
 
 - **Strict TypeScript** — all flags on in `tsconfig.json`. Don't introduce `any` unless truly irreducible.
 - **No raw emojis in source strings.** Use `src/ui/icons.ts` (backed by `figures`, with ASCII fallback on legacy consoles).

@@ -27,9 +27,9 @@ plugin.
 - [Repository](https://github.com/carrilloapps/hfo)
 - [README](https://raw.githubusercontent.com/carrilloapps/hfo/main/README.md)
 - [CHANGELOG](https://raw.githubusercontent.com/carrilloapps/hfo/main/CHANGELOG.md)
-- [CONTRIBUTING](https://raw.githubusercontent.com/carrilloapps/hfo/main/CONTRIBUTING.md)
+- [CONTRIBUTING](https://raw.githubusercontent.com/carrilloapps/hfo/main/.github/CONTRIBUTING.md)
 - [LICENSE (MIT)](https://raw.githubusercontent.com/carrilloapps/hfo/main/LICENSE)
-- [SECURITY policy](https://github.com/carrilloapps/hfo/blob/main/SECURITY.md)
+- [SECURITY policy](https://github.com/carrilloapps/hfo/blob/main/.github/SECURITY.md)
 
 ## Distribution
 
