@@ -1,6 +1,6 @@
 {
   "name": "hfo-cli",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "A fullscreen terminal UI to discover, install, tune, manage, launch, back up and restore Hugging Face GGUF models through Ollama — auto-tuned to your hardware.",
   "keywords": [
     "ollama",

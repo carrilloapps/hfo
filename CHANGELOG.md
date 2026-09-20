@@ -8,6 +8,46 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 _Nothing yet — open an issue or PR to propose the next thing._
 
+## [0.2.1] — 2026-09-20
+
+### Fixed
+
+- **macOS installs needed manual steps that Windows did not.** `install.ps1`
+  wrote the user PATH outright, so Windows worked in the next shell;
+  `install.sh` only printed "add this line yourself" — while the install page
+  claimed it edited `~/.profile`, which it never did. It now appends to the
+  profile the shell actually reads (`.zprofile` for zsh, `.bash_profile` for
+  bash on macOS, `.bashrc` for bash on Linux, `config.fish` for fish, else
+  `.profile`), idempotently, with `HFO_NO_MODIFY_PATH=1` to opt out.
+
+- **Gatekeeper blocked the macOS binary on first run.** The installer now
+  clears `com.apple.quarantine` after download; without it an unsigned binary
+  fails with "developer cannot be verified". The install page documents the
+  manual `xattr -d` fix for browser downloads.
+
+- The Windows ARM binary is published again: `pkg` has to execute the target's
+  base binary while bundling, so `node22-win-arm64` is built on an ARM runner
+  rather than cross-built on x64, and zero-byte outputs from a failed build are
+  dropped before upload instead of failing the job.
+
+- Four stale "Node.js ≥ 20" references — in the README, CONTRIBUTING, the
+  homepage stat and the install page — left over from the move to Node 22.
+
+### Changed
+
+- `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md` and `SECURITY.md` moved to
+  `.github/`, alongside `SUPPORT.md` and the templates. Nothing moved to
+  `docs/`, which is the published Pages site.
+
+- Runner labels are pinned (`ubuntu-24.04`, `macos-26`, `windows-2025`,
+  `windows-11-vs2026-arm`) instead of `-latest`, which removes the migration
+  notices GitHub was annotating every run with.
+
+### Added
+
+- Install page: a macOS architecture picker, a Gatekeeper section, a note on
+  `HFO_VRAM_MIB` for unified-memory tuning, and the `win-arm64` asset row.
+
 ## [0.2.0] — 2026-09-19
 
 Cross-platform correctness pass, two new launch targets, and a clean
