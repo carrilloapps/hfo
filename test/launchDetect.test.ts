@@ -164,3 +164,45 @@ describe('runLaunch via the ollama runner', () => {
     expect(await runLaunch('claude')).toBe(0);
   });
 });
+
+describe('detectAvailableTargets — help parsing is exact, not a regex match', () => {
+  it('does not match an id as a prefix of a longer entry', async () => {
+    execa.mockResolvedValue({ stdout: '  claudex   some other tool\n  codex   OpenAI\n' });
+    const ids = await detectAvailableTargets();
+    expect(ids).toContain('codex');
+    expect(ids).not.toContain('claude');
+  });
+
+  it('skips blank indented lines in the help output', async () => {
+    // Help text is padded with whitespace-only lines between sections.
+    execa.mockResolvedValue({ stdout: ['   ', '  codex   OpenAI', '   ', ''].join('\n') });
+    const ids = await detectAvailableTargets();
+    expect(ids).toContain('codex');
+    expect(ids).not.toContain('claude');
+  });
+
+  it('ignores flush-left headings, matching only indented entries', async () => {
+    execa.mockResolvedValue({ stdout: 'claude is a heading not an entry\n  codex   OpenAI\n' });
+    const ids = await detectAvailableTargets();
+    expect(ids).toContain('codex');
+    expect(ids).not.toContain('claude');
+  });
+
+  it('treats a dot in an id literally rather than as a wildcard', async () => {
+    // A plugin id may contain '.', which would be a regex wildcard if the
+    // help text were matched with an interpolated pattern.
+    const target = LAUNCH_TARGETS.find((t) => t.id === 'claude')!;
+    const originalId = target.id;
+    try {
+      (target as { id: string }).id = 'a.c';
+      // Include a genuine match so the "unparseable help" fallback, which
+      // would add every target, does not mask the assertion.
+      execa.mockResolvedValue({ stdout: '  abc   not the same thing\n  codex   OpenAI\n' });
+      const ids = await detectAvailableTargets();
+      expect(ids).toContain('codex');
+      expect(ids).not.toContain('a.c');
+    } finally {
+      (target as { id: string }).id = originalId;
+    }
+  });
+});

@@ -247,10 +247,21 @@ export async function detectAvailableTargets(
 
   try {
     const { stdout } = await execa('ollama', ['launch', '--help']);
+    // Collect the first word of every indented line — that is how the help
+    // output lists integrations, and headings are flush left. Matching against
+    // a set beats building a regex per id: a target id can come from the user's
+    // plugin file, and interpolating that into a pattern would let a `.` match
+    // the wrong entry (and is a ReDoS smell besides).
+    const listed = new Set<string>();
+    for (const line of stdout.split(/\r?\n/)) {
+      if (!/^\s/.test(line)) continue;
+      const first = line.trim().split(/\s+/)[0];
+      if (first) listed.add(first);
+    }
+
     let matched = 0;
     for (const t of ollamaTargets) {
-      const re = new RegExp(String.raw`^\s+` + t.id + String.raw`\b`, 'm');
-      if (re.test(stdout)) {
+      if (listed.has(t.id)) {
         supported.add(t.id);
         matched += 1;
       }
